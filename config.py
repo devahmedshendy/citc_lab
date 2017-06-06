@@ -1,0 +1,3 @@
+SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/citc_lab'
+SQLALCHEMY_TRACK_MODIFICATIONS = True
+# FLASK_ASSETS_USE_CDN = True

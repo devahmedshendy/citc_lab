@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <title>Patient Profile - CITC LAB</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">CITC LAB</a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto"></ul>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Firstname Lastname
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">Account Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div id="above-container"></div>
+      <div id="search-container" class="container">
+        <div class="row">
+          <p id="search-label" class="offset-3 col-6 text-center">
+            Patient Profile
+          </p>
+        </div>
+        <div class="row">
+        </div>
+        <hr>
+
+        <div id="patient_details" class="row">
+          <div class="offset-3 col-6 text-left justify-content-between">
+            <div class="row">
+              <div class="col-9">
+                <span id="patient_name" >Yasser Rahman Shokry</span><span>-</span>
+                <small id="patient_age">42y</small>
+                <br>
+
+                <span id="patient_id">25908111201044</span>
+                <br>
+
+              </div>
+
+              <div class="col-2">
+                <div class="input-group">
+                  <div class="input-group-btn">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Add
+                    </button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#cbcModal">CBC</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="container">
+              <div class="row">
+                <div id="patient_cbc_list" class="list-group col-12">
+                  <a href="#" target="_blank" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">CBC Analysis</h6>
+                      <small>2017-06-01</small>
+                    </div>
+                    <!-- <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p> -->
+                    <small class="text-muted">Not Approved yet.</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">CBC Analysis</h6>
+                      <small class="text-muted">2017-06-01</small>
+                    </div>
+                    <!-- <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p> -->
+                    <small class="text-muted">Approved by Dr.Zizo.</small>
+                  </a>
+                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h6 class="mb-1">CBC Analysis</h6>
+                      <small class="text-muted">2017-06-01</small>
+                    </div>
+                    <!-- <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p> -->
+                    <small class="text-muted">Approved by Dr.Zizo.</small>
+                  </a>
+                </div>
+
+                <div class="offset-4 col-2">
+                  <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                      <li class="page-item disabled">
+                        <a class="page-link" href="">Previous</a>
+                      </li>
+                      <li class="page-item">
+                        <a class="page-link" href="">Next</a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- CBC Modal -->
+            <div class="modal fade" id="cbcModal" tabindex="-1" role="dialog" aria-labelledby="cbcModalTitle" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="cbcModalTitle">Add CBC Analysis</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+
+                      <form class="" action="" method="">
+                        <div class="form-group row">
+                          <label for="wbc" class="offset-2 col-2 col-form-label">WBC</label>
+                          <div class="col-6">
+                            <input id="wbc" type="text" name="wbc" placeholder="White Blod Cells" class="form-control">
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="hgb" class="offset-2 col-2 col-form-label">HGB</label>
+                          <div class="col-6">
+                            <input id="hgb" type="text" name="hgb" placeholder="Hemoglibin" class="form-control">
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="mcv" class="offset-2 col-2 col-form-label">MCV</label>
+                          <div class="col-6">
+                            <input id="MCV" type="text" name="wbc" placeholder="Mean Corpuscular Volume" class="form-control">
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="MCH" class="offset-2 col-2 col-form-label">MCH</label>
+                          <div class="col-6">
+                            <input id="MCH" type="text" name="wbc" placeholder="Mean Cell Hemoglubine" class="form-control">
+                          </div>
+                        </div>
+                      </form>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="assets/js/main.js">
+
+    </script>
+  </body>
+</html>

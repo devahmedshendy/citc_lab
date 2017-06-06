@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <title>New Patient - CITC LAB</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">CITC LAB</a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto"></ul>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Firstname Lastname
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">Account Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div id="above-container"></div>
+      <div id="search-container" class="container">
+        <div class="row">
+          <p id="search-label" class="offset-3 col-6 text-center">
+            Add New Patient
+          </p>
+        </div>
+        <hr>
+
+        <div class="row">
+          <div class="offset-2 col-10">
+            <form class="" action="" method="">
+              <div class="form-group row">
+                <label for="patient_name" class="col-1">Name</label>
+                <div class="col-8">
+                  <input id='patient_name' type="text" name="patient_name" placeholder="Patient Name" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="patient_address" class="col-1">Address</label>
+                <div class="col-8">
+                  <input id='patient_address' type="text" name="patient_address" placeholder="Patient Adress" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="patient_phone" class="col-1">Phone</label>
+                <div class="col-8">
+                  <input id='patient_phone' type="text" name="patient_phone" placeholder="Patient Phone" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="patient_age" class="col-1">Age</label>
+                <div class="col-2">
+                  <!-- <select id="age_selector" class="selectpicker col-6" name="age_selector" title="Select Age..">
+                  </select> -->
+                  <input id='patient_age' type="text" name="patient_age" placeholder="Patient Age" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="patient_gender" class="col-1">Gender</label>
+                <div class="col-2">
+                  <select id="gender_selector" class="selectpicker" name="gender_selector" title="Select Gender..">
+                    <option>Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="offset-1 col-8">
+                  <button type="button" name="button" class="btn btn-primary">Add Patient</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="assets/js/main.js"></script>
+    <script type="text/javascript" src="assets/js/patient_new.js" /></script>
+  </body>
+</html>
