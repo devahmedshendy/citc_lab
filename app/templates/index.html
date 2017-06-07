@@ -4,12 +4,14 @@
 
 {% block body %}
 <div id="above-container"></div>
+{% include 'alert.html' %}
 <div id="search-container">
   <div class="row">
     <p id="search-label" class="offset-3 col-6 text-center">
       Search for Patient <strong>|</strong> <a href="patient_new.html">Add New Patient</a>
     </p>
   </div>
+
   <div class="row">
     <div class="offset-3 col-6">
       <form role="search" action='' method=''>

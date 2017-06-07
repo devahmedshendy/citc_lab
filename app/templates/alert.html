@@ -1,0 +1,31 @@
+{% with errors = get_flashed_messages(category_filter=["error"]) %}
+  {% if errors %}
+    <div class="row">
+      <div class="offset-3 col-6">
+        <div class="alert alert-danger" role="alert">
+          <h5>You got some errors:</h5>
+          <ul>
+            {% for error in errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
+{% with success = get_flashed_messages(category_filter=["success"]) %}
+  {% if success %}
+    <div class="row">
+      <div class="offset-3 col-6">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          {{ success[0] }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
