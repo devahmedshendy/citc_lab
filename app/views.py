@@ -129,7 +129,7 @@ def add_patient():
 
             added_patient = Patient.query.filter_by(personal_id=personal_id).first()
             if (added_patient):
-                flash(Enums["DUPLICATE_PATIENT"], "error")
+                flash(Enums["DUPLICATE_PATIENT_ID"] % patient_form.patient_personal_id.data, "error")
 
                 return render_template("add_patient.html", form=patient_form)
 

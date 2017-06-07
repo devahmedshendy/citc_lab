@@ -15,7 +15,7 @@ Enums = {
     'REGISTERATION_FAILED': 'Registeration has been failed.',
 
     # Patient Insertion Error Messages
-    'DUPLICATE_PATIENT': 'This patient is already added.',
+    'DUPLICATE_PATIENT_ID': 'This ID (%s) is already added.',
     'INVALID_PERSONAL_ID': 'Please enter a valid personal id.',
 
     # General Error Messages
