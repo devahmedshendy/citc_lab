@@ -10,6 +10,8 @@ from app.constants import Enums
 
 from forms import LoginForm, RegisterForm, PatientForm
 
+import json, jsonify
+
 
 """ Home """
 @app.route('/')
@@ -101,12 +103,32 @@ def logout():
 
 """ Patient """
 @app.route('/patient', methods=['GET', 'POST'])
+@app.route('/patient/personal_id/<patient_personal_id>', methods=['GET'])
 @login_required
-def add_patient():
+def patient(patient_personal_id=None):
     patient_form = PatientForm(request.form)
 
-    if request.method == 'POST':
-        print "POST"
+    if request.method == 'GET' and patient_personal_id == None:
+        patients = []
+
+        patients_list = Patient.query.limit(10).all();
+        for patient in patients_list:
+            patients.append({
+                'personal_id'   : patient.personal_id,
+                'name'          : patient.name,
+                'address'       : patient.address,
+                'phone'         : patient.phone,
+                'gender'        : patient.gender
+            })
+
+        return json.dumps(patients)
+
+
+    if request.method == 'GET' and patient_personal_id != None:
+        return 'GET patient profile'
+
+
+    elif request.method == 'POST' and patient_personal_id == None:
         if patient_form.validate() == False:
             for field, errors in patient_form.errors.items():
                 for error in errors:
@@ -114,18 +136,20 @@ def add_patient():
 
             return render_template("add_patient.html", form=patient_form)
 
+
         else:
             personal_id   = patient_form.patient_personal_id.data
-            name = patient_form.patient_name.data
-            address = patient_form.patient_address.data
-            phone = patient_form.patient_phone.data
-            age = patient_form.patient_age.data
-            gender = patient_form.patient_gender.data
+            name          = patient_form.patient_name.data
+            address       = patient_form.patient_address.data
+            phone         = patient_form.patient_phone.data
+            age           = patient_form.patient_age.data
+            gender        = patient_form.patient_gender.data
 
             if (len(personal_id) != 14):
                 flash(Enums["INVALID_PERSONAL_ID"], "error")
 
                 return render_template("add_patient.html", form=patient_form)
+
 
             added_patient = Patient.query.filter_by(personal_id=personal_id).first()
             if (added_patient):
@@ -144,6 +168,3 @@ def add_patient():
             except:
                 flash(Enums["UNEXPECTED_ERROR"], "error")
                 return render_template("add_patient.html", form=patient_form)
-
-
-    return render_template("add_patient.html", form=patient_form)
