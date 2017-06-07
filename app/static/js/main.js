@@ -6,9 +6,18 @@ $(document).ready(function() {
 
 
   } else if (page_name === "Home") {
-    let patients = getListOfPatients();
+    let patients = []
 
-    displayPatientsElements(patients);
+    $.get('/patient', (list_of_patients) => {
+      list_of_patients = JSON.parse(list_of_patients)
+
+      list_of_patients.forEach((patient) => {
+        patients.push(patient)
+      })
+
+      displayPatientsElements(patients);
+    });
+
 
     $('#search-box').on("keyup keypress", (event) => {
       let targetElement = $(event.target);
@@ -28,28 +37,33 @@ $(document).ready(function() {
 
     /* Home page specific functions */
     function getListOfPatients() {
-      return [
-        {
-          name: "Yasser Rahman Shokry",
-          age: 43
-        },
-        {
-          name: "Yomna Mostafa Mohamed",
-          age: 82
-        },
-        {
-          name: "Mohamed Sameh Rushdy",
-          age: 28
-        },
-        {
-          name: "Ramiz Hamed Al Morshdy",
-          age: 50
-        },
-        {
-          name: "Mai Mansour Himdan",
-          age: 39
-        }
-      ];
+      var result = [];
+
+      return result
+
+
+      // return [
+      //   {
+      //     name: "Yasser Rahman Shokry",
+      //     age: 43
+      //   },
+      //   {
+      //     name: "Yomna Mostafa Mohamed",
+      //     age: 82
+      //   },
+      //   {
+      //     name: "Mohamed Sameh Rushdy",
+      //     age: 28
+      //   },
+      //   {
+      //     name: "Ramiz Hamed Al Morshdy",
+      //     age: 50
+      //   },
+      //   {
+      //     name: "Mai Mansour Himdan",
+      //     age: 39
+      //   }
+      // ];
     }
 
     /*
@@ -74,7 +88,7 @@ $(document).ready(function() {
           .text(patient.name);
 
         let spanElement = $("<span></span>")
-          .text(`${patient.age}y`);
+          .text(`${patient.personal_id}`);
 
         spanElement.appendTo(listElement);
         listElement.appendTo(anchorElement);
