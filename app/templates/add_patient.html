@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+
+{% block page_name %}New Patient{% endblock %}
+
+{% block body %}
+
+<div id="above-container"></div>
+<div id="search-container" class="container">
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      <a href="{{url_for('index')}}">Search for Patient</a> <strong>|</strong> Add New Patient
+    </p>
+  </div>
+
+  {% include 'alert.html' %}
+  <hr>
+
+  <div class="row">
+    <div class="offset-3 col-6">
+      <form action="{{ url_for('add_patient') }}" method="POST">
+        <div class="form-group row">
+          <label for="patient_personal_id" class="col-2">ID</label>
+          <div class="col-8">
+            {{ form.patient_personal_id(class_="form-control", placeholder="Patient Perosnal ID")}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_name" class="col-2">Name</label>
+          <div class="col-8">
+            {{ form.patient_name(class_="form-control", placeholder="Patient Name")}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_address" class="col-2">Address</label>
+          <div class="col-8">
+            {{ form.patient_address(class_="form-control", placeholder="Patient Address") }}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_phone" class="col-2">Phone</label>
+          <div class="col-8">
+            {{ form.patient_phone(class_="form-control", placeholder="Patient Phone")}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_age" class="col-2">Age</label>
+          <div class="col-2">
+            {{ form.patient_age(class_="form-control", placeholder="Age")}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_gender" class="col-2">Gender</label>
+          <div class="col-2">
+            {{form.patient_gender}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="offset-2 col-8">
+              <button type="submit" name="button" class="btn btn-primary btn-block">Add Patient</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

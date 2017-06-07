@@ -4,11 +4,11 @@ from datetime import datetime
 from flask_sqlalchemy import sqlalchemy
 
 from app import app, db
-from app.models import User
+from app.models import User, Patient
 from app.services import UserService
 from app.constants import Enums
 
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, PatientForm
 
 
 """ Home """
@@ -74,7 +74,11 @@ def login():
                 login_user(registered_user)
                 registered_user.authenticated = True
                 flash(Enums["LOGIN_DONE"] + registered_user.username, "success")
-                return redirect('/')
+
+                # We need to check if next is safe_url or not
+                # print request.args.get('next')
+                # next = request.args.get('next')
+                return redirect(url_for('index'))
 
             else:
                 flash(Enums["WRONG_CREDENTIALS"], "error")
@@ -93,3 +97,53 @@ def logout():
     logout_user()
     flash(Enums["LOGOUT_DONE"], "success")
     return redirect(url_for('login'))
+
+
+""" Patient """
+@app.route('/patient', methods=['GET', 'POST'])
+@login_required
+def add_patient():
+    patient_form = PatientForm(request.form)
+
+    if request.method == 'POST':
+        print "POST"
+        if patient_form.validate() == False:
+            for field, errors in patient_form.errors.items():
+                for error in errors:
+                    flash(error, "error")
+
+            return render_template("add_patient.html", form=patient_form)
+
+        else:
+            personal_id   = patient_form.patient_personal_id.data
+            name = patient_form.patient_name.data
+            address = patient_form.patient_address.data
+            phone = patient_form.patient_phone.data
+            age = patient_form.patient_age.data
+            gender = patient_form.patient_gender.data
+
+            if (len(personal_id) != 14):
+                flash(Enums["INVALID_PERSONAL_ID"], "error")
+
+                return render_template("add_patient.html", form=patient_form)
+
+            added_patient = Patient.query.filter_by(personal_id=personal_id).first()
+            if (added_patient):
+                flash(Enums["DUPLICATE_PATIENT"], "error")
+
+                return render_template("add_patient.html", form=patient_form)
+
+            try:
+                patient = Patient(personal_id, name, address, phone, age, gender)
+                db.session.add(patient)
+                db.session.commit()
+
+                flash(Enums["PATIENT_ADDED"], "success")
+                return redirect(url_for('add_patient'))
+
+            except:
+                flash(Enums["UNEXPECTED_ERROR"], "error")
+                return render_template("add_patient.html", form=patient_form)
+
+
+    return render_template("add_patient.html", form=patient_form)
