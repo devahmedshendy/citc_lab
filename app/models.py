@@ -79,13 +79,3 @@ class Patient(db.Model):
         self.gender         = gender
         self.created_at     = datetime.now()
         self.updated_at     = datetime.now()
-
-    def serialize(self):
-        return {
-            'personal_id': self.personal_id,
-            'name': self.name,
-            'address': self.phone,
-            'phone': self.phone,
-            'age': self.age,
-            'gender': self.gender
-        }

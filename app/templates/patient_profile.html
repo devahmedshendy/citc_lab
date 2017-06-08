@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block page_name %}Patient Profile{% endblock %}
+
+{% block body %}
+
+<div id="above-container"></div>
+<div id="search-container" class="container">
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      Patient Profile
+    </p>
+  </div>
+
+  {% include 'alert.html' %}
+  <hr>
+
+  <div class="row">
+    <div class="offset-3 col-6">
+      <form action="{{ url_for('edit_patient_profile', patient_personal_id=patient.personal_id) }}" method="POST">
+        <div class="form-group row">
+          <label for="patient_personal_id" class="col-2">ID</label>
+          <div class="col-8">
+            <!-- value=patient.personal_id, -->
+            <input type="text" class="form-control" name="patient_personal_id" value="{{patient.personal_id}}" placeholder="Patient Personal ID">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_name" class="col-2">Name</label>
+          <div class="col-8">
+            <input type="text" class="form-control" name="patient_name" value="{{patient.name}}" placeholder="Patient Name">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_address" class="col-2">Address</label>
+          <div class="col-8">
+            <input type="text" class="form-control" name="patient_address" value="{{patient.address}}" placeholder="Patient Address">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_phone" class="col-2">Phone</label>
+          <div class="col-8">
+            <input type="text" class="form-control" name="patient_phone" value="{{patient.phone}}" placeholder="Patient Phone">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_age" class="col-2">Age</label>
+          <div class="col-2">
+            <input type="text" class="form-control" name="patient_age" value="{{patient.age}}" placeholder="Age">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="patient_gender" class="col-2">Gender</label>
+          <div class="col-2">
+            <select id="gender_selector" class="selectpicker" name="patient_gender" title="Select Gender..">
+              <option value="">Select Gender</option>
+
+              {% if patient.gender == "male" %}
+                <option selected value="male">Male</option>
+                <option value="female">Female</option>
+
+              {% else %}
+                <option value="male">Male</option>
+                <option selected value="female">Female</option>
+              {% endif %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="offset-2 col-8">
+              <button type="submit" name="button" class="btn btn-primary btn-block">Update Profile</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

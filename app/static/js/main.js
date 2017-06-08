@@ -8,7 +8,7 @@ $(document).ready(function() {
   } else if (page_name === "Home") {
     let patients = []
 
-    $.get('/patient', (list_of_patients) => {
+    $.get('/patient?json=list_of_patients', (list_of_patients) => {
       list_of_patients = JSON.parse(list_of_patients)
 
       list_of_patients.forEach((patient) => {
@@ -35,36 +35,6 @@ $(document).ready(function() {
       toggleClass(event.target, 'active');
     });
 
-    /* Home page specific functions */
-    function getListOfPatients() {
-      var result = [];
-
-      return result
-
-
-      // return [
-      //   {
-      //     name: "Yasser Rahman Shokry",
-      //     age: 43
-      //   },
-      //   {
-      //     name: "Yomna Mostafa Mohamed",
-      //     age: 82
-      //   },
-      //   {
-      //     name: "Mohamed Sameh Rushdy",
-      //     age: 28
-      //   },
-      //   {
-      //     name: "Ramiz Hamed Al Morshdy",
-      //     age: 50
-      //   },
-      //   {
-      //     name: "Mai Mansour Himdan",
-      //     age: 39
-      //   }
-      // ];
-    }
 
     /*
       <a href="#" target="_blank">
@@ -79,8 +49,7 @@ $(document).ready(function() {
 
       patients.forEach((patient) => {
         let anchorElement = $("<a></a>").attr({
-          "target": "_blank",
-          "href": ""
+          "href": `/patient/profile/${patient.personal_id}`
         });
 
         let listElement = $("<li></li>")
@@ -88,7 +57,7 @@ $(document).ready(function() {
           .text(patient.name);
 
         let spanElement = $("<span></span>")
-          .text(`${patient.personal_id}`);
+          .text(`${patient.updated_at}`);
 
         spanElement.appendTo(listElement);
         listElement.appendTo(anchorElement);
@@ -109,10 +78,6 @@ $(document).ready(function() {
   /* Global Functions */
   function toggleClass(item, className) {
     $(item).toggleClass(className);
-  }
-
-  function displayPatientCBCElements(patient) {
-
   }
 
 });
