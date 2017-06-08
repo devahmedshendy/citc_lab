@@ -177,8 +177,8 @@ def edit_patient_profile(patient_personal_id=None):
 
         db.session.commit()
 
-        flash(Enums["PATIENT_PROFILE_UPDATED"], "success")
-        return redirect(url_for('edit_patient_profile', patient_personal_id=patient.personal_id))
+        flash(Enums["PATIENT_PROFILE_UPDATE_DONE"], "success")
+        return redirect(url_for('patient_analyzes', patient_personal_id=patient.personal_id))
 
 
 
@@ -202,3 +202,21 @@ def list_of_patients():
             })
 
         return json.dumps(patients)
+
+
+# """ Display Patient's Analysis """
+# @app.route('/analysis')
+
+
+
+""" Get Analysis List for a Patient """
+@app.route('/analysis/personal_id/<string:patient_personal_id>', methods=['GET'])
+@login_required
+def patient_analyzes(patient_personal_id=None):
+    patient = Patient.query.filter_by(personal_id=patient_personal_id).first()
+
+    if not patient:
+        falsh(Enums["NO_SUCH_PATIENT"], "error")
+        return redirect(url_for("index"))
+
+    return render_template('analysis_profile.html', patient=patient)

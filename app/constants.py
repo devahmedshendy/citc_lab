@@ -4,7 +4,7 @@ Enums = {
     'LOGIN_DONE': 'Login successful for ',
     'LOGOUT_DONE': 'Logout done successfully.',
     'PATIENT_ADDED': 'Patient has been added successfully.',
-    'PATIENT_PROFILE_UPDATED': 'Patient has been updated successfully.',
+    'PATIENT_PROFILE_UPDATE_DONE': 'Patient has been updated successfully.',
 
     # User Login Error Messages
     'NO_SUCH_USER': 'Sorry, but there is no such user in our system.',

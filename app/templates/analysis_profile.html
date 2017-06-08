@@ -1,0 +1,396 @@
+{% extends 'layout.html' %}
+
+{% block page_name %}Analysis Profile{% endblock %}
+
+
+{% block add_analysis_dropdown %}
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Add Analysis
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#cbcModal">CBC Analysis</a>
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block body %}
+
+<div id="above-container"></div>
+<div id="search-container" class="container-fluid">
+  <div class="row">
+    <p id="patient-profile-label" class="offset-3 col-6 text-center">
+      Analysis Profile
+    </p>
+  </div>
+
+  {% include 'alert.html' %}
+  <hr>
+
+  <div class="row justify-content-around">
+
+    <!-- Patient Details -->
+    <div class="col-4">
+
+      <div class="row justify-content-between">
+        <div class="col-6">
+          <strong id="patient_name" >{{patient.name}}</strong>
+        </div>
+
+        <div class="col-4">
+          <a href="{{url_for('edit_patient_profile', patient_personal_id=patient.personal_id)}}">Edit</a>
+          |
+          <a href="{{url_for('edit_patient_profile', patient_personal_id=patient.personal_id)}}">Delete</a>
+        </div>
+      </div>
+
+      <div class="row">
+        <hr class="col">
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th scope="row">Personal Id</th>
+                <td>{{patient.personal_id}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Gender</th>
+                <td>{{patient.gender}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Age</th>
+                <td>{{patient.age}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Address</th>
+                <td>{{patient.address}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Phone</th>
+                <td>{{patient.phone}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Patient Analysis -->
+    <div id="analyzes_container" class="col-6">
+      <div id="patient_analyzes_list" class="list-group ">
+        <div id="accordion" role="tablist" aria-multiselectable="true">
+
+          <div class="card">
+            <div class="card-header" role="tab" id="headingOne">
+              <a href="#collapseOne" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapseOne" class="list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">CBC Analysis</h6>
+                  <small>2017-06-01</small>
+                </div>
+
+                <p class="mb-1">Comment: Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                <small class="text-muted">Not Approved yet.</small>
+              </a>
+            </div>
+
+            <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="card-block">
+                <div class="row">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col align-self-center text-center">
+                        <a href="#">Edit</a> | <a href="#">Delete</a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Value</th>
+                          <th>Normal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">WBC</th>
+                          <td>{{patient.personal_id}}</td>
+                          <td>3.70 - 10.10</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">HGB</th>
+                          <td>{{patient.gender}}</td>
+                          <td>12.9 - 15.9</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCV</th>
+                          <td>{{patient.age}}</td>
+                          <td>81.1 - 96.0</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCH</th>
+                          <td>{{patient.address}}</td>
+                          <td>27.0 - 31.2</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header" role="tab" id="headingTwo">
+              <a href="#collapseTwo" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapseTwo" class="list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">CBC Analysis</h6>
+                  <small>2017-05-29</small>
+                </div>
+
+                <p class="mb-1">Comment: Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                <small class="text-muted">Approved by Dr.Zizo.</small>
+              </a>
+            </div>
+
+            <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+              <div class="card-block">
+                <div class="row">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col align-self-center text-center">
+                        <a href="#">Edit</a> | <a href="#">Delete</a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Value</th>
+                          <th>Normal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">WBC</th>
+                          <td>{{patient.personal_id}}</td>
+                          <td>3.70 - 10.10</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">HGB</th>
+                          <td>{{patient.gender}}</td>
+                          <td>12.9 - 15.9</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCV</th>
+                          <td>{{patient.age}}</td>
+                          <td>81.1 - 96.0</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCH</th>
+                          <td>{{patient.address}}</td>
+                          <td>27.0 - 31.2</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header" role="tab" id="headingThree">
+              <a href="#collapseThree" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapseThree" class="list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">CBC Analysis</h6>
+                  <small>2017-05-29</small>
+                </div>
+
+                <p class="mb-1">Comment: Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                <small class="text-muted">Approved by Dr.Zizo.</small>
+              </a>
+            </div>
+
+            <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
+              <div class="card-block">
+                <div class="row">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col align-self-center text-center">
+                        <a href="#">Edit</a> | <a href="#">Delete</a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Value</th>
+                          <th>Normal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">WBC</th>
+                          <td>{{patient.personal_id}}</td>
+                          <td>3.70 - 10.10</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">HGB</th>
+                          <td>{{patient.gender}}</td>
+                          <td>12.9 - 15.9</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCV</th>
+                          <td>{{patient.age}}</td>
+                          <td>81.1 - 96.0</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCH</th>
+                          <td>{{patient.address}}</td>
+                          <td>27.0 - 31.2</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header" role="tab" id="headingFour">
+              <a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapseFour" class="list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mb-1">CBC Analysis</h6>
+                  <small>2017-05-29</small>
+                </div>
+
+                <p class="mb-1">Comment: Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                <small class="text-muted">Approved by Dr.Zizo.</small>
+              </a>
+            </div>
+
+            <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour">
+              <div class="card-block">
+                <div class="row">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col align-self-center text-center">
+                        <a href="#">Edit</a> | <a href="#">Delete</a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Value</th>
+                          <th>Normal</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">WBC</th>
+                          <td>{{patient.personal_id}}</td>
+                          <td>3.70 - 10.10</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">HGB</th>
+                          <td>{{patient.gender}}</td>
+                          <td>12.9 - 15.9</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCV</th>
+                          <td>{{patient.age}}</td>
+                          <td>81.1 - 96.0</td>
+                        </tr>
+                        <tr>
+                          <th scope="row">MCH</th>
+                          <td>{{patient.address}}</td>
+                          <td>27.0 - 31.2</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CBC Modal -->
+  <div class="row">
+      <div class="modal fade" id="cbcModal" tabindex="-1" role="dialog" aria-labelledby="cbcModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="cbcModalTitle">Add CBC Analysis</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+                <form class="" action="" method="">
+                  <div class="form-group row">
+                    <label for="wbc" class="offset-2 col-2 col-form-label">WBC</label>
+                    <div class="col-6">
+                      <input id="wbc" type="text" name="wbc" placeholder="White Blod Cells" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="hgb" class="offset-2 col-2 col-form-label">HGB</label>
+                    <div class="col-6">
+                      <input id="hgb" type="text" name="hgb" placeholder="Hemoglibin" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="mcv" class="offset-2 col-2 col-form-label">MCV</label>
+                    <div class="col-6">
+                      <input id="MCV" type="text" name="wbc" placeholder="Mean Corpuscular Volume" class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="MCH" class="offset-2 col-2 col-form-label">MCH</label>
+                    <div class="col-6">
+                      <input id="MCH" type="text" name="wbc" placeholder="Mean Cell Hemoglubine" class="form-control">
+                    </div>
+                  </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+{% endblock %}

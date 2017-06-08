@@ -49,7 +49,7 @@ $(document).ready(function() {
 
       patients.forEach((patient) => {
         let anchorElement = $("<a></a>").attr({
-          "href": `/patient/profile/${patient.personal_id}`
+          "href": `/analysis/personal_id/${patient.personal_id}`
         });
 
         let listElement = $("<li></li>")
@@ -66,8 +66,15 @@ $(document).ready(function() {
       });
     }
 
-  } else if (page_name === "Patient Profile") {
-    console.log("Patient Profile Page");
+  } else if (page_name === "Analysis Profile") {
+    console.log("Analysis Profile Page");
+
+    $('#patient_analyzes_list').slimScroll({
+        wheelStep: 3,
+        alwaysVisible: true,
+        railVisible: true,
+        height: '400px',
+    });
 
   } else if (page_name === "New Patient") {
     console.log("New Patient Page");
