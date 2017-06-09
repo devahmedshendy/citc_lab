@@ -11,14 +11,14 @@ from app.forms import LoginForm, RegisterForm, PatientForm, CBCAnalysisForm
 import json, jsonify
 
 
-""" Home """
+""" User: Index """
 @app.route('/')
 @login_required
 def index():
     return render_template('index.html')
 
 
-""" Register """
+""" User: Register """
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     register_form = RegisterForm(request.form);
@@ -62,7 +62,7 @@ def register():
             return render_template('register.html', form=register_form)
 
 
-""" Login """
+""" User: Login """
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm(request.form)
@@ -105,7 +105,7 @@ def login():
             return render_template('login.html', form=login_form)
 
 
-""" Logout """
+""" User: Logout """
 @app.route('/logout')
 @login_required
 def logout():
@@ -114,7 +114,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-""" Adding New Patient """
+""" Patient: New """
 @app.route('/patient/new', methods=['GET', 'POST'])
 @login_required
 def new_patient():
@@ -162,7 +162,7 @@ def new_patient():
 
 
 
-""" Edit Patient Account Profile """
+""" Patient: Edit Profile """
 @app.route('/patient/profile/<string:personal_id>', methods=['GET', 'POST'])
 @login_required
 def edit_patient_profile(personal_id=None):
@@ -201,7 +201,7 @@ def edit_patient_profile(personal_id=None):
 
 
 
-""" Get List of Patients """
+""" Patient: List of Patients """
 @app.route('/patient')
 @login_required
 def list_of_patients():
@@ -224,7 +224,7 @@ def list_of_patients():
 
 
 
-""" Get Analysis List for a Patient """
+""" Patient: Analyzes Profile """
 @app.route('/analysis/personal_id/<string:personal_id>', methods=['GET', 'POST'])
 @login_required
 def patient_analyzes(personal_id=None):
@@ -250,20 +250,3 @@ def patient_analyzes(personal_id=None):
         print 'cbc_analysis_form validate success'
         flash('cbc_analysis_form validate success', 'success')
         return render_template('analysis_profile.html', form=cbc_analysis_form, patient=patient)
-
-
-
-
-@app.route('/analysis', methods=['POST'])
-@login_required
-def new_cbc_analysis():
-    cbc_analysis_form = CBCAnalysisForm(request.form)
-
-    if cbc_analysis_form.validate_on_submit() == False:
-        for field, errors in cbc_analysis_form.errors.items():
-            for error in errors:
-                print error
-
-        return redirect( url_for('patient_analyzes') )
-
-    print "POST new analysis"
