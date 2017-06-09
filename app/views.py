@@ -5,10 +5,8 @@ from flask_sqlalchemy import sqlalchemy
 
 from app import app, db
 from app.models import User, Patient
-from app.services import UserService
 from app.constants import Enums
-
-from forms import LoginForm, RegisterForm, PatientForm
+from app.forms import LoginForm, RegisterForm, PatientForm, CBCAnalysisForm
 
 import json, jsonify
 
@@ -25,34 +23,43 @@ def index():
 def register():
     register_form = RegisterForm(request.form);
 
-    if request.method == 'POST':
-        if register_form.validate() == False:
-            for field, errors in register_form.errors.items():
-                for error in errors:
-                    flash(error, "error")
+    if request.method == 'GET':
+        return render_template('register.html', form=register_form)
 
-        else:
-            firstname = register_form.user_firstname.data.strip().title()
-            lastname  = register_form.user_lastname.data.strip().title()
-            username  = register_form.user_username.data.strip()
-            password  = register_form.user_password.data.strip()
 
-            user = User(firstname, lastname, username, password)
+    if register_form.validate_on_submit() == False:
+        for field, errors in register_form.errors.items():
+            for error in errors:
+                flash(error, "error")
+        return render_template('register.html', form=register_form)
 
-            try:
-                db.session.add(user)
-                db.session.commit()
 
-                flash(Enums["REGISTERATION_DONE"], "success")
-                return redirect('/login')
+    if register_form.validate_on_submit() == True:
+        password  = register_form.password.data
 
-            except sqlalchemy.exc.IntegrityError as e:
-                flash(Enums["DUPLICATE_USER"], "error")
+        try:
+            user = User()
+            user.hash_password(password)
 
-            except:
-                flash(Enums["UNEXPECTED_ERROR"], "error")
+            register_form.populate_obj(user)
 
-    return render_template('register.html', form=register_form)
+            db.session.add(user)
+            db.session.commit()
+
+            flash(Enums["REGISTERATION_DONE"], "success")
+            return redirect( url_for('login') )
+
+        except sqlalchemy.exc.IntegrityError as e:
+            print e.message
+
+            flash(Enums["DUPLICATE_USER"], "error")
+            return render_template('register.html', form=register_form)
+
+        except Exception as e:
+            print e.message
+
+            flash(Enums["UNEXPECTED_ERROR"], "error")
+            return render_template('register.html', form=register_form)
 
 
 """ Login """
@@ -60,22 +67,27 @@ def register():
 def login():
     login_form = LoginForm(request.form)
 
-    if request.method == 'POST':
-        if login_form.validate() == False:
-            for field, errors in login_form.errors.items():
-                for error in errors:
-                    flash(error, "error")
-            return render_template('login.html', form=login_form)
+    if request.method == 'GET':
+        return render_template('login.html', form=login_form)
 
-        username = login_form.user_username.data
-        password = login_form.user_password.data
+
+    if login_form.validate_on_submit() == False:
+        for field, errors in login_form.errors.items():
+            for error in errors:
+                flash(error, "error")
+        return render_template('login.html', form=login_form)
+
+
+    if login_form.validate_on_submit() == True:
+        username = login_form.username.data
+        password = login_form.password.data
 
         try:
-            registered_user = User.query.filter_by(username=username).first()
-            if registered_user and User.verify_password(password, registered_user.hashed_password):
-                login_user(registered_user)
-                registered_user.authenticated = True
-                flash(Enums["LOGIN_DONE"] + registered_user.username, "success")
+            user = User.query.filter_by(username=username).first()
+            if user and User.verify_password(password, user.hashed_password):
+                login_user(user)
+                user.authenticated = True
+                flash(Enums["LOGIN_DONE"] + user.username, "success")
 
                 # We need to check if next is safe_url or not
                 # print request.args.get('next')
@@ -84,12 +96,13 @@ def login():
 
             else:
                 flash(Enums["WRONG_CREDENTIALS"], "error")
+                return render_template('login.html', form=login_form)
 
         except Exception as e:
-            flash(Enums["UNEXPECTED_ERROR"], "error")
             print e.message
 
-    return render_template('login.html', form=login_form)
+            flash(Enums["UNEXPECTED_ERROR"], "error")
+            return render_template('login.html', form=login_form)
 
 
 """ Logout """
@@ -110,8 +123,8 @@ def new_patient():
     if request.method == 'GET':
         return render_template("new_patient.html", form=patient_form)
 
-    if request.method == 'POST':
-        if patient_form.validate() == False:
+
+    if patient_form.validate_on_submit() == False:
             for field, errors in patient_form.errors.items():
                 for error in errors:
                     flash(error, "error")
@@ -119,66 +132,72 @@ def new_patient():
             return render_template("new_patient.html", form=patient_form)
 
 
-        else:
-            personal_id   = patient_form.patient_personal_id.data
-            name          = patient_form.patient_name.data
-            address       = patient_form.patient_address.data
-            phone         = patient_form.patient_phone.data
-            age           = patient_form.patient_age.data
-            gender        = patient_form.patient_gender.data
-
-            if (len(personal_id) != 14):
-                flash(Enums["INVALID_PERSONAL_ID"], "error")
-
-                return render_template("new_patient.html", form=patient_form)
+    if patient_form.validate_on_submit() == True:
+        personal_id = patient_form.personal_id.data
+        if (len(personal_id) != 14):
+            flash(Enums["INVALID_PERSONAL_ID"], "error")
+            return render_template("new_patient.html", form=patient_form)
 
 
-            added_patient = Patient.query.filter_by(personal_id=personal_id).first()
-            if (added_patient):
-                flash(Enums["DUPLICATE_PATIENT_ID"] % patient_form.patient_personal_id.data, "error")
+        patient = Patient.query.filter_by(personal_id=personal_id).first()
+        if (patient):
+            print 'here'
+            flash(Enums["DUPLICATE_PATIENT_ID"] % patient_form.personal_id.data, "error")
+            return render_template("new_patient.html", form=patient_form)
 
-                return render_template("new_patient.html", form=patient_form)
+        try:
+            patient = Patient()
+            patient_form.populate_obj(patient)
 
-            try:
-                patient = Patient(personal_id, name, address, phone, age, gender)
-                db.session.add(patient)
-                db.session.commit()
+            db.session.add(patient)
+            db.session.commit()
 
-                flash(Enums["PATIENT_ADDED"], "success")
-                return redirect(url_for('edit_patient_profile', patient_personal_id=patient.personal_id))
+            print 'added'
+            flash(Enums["PATIENT_ADDED"], "success")
+            return redirect(url_for('patient_analyzes', personal_id=patient.personal_id))
 
-            except:
-                flash(Enums["UNEXPECTED_ERROR"], "error")
-                return render_template("new_patient.html", form=patient_form)
+        except:
+            flash(Enums["UNEXPECTED_ERROR"], "error")
+            return render_template("new_patient.html", form=patient_form)
 
 
 
 """ Edit Patient Account Profile """
-@app.route('/patient/profile/<string:patient_personal_id>', methods=['GET', 'POST'])
+@app.route('/patient/profile/<string:personal_id>', methods=['GET', 'POST'])
 @login_required
-def edit_patient_profile(patient_personal_id=None):
-    patient = Patient.query.filter_by(personal_id=patient_personal_id).first()
+def edit_patient_profile(personal_id=None):
+    patient = Patient.query.filter_by(personal_id=personal_id).first()
 
     if not patient:
         flash(Enums["NO_SUCH_PATIENT"], "error")
         return redirect( url_for('index') )
 
+    patient_form = PatientForm(obj=patient)
+
     if request.method == 'GET':
-        return render_template("patient_profile.html", patient=patient)
+        return render_template("patient_profile.html", form=patient_form)
 
-    if request.method == 'POST':
-        patient.personal_id = request.form["patient_personal_id"]
-        patient.name = request.form["patient_name"]
-        patient.address = request.form["patient_address"]
-        patient.phone = request.form["patient_phone"]
-        patient.age = request.form["patient_age"]
-        patient.gender = request.form["patient_gender"]
-        patient.updated_at = datetime.now()
+    if patient_form.validate_on_submit() == False:
+        for field, errors in patient_form.errors.items():
+            for error in errors:
+                flash(error, "error")
+        return render_template('patient_profile.html', form=patient_form)
 
-        db.session.commit()
+    if patient_form.validate_on_submit() == True:
 
-        flash(Enums["PATIENT_PROFILE_UPDATE_DONE"], "success")
-        return redirect(url_for('patient_analyzes', patient_personal_id=patient.personal_id))
+        try:
+            patient_form.populate_obj(patient)
+            patient.updated_at = datetime.now()
+
+            db.session.add(patient)
+            db.session.commit()
+
+            flash(Enums["PATIENT_PROFILE_UPDATE_DONE"], "success")
+            return redirect(url_for('patient_analyzes', personal_id=patient_form.personal_id.data))
+
+        except:
+            flash(Enums["UNEXPECTED_ERROR"], "error")
+            return render_template("new_patient.html", form=patient_form)
 
 
 
@@ -210,13 +229,45 @@ def list_of_patients():
 
 
 """ Get Analysis List for a Patient """
-@app.route('/analysis/personal_id/<string:patient_personal_id>', methods=['GET'])
+@app.route('/analysis/personal_id/<string:personal_id>', methods=['GET', 'POST'])
 @login_required
-def patient_analyzes(patient_personal_id=None):
-    patient = Patient.query.filter_by(personal_id=patient_personal_id).first()
+def patient_analyzes(personal_id=None):
+    patient = Patient.query.filter_by(personal_id=personal_id).first()
+    patient_form = PatientForm(obj=patient)
+    cbc_analysis_form = CBCAnalysisForm(request.form)
 
     if not patient:
-        falsh(Enums["NO_SUCH_PATIENT"], "error")
+        flash(Enums["NO_SUCH_PATIENT"], "error")
         return redirect(url_for("index"))
 
-    return render_template('analysis_profile.html', patient=patient)
+    if request.method == "GET":
+        return render_template('analysis_profile.html', form=cbc_analysis_form, patient_form=patient_form)
+
+    if cbc_analysis_form.validate_on_submit() == False:
+        for field, errors in cbc_analysis_form.errors.items():
+            for error in errors:
+                flash(error, "error")
+        print 'cbc_analysis_form validate error'
+        return render_template('analysis_profile.html', form=cbc_analysis_form, patient=patient, modalStatus='show')
+
+    if cbc_analysis_form.validate_on_submit() == True:
+        print 'cbc_analysis_form validate success'
+        flash('cbc_analysis_form validate success', 'success')
+        return render_template('analysis_profile.html', form=cbc_analysis_form, patient=patient)
+
+
+
+
+@app.route('/analysis', methods=['POST'])
+@login_required
+def new_cbc_analysis():
+    cbc_analysis_form = CBCAnalysisForm(request.form)
+
+    if cbc_analysis_form.validate_on_submit() == False:
+        for field, errors in cbc_analysis_form.errors.items():
+            for error in errors:
+                print error
+
+        return redirect( url_for('patient_analyzes') )
+
+    print "POST new analysis"

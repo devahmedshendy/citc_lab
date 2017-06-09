@@ -7,7 +7,7 @@ from bcrypt import hashpw, gensalt
 class User(db.Model):
     __tablename__ = 'users'
 
-    # Colunmns map
+    # Columns map
     id               = db.Column(db.Integer, primary_key=True)
     firstname        = db.Column(db.String(45))
     lastname         = db.Column(db.String(45))
@@ -19,11 +19,7 @@ class User(db.Model):
     authenticated    = False
 
 
-    def __init__(self, firstname=None, lastname=None, username=None, password=None):
-        self.firstname = firstname
-        self.lastname  = lastname
-        self.username = username
-        self.hashed_password = User.hash_password(password)
+    def __init__(self):
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
 
@@ -41,9 +37,9 @@ class User(db.Model):
         return unicode(self.id)
 
 
-    @staticmethod
-    def hash_password(password):
-        return hashpw(password, gensalt())
+    # @staticmethod
+    def hash_password(self, password):
+        self.hashed_password = hashpw(password, gensalt())
 
 
     @staticmethod
@@ -58,24 +54,54 @@ class User(db.Model):
 class Patient(db.Model):
     __tablename__ = 'patients'
 
-    # Colunmns map
-    id          = db.Column(db.Integer, primary_key=True)
-    personal_id = db.Column(db.String(14), unique=True)
-    name        = db.Column(db.String(45))
-    address     = db.Column(db.String(45))
-    phone       = db.Column(db.Integer)
-    age         = db.Column(db.Integer)
-    gender      = db.Column(db.String(45))
-    created_at  = db.Column(db.DateTime)
-    updated_at  = db.Column(db.DateTime)
+    # Columns map
+    id            = db.Column(db.Integer, primary_key=True)
+    personal_id   = db.Column(db.String(14), unique=True)
+    name          = db.Column(db.String(45))
+    address       = db.Column(db.String(45))
+    phone         = db.Column(db.Integer)
+    age           = db.Column(db.Integer)
+    gender        = db.Column(db.String(45))
+    created_at    = db.Column(db.DateTime)
+    updated_at    = db.Column(db.DateTime)
+    cbc_analyzes  = db.relationship('CBCAnalysis', backref='patient', lazy='dynamic')
 
 
-    def __init__(self, personal_id, name, address, phone, age, gender):
-        self.personal_id    = personal_id
-        self.name           = name
-        self.address        = address
-        self.phone          = phone if phone else 0
-        self.age            = age
-        self.gender         = gender
+    def __init__(self):
         self.created_at     = datetime.now()
         self.updated_at     = datetime.now()
+
+
+class CBCAnalysis(db.Model):
+    __tablename__ = 'cbc_analysis'
+
+    id          = db.Column(db.Integer, primary_key=True)
+    WCB         = db.Column(db.String(45))
+    HGB         = db.Column(db.String(45))
+    MCV         = db.Column(db.String(45))
+    MCH         = db.Column(db.String(45))
+    comment     = db.Column(db.String(45))
+    created_at  = db.Column(db.DATETIME)
+    updated_at  = db.Column(db.DATETIME)
+    type_id     = db.Column(db.Integer, db.ForeignKey('analysis_types.id'))
+    patient_id  = db.Column(db.Integer, db.ForeignKey('patients.id'))
+
+    def __init__(self, wcb, hgb, mcv, mch, comment, type_id, patient_id, created_at=None, updated_at=None):
+        self.WCB            = wcb
+        self.HGB            = hgb
+        self.MCV            = mcv
+        self.MCH            = mch
+        self.comment        = comment
+        self.updated_at     = updated_at
+        self.type_id        = type_id
+        self.patient_id     = patient_id
+        self.created_at = datetime.now() if created_at == None else created_at
+        self.updated_at = datetime.now() if updated_at == None else updated_at
+
+
+class AnalysisType(db.Model):
+    __tablename__ = 'analysis_types'
+
+    id          = db.Column(db.Integer, primary_key=True)
+    type        = db.Column(db.String(45))
+    cbc_analyzes    = db.relationship('CBCAnalysis', backref='analysis_type', lazy='dynamic')

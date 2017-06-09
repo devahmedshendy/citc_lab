@@ -35,6 +35,13 @@ $(document).ready(function() {
       toggleClass(event.target, 'active');
     });
 
+    $("#search-result").slimScroll({
+        wheelStep: 3,
+        alwaysVisible: true,
+        railVisible: true,
+        height: '400px',
+    });
+
 
     /*
       <a href="#" target="_blank">
@@ -75,6 +82,16 @@ $(document).ready(function() {
         railVisible: true,
         height: '400px',
     });
+
+    $("#add_button").click((event) => {
+        console.log("Form submitted");
+        $("#add_cbc_analysis").submit();
+        // event.preventDefault();
+        // wbc = $("#wbc")
+        // console.log(wbc);
+    })
+
+
 
   } else if (page_name === "New Patient") {
     console.log("New Patient Page");

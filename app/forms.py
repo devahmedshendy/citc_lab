@@ -1,50 +1,76 @@
-from wtforms import Form, validators, StringField, PasswordField, IntegerField, SelectField
+from wtforms import validators, StringField, PasswordField, IntegerField, SelectField, TextAreaField
+from wtforms.validators import InputRequired, EqualTo, optional, length
+from flask_wtf import FlaskForm
+
+from app import db
+from app.models import User
 
 
-class LoginForm(Form):
-    user_username = StringField('user_username',
-                        [validators.InputRequired("Please enter your username.")])
+class LoginForm(FlaskForm):
+    username = StringField('username',
+                        [InputRequired("Please enter your username.")])
 
-    user_password = PasswordField('user_password',
-                        [validators.InputRequired("Please enter your password.")])
-
-
-class RegisterForm(Form):
-    user_firstname = StringField('user_firstname',
-                        [validators.InputRequired("Please enter your firstname.")])
-
-    user_lastname  = StringField('user_lastname',
-                        [validators.InputRequired("Please enter your lastname.")])
-
-    user_username  = StringField('user_username',
-                        [validators.InputRequired("Please enter your username.")])
-
-    user_password  = PasswordField('user_password',
-                     [
-                        validators.InputRequired("Please enter your password."),
-                        validators.EqualTo('user_password_confirm', message="Passwords must match.")
-                     ])
-
-    user_password_confirm = PasswordField('user_password_confirm',
-                                [validators.InputRequired("Please enter password confirmation.")])
+    password = PasswordField('password',
+                        [InputRequired("Please enter your password.")])
 
 
+class RegisterForm(FlaskForm):
+    firstname = StringField('firstname',
+                        [InputRequired("Please enter your firstname.")])
 
-class PatientForm(Form):
-    patient_personal_id = StringField(u'Patient Personal ID',
-                            [validators.InputRequired("Please enter patient's ID.")])
+    lastname  = StringField('lastname',
+                        [InputRequired("Please enter your lastname.")])
 
-    patient_name        = StringField('patient_name',
-                            [validators.InputRequired("Please enter patient's name.")])
+    username  = StringField('username',
+                        [InputRequired("Please enter your username.")])
 
-    patient_address     = StringField('patient_address',
-                            [validators.InputRequired("Please enter patient's address.")])
+    password         = PasswordField('password',
+                         [
+                            InputRequired("Please enter your password."),
+                            EqualTo('password_confirm', message="Passwords must match.")
+                         ])
 
-    patient_phone       = IntegerField('patient_phone',
-                            [validators.optional()])
+    password_confirm  = PasswordField('password_confirm',
+                                [InputRequired("Please enter password confirmation.")])
 
-    patient_age         = IntegerField("patient_age",
-                            [validators.InputRequired("Please enter patient's age.")])
 
-    patient_gender      = SelectField(u'Patient Gender',
-                            choices=[("male", "Male"), ("female", "Female")])
+
+class PatientForm(FlaskForm):
+    personal_id = StringField(u'ID',
+                        [InputRequired("Please enter patient's ID.")])
+
+    name        = StringField(u'Name',
+                        [InputRequired("Please enter patient's name.")])
+
+    address     = StringField(u'Address',
+                        [InputRequired("Please enter patient's address.")])
+
+    phone       = IntegerField(u'Phone',
+                        [optional()])
+
+    age         = IntegerField(u"Age",
+                        [InputRequired("Please enter patient's age.")])
+
+    gender      = SelectField(u'Gender',
+                        choices=[("Male", "Male"), ("Female", "Female")])
+
+
+class CBCAnalysisForm(FlaskForm):
+    comment  = TextAreaField('Comment',
+                    [optional(), length(max=200)],
+                    render_kw={"placeholder": "Doctor comments...", "rows": "3"})
+
+    WCB      = StringField('WBC',
+                    [InputRequired("Please enter WBC value.")],
+                    render_kw={"placeholder": "White Blod Cells"})
+    HGB      = StringField('HGB',
+                    [InputRequired("Please enter HGB value.")],
+                    render_kw={"placeholder": "Hemoglibin"})
+
+    MCV      = StringField('MCV',
+                    [InputRequired("Please enter MCV value.")],
+                    render_kw={"placeholder": "Mean Corpuscular Volume"})
+
+    MCH      = StringField('MCH',
+                    [InputRequired("Please enter MCH value.")],
+                    render_kw={"placeholder": "Mean Cell Hemoglubine"})
