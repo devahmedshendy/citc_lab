@@ -201,6 +201,29 @@ def edit_patient_profile(personal_id=None):
 
 
 
+""" Patient: Delete """
+@app.route('/patient/delete/personal_id/<string:personal_id>', methods=['GET'])
+@login_required
+def delete_patient_profile(personal_id=None):
+    patient = Patient.query.filter_by(personal_id=personal_id).first()
+
+    if (not patient):
+        flash(Enums["NO_SUCH_PATIENT"], "error")
+        return redirect( url_for('index') )
+
+    try:
+        db.session.delete(patient)
+        db.session.commit()
+
+        flash(Enums["PATIENT_PROFILE_DELET_DONE"], 'success')
+        return redirect( url_for('index') )
+    except Exception as e:
+        print e.message
+        flash(Enums["UNEXPECTED_ERROR"], "error")
+        return redirect( url_for('index') )
+
+
+
 """ Patient: List of Patients """
 @app.route('/patient')
 @login_required
