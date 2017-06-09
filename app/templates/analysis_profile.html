@@ -74,10 +74,10 @@
       <div id="patient_analyzes_list" class="list-group ">
         <div id="accordion" role="tablist" aria-multiselectable="true">
 
-          {% for item in [1, 2, 3, 4, 5] %}
+          {% for number in ["One", "Two", "Three", "Four", "Five"] %}
           <div class="card">
-            <div class="card-header" role="tab" id="headingFour">
-              <a href="#collapseFour" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapseFour" class="list-group-item-action flex-column align-items-start">
+            <div class="card-header" role="tab" id="heading{{ number }}">
+              <a href="#collapse{{ number }}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse{{ number }}" class="list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
                   <!-- "analysis_type": "CBC Analysis" -->
                   <h6 class="mb-1">CBC Analysis</h6>
@@ -90,7 +90,7 @@
               </a>
             </div>
 
-            <div id="collapseFour" class="collapse" role="tabpanel" aria-labelledby="headingFour">
+            <div id="collapse{{ number }}" class="collapse" role="tabpanel" aria-labelledby="heading{{ number }}">
               <div class="card-block">
                 <div class="row">
                   <div class="container">
