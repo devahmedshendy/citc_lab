@@ -63,6 +63,33 @@ $(document).ready(function() {
           .addClass("list-group-item justify-content-between border-right-0 border-left-0 border-bottom-0")
           .text(patient.name);
 
+        let updated_at = patient.updated_at.split("|")
+
+
+        // let tableElement = $("<table></table>")
+        // let tbodyElement = $("<tbody></tbody>")
+        //   .appendTo(tableElement)
+        //
+        // let col1 = $("<col>")
+        //   .attr("width", "150")
+        //   .appendTo(tbodyElement)
+        // let col2 = $("<col>")
+        //   .attr("width", "150")
+        //   .appendTo(tbodyElement)
+        //
+        // let trElement = $("<tr></tr>")
+        //   .appendTo(tbodyElement)
+        //
+        // let tdElement1 = $("<td></td>")
+        //   .text(`${updated_at[0]} `)
+        //   // .attr("width", "100px")
+        //   .appendTo(trElement)
+        //
+        // let tdElement2 = $("<td></td>")
+        //   .text(`- ${updated_at[1]}`)
+        //   // .attr("width", "100px")
+        //   .appendTo(trElement)
+
         let spanElement = $("<span></span>")
           .text(`${patient.updated_at}`);
 

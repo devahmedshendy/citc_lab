@@ -213,11 +213,7 @@ def list_of_patients():
             patients.append({
                 'personal_id'   : patient.personal_id,
                 'name'          : patient.name,
-                'address'       : patient.address,
-                'phone'         : patient.phone,
-                'age'           : patient.age,
-                'gender'        : patient.gender,
-                'updated_at'    : patient.updated_at.strftime("%Y-%m-%d")
+                'updated_at'    : patient.updated_at.strftime("%b %d, %Y - %I:%M %p")
             })
 
         return json.dumps(patients)

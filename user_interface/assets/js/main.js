@@ -73,10 +73,27 @@ $(document).ready(function() {
           .addClass("list-group-item justify-content-between border-right-0 border-left-0 border-bottom-0")
           .text(patient.name);
 
-        let spanElement = $("<span></span>")
-          .text(`${patient.age}y`);
+        let tableElement = $("<table></table>")
+        let tbodyElement = $("<tbody></tbody>")
+          .appendTo(tableElement)
 
-        spanElement.appendTo(listElement);
+        let trElement = $("<tr></tr>")
+          .appendTo(tbodyElement)
+
+        let tdElement1 = $("<td></td>")
+          .text(`${patient.age}`)
+          .appendTo(trElement)
+
+        let tdElement2 = $("<td></td>")
+          .text(`${patient.age}`)
+          .appendTo(trElement)
+
+
+
+        let spanElement = $("<span></span>")
+          .text(`${patient.age}`);
+
+        tableElement.appendTo(listElement);
         listElement.appendTo(anchorElement);
 
         anchorElement.appendTo("#search-result");
