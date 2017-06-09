@@ -225,21 +225,33 @@ def delete_patient_profile(personal_id=None):
 
 
 """ Patient: List of Patients """
-@app.route('/patient')
+@app.route('/patient/json', methods=["GET"])
+@app.route('/patient/search/json', methods=["GET"])
 @login_required
 def list_of_patients():
-    if request.args.get('json') == "list_of_patients":
-        patients = []
+    patients = []
+    query_result = []
+    print 'GET'
 
-        patients_list = Patient.query.limit(10).all();
-        for patient in patients_list:
-            patients.append({
-                'personal_id'   : patient.personal_id,
-                'name'          : patient.name,
-                'updated_at'    : patient.updated_at.strftime("%b %d, %Y - %I:%M %p")
-            })
+    startswith_string = request.args.get('startswith')
+    print "startswith %s" % startswith_string
 
-        return json.dumps(patients)
+    if startswith_string == None:
+        print 'GET /patient/json'
+        query_result = Patient.query.all();
+
+    elif len(startswith_string) > 0:
+        query_result = Patient.query.filter(
+                        Patient.personal_id.startswith(startswith_string)).all();
+
+    for patient in query_result:
+        patients.append({
+            'personal_id'   : patient.personal_id,
+            'name'          : patient.name,
+            'updated_at'    : patient.updated_at.strftime("%b %d, %Y - %I:%M %p")
+        })
+
+    return json.dumps(patients)
 
 
 # """ Display Patient's Analysis """
