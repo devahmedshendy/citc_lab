@@ -2,3 +2,4 @@
 app/static/.webassets-cache/
 app/static/gen/
 tasks_to_do.txt
+.DS_Store
