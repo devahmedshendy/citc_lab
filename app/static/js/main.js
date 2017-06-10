@@ -1,21 +1,12 @@
 $(document).ready(function() {
     var page_name = document.title.split(" - ")[0];
-    console.log(page_name);
 
-    // === Home Page =============================================================
+
+    // === Home Page ===========================================================
     if (page_name === "Home") {
-        let patients_list = []
 
-        // === Home Page Initialization ====
-        $.get('/patient?json=True', (res) => {
-          res = JSON.parse(res)
-
-          res.forEach((patient) => {
-            patients_list.push(patient)
-          })
-
-          displayPatientsElements(patients_list);
-        });
+      // === Home Page Initialization ====
+        displayPatientsElements('/patient/json');
 
         $("#search-result").slimScroll({
             wheelStep: 3,
@@ -26,17 +17,15 @@ $(document).ready(function() {
 
 
         // === Home Page Event Handlers ====
-        $('#search-box').on("keyup keypress", (event) => {
-          let targetElement = $(event.target);
+        $('#search-box').on("keypress keyup", (event) => {
+          let startswith_string = $(event.target).val();
 
-          if (targetElement.val().length > 0) {
-            $('#search-result').text(event.target.value);
-
-          } else if (targetElement.val().length === 0 && $('#search-result li').length === 0) {
-            displayPatientsElements(patients_list);
+          if ($("#search-box").val() !== '') {
+            startswith_string.length == 0 ?
+                displayPatientsElements('/patient/json') :
+                displayPatientsElements(`/patient/search/json?startswith=${startswith_string}`)
           }
         });
-
 
         $('#search-result').on("mouseover mouseout", (event) => {
           $(event.target).toggleClass('active');
@@ -44,33 +33,59 @@ $(document).ready(function() {
 
 
         // === Home Page Functions ====
-        function displayPatientsElements(patients) {
-          $("#search-result").html('')
-          /*
-            <a href="#" target="_blank">
-              <li class="list-group-item justify-content-between">
-                Mohamed Sameh Rushdy
-                <span>25 Years</span>
-              </li>
-            </a>
-          */
-          patients.forEach((patient) => {
-            let anchorElement = $("<a></a>").attr({
-              "href": `/analysis/personal_id/${patient.personal_id}`
+        function sendGetPatientsListRequest(uri) {
+          return new Promise((resolve, reject) => {
+              $.get(uri, (res) => {
+                  var patients = [];
+                  res = JSON.parse(res);
+
+                  res.forEach((patient) => {
+                    patients.push(patient);
+                  });
+
+                  resolve(patients);
+              })
+              .fail((err) => {
+                  reject(err)
+              })
+          })
+        }
+
+        function displayPatientsElements(uri) {
+          $("#search-result").html('');
+          sendGetPatientsListRequest(uri)
+            .then((patients) => {
+                /*
+                  <a href="#" target="_blank">
+                    <li class="list-group-item justify-content-between">
+                      Mohamed Sameh Rushdy
+                      <span>25 Years</span>
+                    </li>
+                  </a>
+                */
+                patients.forEach((patient) => {
+                  let updated_at = patient.updated_at.split("|")
+
+                  let anchorElement = $("<a></a>").attr({
+                    "href": `/analysis/personal_id/${patient.personal_id}`
+                  });
+
+                  let listElement = $("<li></li>")
+                    .addClass("list-group-item justify-content-between "
+                            + "border-right-0 border-left-0 border-bottom-0")
+                    .text(patient.name);
+
+                  let spanElement = $("<span></span>")
+                    .text(`${patient.updated_at}`);
+
+                  spanElement.appendTo(listElement);
+                  listElement.appendTo(anchorElement);
+                  anchorElement.appendTo("#search-result");
+                });
+            })
+            .catch((err) => {
+                console.log(err);
             });
-
-            let listElement = $("<li></li>")
-              .addClass("list-group-item justify-content-between border-right-0 \
-                         border-left-0 border-bottom-0")
-              .text(patient.name);
-
-            let spanElement = $("<span></span>")
-              .text(`${patient.updated_at}`);
-
-            spanElement.appendTo(listElement);
-            listElement.appendTo(anchorElement);
-            anchorElement.appendTo("#search-result");
-          });
         }
     }
 
@@ -84,11 +99,10 @@ $(document).ready(function() {
             res = JSON.parse(res)
 
             displayCBCAnalyzesElements(res)
-            console.log(res);
         })
         .fail((err) => {
             console.log(err);
-        })
+        });
 
         $('#patient_analyzes_list').slimScroll({
             wheelStep: 3,
@@ -97,14 +111,10 @@ $(document).ready(function() {
             height: '400px',
         });
 
-
         // === Analysis Profile Event Handlers ====
         // CBC Button Clicked
         $("#add_cbc_button").click((event) => {
-            console.log("Form submitted");
-
             $("#add_cbc_form").submit();
-            // console.log(wbc);
         });
 
         // Submit CBC Form
@@ -137,61 +147,54 @@ $(document).ready(function() {
                     errors_list  = data["error"]
 
                     /*
-                    <div class="row">
-                      <div class="offset-3 col-6">
-                        <div class="alert alert-danger" role="alert">
-                          <ul>
-                              <li><small>error<small></li>
-                          </ul>
-                        </div>
+                    <div class="offset-3 col-6">
+                      <div class="alert alert-danger" role="alert">
+                        <ul>
+                            <li>error</li>
+                        </ul>
                       </div>
                     </div>
                     */
-                    let row   = $(`<div class='row'></div>`)
-                    let col   = $(`<div class='offset-1 col-10'></div>`).appendTo(row)
-                    let alert = $(`<div class='alert alert-danger' role='alert'></div>`).appendTo(col)
+                    let error_col   = $(`<div class='offset-1 col-10'></div>`);
+                    let alert = $(`<div class='alert alert-danger' role='alert'></div>`).appendTo(error_col);
                     let ul    = $(`<ul></ul>`).appendTo(alert)
 
                     errors_list.forEach((message) => {
-                        console.log(message);
                         let li = $(`<li>${message}</li>`).appendTo(ul);
                     });
 
-                    $(row).insertBefore("#add_cbc_form");
+                    $('#add_cbc_success').html('');
+                    $('#add_cbc_error').html($(error_col));
 
                 } else if (data.hasOwnProperty("success")) {
+                    $("#add_cbc_form")[0].reset();
                     $("#cbcModal").modal("hide");
+
                     success_message = data["success"][0]
 
-                    let success_row   = $(`
-                        <div class='row'>
-                            <div class='offset-3 col-6'>
-                                <div class='alert alert-success alert-dismissible fade show' role='alert'>
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    ${success_message}
-                                </div>
+                    let success_col   = $(`
+                        <div class='offset-3 col-6'>
+                            <div class='alert alert-success alert-dismissible fade show' role='alert'>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                ${success_message}
                             </div>
                         </div>
                     `);
 
-                    $("#header-container").prepend(success_row);
+                    $('#add_cbc_error').html('');
+                    $('#add_cbc_success').html($(success_col));
 
                     $.get(`/analysis/personal_id/${patient_id}?json=True`, (res) => {
                         res = JSON.parse(res)
 
                         displayCBCAnalyzesElements(res)
-                        console.log(res);
                     })
                     .fail((err) => {
                         console.log(err);
                     });
                 }
-
-            })
-            .fail((err) => {
-                console.log(err);
             });
         });
 
@@ -275,7 +278,7 @@ $(document).ready(function() {
                   `)
                   .appendTo(accordion)
 
-              })
+              });
         }
     }
 });

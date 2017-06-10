@@ -67,8 +67,10 @@ class Patient(db.Model):
     gender        = db.Column(db.String(45))
     created_at    = db.Column(db.DateTime)
     updated_at    = db.Column(db.DateTime)
-    cbc_analyzes  = db.relationship('CBCAnalysis', backref='patient', lazy='dynamic')
-
+    cbc_analyzes  = db.relationship('CBCAnalysis', \
+                                    backref='patient', \
+                                    lazy='dynamic', \
+                                    cascade='all, delete-orphan')
 
     def __init__(self):
         self.created_at     = datetime.now()
@@ -120,4 +122,7 @@ class AnalysisType(db.Model):
 
     id          = db.Column(db.Integer, primary_key=True)
     type        = db.Column(db.String(45))
-    cbc_analyzes    = db.relationship('CBCAnalysis', backref='analysis_type', lazy='dynamic')
+    cbc_analyzes    = db.relationship('CBCAnalysis', \
+                                      backref='analysis_type', \
+                                      lazy='dynamic', \
+                                      cascade='all, delete-orphan')

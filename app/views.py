@@ -175,7 +175,9 @@ def new_patient():
             url = url_for('patient_analyzes', personal_id=patient.personal_id)
             return redirect(url)
 
-        except:
+        except Exception as e:
+            print e.message
+
             flash(Enums["UNEXPECTED_ERROR"], "error")
             template = "new_patient.html"
             return render_template(template, form=patient_form)
@@ -223,6 +225,7 @@ def edit_patient_profile(personal_id=None):
 
         except Exception as e:
             print e.message
+
             flash(Enums["UNEXPECTED_ERROR"], "error")
             template = "patient_profile.html"
             return render_template(template, form=patient_form)
@@ -249,6 +252,7 @@ def delete_patient_profile(personal_id=None):
         return redirect(url)
     except Exception as e:
         print e.message
+
         flash(Enums["UNEXPECTED_ERROR"], "error")
         url = url_for('index')
         return redirect(url)
@@ -256,21 +260,32 @@ def delete_patient_profile(personal_id=None):
 
 
 """ Patient: List of Patients """
-@app.route('/patient')
+@app.route('/patient/json', methods=["GET"])
+@app.route('/patient/search/json', methods=["GET"])
 @login_required
 def list_of_patients():
-    if request.args.get('json') == "True":
-        patients = []
+    patients = []
+    query_result = []
 
-        patients_list = Patient.query.order_by(desc("updated_at")).all();
-        for patient in patients_list:
-            patients.append({
-                'personal_id'   : patient.personal_id,
-                'name'          : patient.name,
-                'updated_at'    : patient.updated_at.strftime("%b %d, %Y - %I:%M %p")
-            })
+    startswith_string = request.args.get('startswith')
 
-        return json.dumps(patients)
+    if startswith_string == None:
+        query_result = Patient.query.order_by(desc("updated_at")).all();
+
+    elif len(startswith_string) > 0:
+        query_result = Patient.query.filter(
+                            Patient.personal_id.startswith(startswith_string)
+                            ).order_by(desc("updated_at")).all();
+
+    for patient in query_result:
+        patients.append({
+            'personal_id'   : patient.personal_id,
+            'name'          : patient.name,
+            'updated_at'    : patient.updated_at.strftime("%b %d, %Y - %I:%M %p")
+        })
+
+    return json.dumps(patients)
+# >>>>>>> search-patients
 
 
 
@@ -281,8 +296,6 @@ def patient_analyzes(personal_id=None):
     patient = Patient.query.filter_by(personal_id=personal_id).first()
     patient_form = PatientForm(obj=patient)
     cbc_analysis_form = CBCAnalysisForm(request.form)
-
-    print request.args.get("json")
 
     if not patient:
         flash(Enums["NO_SUCH_PATIENT"], "error")
@@ -311,7 +324,6 @@ def patient_analyzes(personal_id=None):
 @app.route('/analysis/cbc_analysis/personal_id/<string:personal_id>', methods=['POST'])
 @login_required
 def add_cbc_analysis(personal_id=None):
-    print request.args
     messages_list = {}
 
     cbc_submitted_data = request.get_json()
@@ -351,6 +363,7 @@ def add_cbc_analysis(personal_id=None):
             return json.dumps(messages_list)
 
         except Exception as e:
+            print e.message
             messages_list["error"] = []
 
             messages_list.append(Enums["UNEXPECTED_ERROR"])
