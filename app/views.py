@@ -359,7 +359,7 @@ def add_cbc_analysis(personal_id=None):
             db.session.add(cbc_analysis_model)
             db.session.commit()
 
-            messages_list["success"].append( Enums["CBC_ADD_DONE"] )
+            messages_list["success"].append( Enums["CBC_ANALYSIS_ADD_DONE"] )
             return json.dumps(messages_list)
 
         except Exception as e:
@@ -368,3 +368,29 @@ def add_cbc_analysis(personal_id=None):
 
             messages_list.append(Enums["UNEXPECTED_ERROR"])
             return json.dumps(messages_list)
+
+
+@app.route('/analysis/cbc_analysis/personal_id/<string:personal_id>/cbc_id/<string:cbc_id>', methods=['GET'])
+@login_required
+def delete_cbc_analysis(personal_id=None, cbc_id=None):
+    cbc_analysis = CBCAnalysis.query.filter_by(id=cbc_id).first()
+
+    if (not cbc_analysis):
+        flash(Enums["NO_SUCH_CBC_ANALYSIS"], "error")
+        url = url_for('patient_analyzes', personal_id=personal_id)
+        return redirect(url)
+
+    try:
+        db.session.delete(cbc_analysis)
+        db.session.commit()
+
+        flash(Enums["CBC_ANALYSIS_DELETE_DONE"], 'success')
+        url = url_for('patient_analyzes', personal_id=personal_id)
+        return redirect(url)
+
+    except Exception as e:
+        print e.message
+
+        flash(Enums["UNEXPECTED_ERROR"], "error")
+        url = url_for('patient_analyzes', personal_id=personal_id)
+        return redirect(url)

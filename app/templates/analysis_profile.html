@@ -14,12 +14,13 @@
   </div>
 {% endblock %}
 
-
 {% block body %}
 
 <div id="above-container"></div>
 <div id="header-container" class="container-fluid">
   <div id="add_cbc_success" class='row'></div>
+
+  {% include 'alert.html' %}
 
   <div class="row">
     <p id="patient-profile-label" class="offset-3 col-6 text-center">
@@ -27,7 +28,6 @@
     </p>
   </div>
 
-  {% include 'alert.html' %}
   <hr>
 
   <div class="row justify-content-around">

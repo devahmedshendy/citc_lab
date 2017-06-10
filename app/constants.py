@@ -6,7 +6,8 @@ Enums = {
     'PATIENT_ADDED'                 : 'Patient has been added successfully.',
     'PATIENT_PROFILE_UPDATE_DONE'   : 'Patient has been updated successfully.',
     'PATIENT_PROFILE_DELET_DONE'    : 'Patient profiile has been delete successfully.',
-    'CBC_ADD_DONE'                  : 'The CBC Analysis has been added successfully',
+    'CBC_ANALYSIS_ADD_DONE'         : 'The CBC Analysis has been added successfully',
+    'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully',
 
     # User Login Error Messages
     'NO_SUCH_USER'                  : 'Sorry, but there is no such user in our system.',
@@ -20,7 +21,10 @@ Enums = {
     # Patient Error Messages
     'DUPLICATE_PATIENT_ID'          : 'This ID (%s) is already added.',
     'INVALID_PERSONAL_ID'           : 'Please enter a valid personal id.',
-    'NO_SUCH_PATIENT'               : 'This is no such patient in the database.',
+    'NO_SUCH_PATIENT'               : 'There is no such patient in the database.',
+
+    # CBC Analyssi Error Messages
+    'NO_SUCH_CBC_ANALYSIS'          : 'There is no such CBC analysis in the system.',
 
     # General Error Messages
     'UNEXPECTED_ERROR'              : 'Unexpected error.'

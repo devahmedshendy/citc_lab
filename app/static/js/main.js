@@ -98,7 +98,11 @@ $(document).ready(function() {
         $.get(`/analysis/personal_id/${patient_id}?json=True`, (res) => {
             res = JSON.parse(res)
 
-            displayCBCAnalyzesElements(res)
+            displayCBCAnalyzesElements(patient_id, res)
+            $("#cbc_edit_options a").click((event) => {
+                // event.preventDefault();
+                console.log(event.target);
+            })
         })
         .fail((err) => {
             console.log(err);
@@ -116,6 +120,7 @@ $(document).ready(function() {
         $("#add_cbc_button").click((event) => {
             $("#add_cbc_form").submit();
         });
+
 
         // Submit CBC Form
         $("#add_cbc_form").submit((event) => {
@@ -189,7 +194,7 @@ $(document).ready(function() {
                     $.get(`/analysis/personal_id/${patient_id}?json=True`, (res) => {
                         res = JSON.parse(res)
 
-                        displayCBCAnalyzesElements(res)
+                        displayCBCAnalyzesElements(patient_id, res)
                     })
                     .fail((err) => {
                         console.log(err);
@@ -200,7 +205,7 @@ $(document).ready(function() {
 
 
         // === Analysis Profile Page Functions ====
-        function displayCBCAnalyzesElements(cbc_analyzes) {
+        function displayCBCAnalyzesElements(patient_id, cbc_analyzes) {
             var accordion = $("#patient_analyzes_list #accordion")
                                 .first()
                                 .html('')
@@ -227,8 +232,10 @@ $(document).ready(function() {
                           <div class="row">
                             <div class="container">
                               <div class="row">
-                                <div class="col align-self-center text-center">
-                                  <a href="#">Edit</a> | <a href="#">Delete</a>
+                                <div id="cbc_edit_options" class="col align-self-center text-center">
+                                  <a id="edit_cbc_${cbc["id"]}" href="#">Edit</a>
+                                  |
+                                  <a id="delete_cbc_${cbc["id"]}" href="#" data-toggle="modal" data-target="#delete_cbc_confirmation">Delete</a>
                                 </div>
                               </div>
                             </div>
@@ -270,6 +277,30 @@ $(document).ready(function() {
                                 </tbody>
                               </table>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div id="delete_cbc_confirmation" class="modal fade">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title">Delete CBC Analysis</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <p>Are you sure?.</p>
+                            </div>
+                            <form action="/analysis/cbc_analysis/personal_id/${patient_id}/cbc_id/${cbc['id']}" method="GET">
+                              <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">Yes, Sure</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                              </div>
+                            </form>
                           </div>
                         </div>
                       </div>
