@@ -18,7 +18,7 @@
 {% block body %}
 
 <div id="above-container"></div>
-<div id="search-container" class="container-fluid">
+<div id="header-container" class="container-fluid">
   <div class="row">
     <p id="patient-profile-label" class="offset-3 col-6 text-center">
       Analysis Profile
@@ -34,11 +34,6 @@
     <div class="col-4">
 
       <div class="row justify-content-center">
-        <!-- <div class="col-6">
-          patient_form.name.data
-          <strong id="patient_name" ></strong>
-        </div> -->
-
         <div class="col-4">
           <a id="edit_patient_profile" href="{{url_for('edit_patient_profile', personal_id=patient_form.personal_id.data)}}" class="btn btn-outline-primary">Edit Profile</a>
         </div>
@@ -74,82 +69,9 @@
       <div id="patient_analyzes_list" class="list-group ">
         <div id="accordion" role="tablist" aria-multiselectable="true">
 
-          {% for number in ["One", "Two", "Three", "Four", "Five"] %}
-          <div class="card">
-            <div class="card-header" role="tab" id="heading{{ number }}">
-              <a href="#collapse{{ number }}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse{{ number }}" class="list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                  <!-- "analysis_type": "CBC Analysis" -->
-                  <h6 class="mb-1">CBC Analysis</h6>
-                  <!-- "created_at": "2017-05-29" -->
-                  <small>2017-05-29</small>
-                </div>
-                <!-- "comment": "Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit." -->
-                <p class="mb-1">Comment: Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                <small class="text-muted">Approved by Dr.Zizo.</small>
-              </a>
-            </div>
-
-            <div id="collapse{{ number }}" class="collapse" role="tabpanel" aria-labelledby="heading{{ number }}">
-              <div class="card-block">
-                <div class="row">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col align-self-center text-center">
-                        <a href="#">Edit</a> | <a href="#">Delete</a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-12">
-                    <table class="table table-sm">
-                      <thead>
-                        <tr>
-                          <th>Item</th>
-                          <th>Value</th>
-                          <th>Normal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row">WBC</th>
-                          <!-- "WBC": "2.19" -->
-                          <td>2.19</td>
-                          <td>3.70 - 10.10</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">HGB</th>
-                          <!-- "HGB": "12.9" -->
-                          <td>12.9</td>
-                          <td>12.9 - 15.9</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">MCV</th>
-                          <!-- "MCV": "82.2" -->
-                          <td>82.2</td>
-                          <td>81.1 - 96.0</td>
-                        </tr>
-                        <tr>
-                          <th scope="row">MCH</th>
-                          <!-- "MCH": "27.3" -->
-                          <td>27.3</td>
-                          <td>27.0 - 31.2</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-
         </div>
-
       </div>
-
     </div>
-
   </div>
 
 
@@ -167,9 +89,8 @@
 
             <div class="modal-body">
 
-                <form id="add_cbc_analysis" action="{{ url_for('patient_analyzes', personal_id=patient_form.personal_id) }}" method="POST">
-
-                  {% for field in form %}
+                <form id="add_cbc_form" action="{{ url_for('add_cbc_analysis', personal_id=patient_form.personal_id.data) }}" method="POST">
+                  {% for field in cbc_analysis_form %}
                     {% if field.label.text == 'Comment' %}
                       <div class="form-group row">
                         {{ field.label(class_="col-12 col-form-label text-center") }}
@@ -193,7 +114,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" name="cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-              <button id="add_button" type="submit" name="add" class="btn btn-primary">Add</button>
+              <button id="add_cbc_button" type="submit" name="add" class="btn btn-primary">Add</button>
             </div>
           </div>
         </div>

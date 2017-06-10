@@ -1,4 +1,8 @@
-{% with errors = get_flashed_messages(category_filter=["error"]) %}
+{% set errors_list = get_flashed_messages(category_filter=["error"]) %}
+{% set success_list = get_flashed_messages(category_filter=["success"]) %}
+
+
+{% with errors = errors_list %}
   {% if errors %}
     <div class="row">
       <div class="offset-3 col-6">
@@ -15,7 +19,7 @@
   {% endif %}
 {% endwith %}
 
-{% with success = get_flashed_messages(category_filter=["success"]) %}
+{% with success = success_list %}
   {% if success %}
     <div class="row">
       <div class="offset-3 col-6">

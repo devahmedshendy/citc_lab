@@ -45,7 +45,7 @@ class PatientForm(FlaskForm):
     address     = StringField(u'Address',
                         [InputRequired("Please enter patient's address.")])
 
-    phone       = IntegerField(u'Phone',
+    phone       = StringField(u'Phone',
                         [optional()])
 
     age         = IntegerField(u"Age",

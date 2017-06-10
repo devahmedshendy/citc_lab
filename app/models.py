@@ -3,6 +3,8 @@ from app import app, db
 from datetime import datetime
 from bcrypt import hashpw, gensalt
 
+from sqlalchemy.dialects.mysql import BIGINT
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -59,7 +61,8 @@ class Patient(db.Model):
     personal_id   = db.Column(db.String(14), unique=True)
     name          = db.Column(db.String(45))
     address       = db.Column(db.String(45))
-    phone         = db.Column(db.String(12))
+    phone         = db.Column(db.String(13))
+    # phone         = db.Column(BIGINT(unsigned=True))
     age           = db.Column(db.String(3))
     gender        = db.Column(db.String(45))
     created_at    = db.Column(db.DateTime)
@@ -86,17 +89,30 @@ class CBCAnalysis(db.Model):
     type_id     = db.Column(db.Integer, db.ForeignKey('analysis_types.id'))
     patient_id  = db.Column(db.Integer, db.ForeignKey('patients.id'))
 
-    def __init__(self, wcb, hgb, mcv, mch, comment, type_id, patient_id, created_at=None, updated_at=None):
+    def __init__(self, wcb, hgb, mcv, mch, type_id, patient_id, comment=None):
         self.WCB            = wcb
         self.HGB            = hgb
         self.MCV            = mcv
         self.MCH            = mch
-        self.comment        = comment
-        self.updated_at     = updated_at
+        self.created_at     = datetime.now()
+        self.updated_at     = datetime.now()
         self.type_id        = type_id
         self.patient_id     = patient_id
-        self.created_at = datetime.now() if created_at == None else created_at
-        self.updated_at = datetime.now() if updated_at == None else updated_at
+        if comment == None or len(comment) == 0:
+            self.comment    = "---"
+        else:
+            self.comment    = comment
+
+    def serialize(self):
+        return {
+            "id"        : self.id,
+            "WCB"       : self.WCB,
+            "HGB"       : self.HGB,
+            "MCV"       : self.MCV,
+            "MCH"       : self.MCH,
+            "comment"   : self.comment,
+            "updated_at": self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
+        }
 
 
 class AnalysisType(db.Model):
