@@ -59,7 +59,7 @@ class CBCAnalysisForm(FlaskForm):
     comment  = TextAreaField('Comment',
                     [optional(), length(max=200)],
                     render_kw={"placeholder": "Doctor comments...", "rows": "3"})
-
+                    
     WCB      = StringField('WBC',
                     [InputRequired("Please enter WBC value.")],
                     render_kw={"placeholder": "White Blod Cells"})

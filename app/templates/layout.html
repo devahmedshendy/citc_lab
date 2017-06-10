@@ -62,5 +62,7 @@
     {% assets output="gen/main.js", "js/main.js" %}
           <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
+
+    {% block page_js %}{% endblock %}
   </body>
 </html>

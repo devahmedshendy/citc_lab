@@ -12,12 +12,14 @@ from app.forms import *
 import json, jsonify
 
 
+
 """ User: Index """
 @app.route('/')
 @login_required
 def index():
     template = 'index.html'
     return render_template(template)
+
 
 
 """ User: Register """
@@ -70,6 +72,7 @@ def register():
             return render_template(template, form=register_form)
 
 
+
 """ User: Login """
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -118,6 +121,7 @@ def login():
             return render_template(template, form=login_form)
 
 
+
 """ User: Logout """
 @app.route('/logout')
 @login_required
@@ -129,7 +133,8 @@ def logout():
     return redirect(url)
 
 
-""" Patient: New """
+
+""" Patient: Add Patient Profile """
 @app.route('/patient/new', methods=['GET', 'POST'])
 @login_required
 def new_patient():
@@ -232,7 +237,7 @@ def edit_patient_profile(personal_id=None):
 
 
 
-""" Patient: Delete """
+""" Patient: Delete Profile """
 @app.route('/patient/delete/personal_id/<string:personal_id>', methods=['GET'])
 @login_required
 def delete_patient_profile(personal_id=None):
@@ -285,7 +290,6 @@ def list_of_patients():
         })
 
     return json.dumps(patients)
-# >>>>>>> search-patients
 
 
 
@@ -321,6 +325,7 @@ def patient_analyzes(personal_id=None):
 
 
 
+""" CBC: Add Analysis """
 @app.route('/analysis/cbc_analysis/personal_id/<string:personal_id>', methods=['POST'])
 @login_required
 def add_cbc_analysis(personal_id=None):
@@ -353,13 +358,11 @@ def add_cbc_analysis(personal_id=None):
 
 
     if cbc_analysis_form.validate() == True:
-        messages_list["success"] = []
-
         try:
             db.session.add(cbc_analysis_model)
             db.session.commit()
 
-            messages_list["success"].append( Enums["CBC_ANALYSIS_ADD_DONE"] )
+            messages_list["success"] = Enums["CBC_ANALYSIS_ADD_DONE"]
             return json.dumps(messages_list)
 
         except Exception as e:
@@ -370,18 +373,13 @@ def add_cbc_analysis(personal_id=None):
             return json.dumps(messages_list)
 
 
+""" CBC: Delete Analysis """
 @app.route('/analysis/cbc_analysis/personal_id/<string:personal_id>/cbc_id/<string:cbc_id>', methods=['GET'])
 @login_required
 def delete_cbc_analysis(personal_id=None, cbc_id=None):
-    cbc_analysis = CBCAnalysis.query.filter_by(id=cbc_id).first()
-
-    if (not cbc_analysis):
-        flash(Enums["NO_SUCH_CBC_ANALYSIS"], "error")
-        url = url_for('patient_analyzes', personal_id=personal_id)
-        return redirect(url)
-
     try:
-        db.session.delete(cbc_analysis)
+        CBCAnalysis.query.filter_by(id=cbc_id).delete()
+        # db.session.delete(cbc_analysis)
         db.session.commit()
 
         flash(Enums["CBC_ANALYSIS_DELETE_DONE"], 'success')
@@ -394,3 +392,62 @@ def delete_cbc_analysis(personal_id=None, cbc_id=None):
         flash(Enums["UNEXPECTED_ERROR"], "error")
         url = url_for('patient_analyzes', personal_id=personal_id)
         return redirect(url)
+
+
+""" CBC: Edit Analysis """
+@app.route('/analysis/personal_id/<string:personal_id>/cbc_id/<string:cbc_id>', methods=['POST'])
+@login_required
+def edit_cbc_profile(personal_id=None, cbc_id=None):
+    messages_list = {}
+
+    cbc_analysis = CBCAnalysis.query \
+                        .join(Patient, Patient.id==CBCAnalysis.patient_id) \
+                        .filter(CBCAnalysis.id == cbc_id) \
+                        .first()
+
+
+    if (not cbc_analysis):
+        messages_list["error"] = []
+        messages_list["error"].append(Enums["NO_SUCH_CBC_ANALYSIS"] )
+
+        return json.dumps(messages_list)
+
+
+    cbc_submitted_data = request.get_json()
+
+    cbc_analysis_form = CBCAnalysisForm()
+
+    cbc_analysis_form.comment.data = cbc_submitted_data["comment"]
+    cbc_analysis_form.WCB.data = cbc_submitted_data["WCB"]
+    cbc_analysis_form.HGB.data = cbc_submitted_data["HGB"]
+    cbc_analysis_form.MCV.data = cbc_submitted_data["MCV"]
+    cbc_analysis_form.MCH.data = cbc_submitted_data["MCH"]
+
+
+    if cbc_analysis_form.validate_on_submit() == False:
+        messages_list["error"] = []
+
+        for field, errors in cbc_analysis_form.errors.items():
+            for error in errors:
+                messages_list["error"].append(error)
+
+        return json.dumps(messages_list)
+
+
+    if cbc_analysis_form.validate_on_submit() == True:
+        cbc_analysis_form.populate_obj(cbc_analysis)
+
+    try:
+        db.session.add(cbc_analysis)
+        db.session.commit()
+
+        messages_list["success"] = Enums["CBC_ANALYSIS_EDIT_DONE"]
+
+        return json.dumps(messages_list)
+
+    except Exception as e:
+        print e.message
+        messages_list["error"] = []
+        messages_list["error"].append(Enums["UNEXPECTED_ERROR"])
+
+        return json.dumps(messages_list)

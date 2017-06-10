@@ -18,7 +18,7 @@
 
 <div id="above-container"></div>
 <div id="header-container" class="container-fluid">
-  <div id="add_cbc_success" class='row'></div>
+  <div id="cbc_success" class='row'></div>
 
   {% include 'alert.html' %}
 
@@ -149,4 +149,10 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block page_js %}
+  {% assets output='gen/min.js', "js/analysis_profile.js" %}
+      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
 {% endblock %}
