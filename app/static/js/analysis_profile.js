@@ -94,45 +94,11 @@ $(document).ready(() => {
 
 
 
-
-    // $(document).on('click', '[data-cbc-options-link=print_pdf]', (event) => {
-    //   console.log("print pdf");
-    //   let patient_id = $("#patient_id").text();
-    //   let cbc_id     = $(event.target).data("cbc-id");
-    //
-    //   $.get(`/analysis/personal_id/${patient_id}/cbc_id/${cbc_id}`, (messages)=> {
-    //       console.log(messages);
-    //   })
-    // })
-
     // CBC Edit Button Clicked
     $(document).on('click', '[data-cbc-options-link=edit]', (event) => {
         var edit_cbc_link = $(event.target)
-        console.log("edit link cliced");
-        console.log(cbc);
-        console.log("----------------");
-        // console.log($(event.target)[0]);
-        // cbc_id      = $(event.target).data("cbc-id");
-        // cbc_comment = $(event.target).data("cbc-comment")
-        // cbc_wcb     = $(event.target).data("cbc-wcb")
-        // cbc_hgb     = $(event.target).data("cbc-hgb")
-        // cbc_mcv     = $(event.target).data("cbc-mcv")
-        // cbc_mch     = $(event.target).data("cbc-mch")
-
-
-        console.log("edit link object");
-        console.log($(event.target)[0]);
-        console.log("----------------");
-
-        console.log("cbc-mch");
-        console.log($(event.target).attr("data-cbc-mch"));
-        console.log("--------");
 
         set_global_cbc(...get_cbc_from_edit_link(edit_cbc_link))
-
-        console.log("edit link cliced - global cbc filled");
-        console.log(cbc);
-        console.log("----------------");
 
         var edit_cbc_modal = get_edit_cbc_modal(cbc.id, cbc.comment,
                                                 cbc.wcb, cbc.hgb,
@@ -150,9 +116,6 @@ $(document).ready(() => {
       $(edit_cbc_modal).remove();
 
       reset_global_cbc();
-      console.log("modal is hidden - global cbc reset");
-      console.log(cbc);
-      console.log("----------------");
     })
 
 
@@ -174,11 +137,6 @@ $(document).ready(() => {
 
         set_global_cbc(id = cbc.id, ...get_cbc_from_edit_form(edit_cbc_form));
 
-
-        console.log("edit form submitted - global cbc filled");
-        console.log(cbc);
-        console.log("----------------");
-
         var submitted_data = JSON.stringify({
             "comment" : cbc.comment,
             "WCB"     : cbc.wcb,
@@ -195,10 +153,6 @@ $(document).ready(() => {
           data: submitted_data
         })
         .done((messages) => {
-          console.log("POST request success");
-          console.log(cbc);
-          console.log("----------------");
-
             messages = JSON.parse(messages);
 
             if (messages.hasOwnProperty("error")) {
@@ -208,18 +162,15 @@ $(document).ready(() => {
                 $('#cbc_success').html('');
                 $('#edit_cbc_error').html($(error_element));
 
-
             } else if (messages.hasOwnProperty("success")) {
                 submitted_data = JSON.parse(submitted_data)
 
                 var edit_cbc_link = $(`#collapse${cbc.id} [data-cbc-options-link=edit]`);
                 var cbc_table     = $(`#table-${cbc.id}`)
 
-                var cbc_comment   = $(`[href='#collapse${cbc.id}'] [data-cbc-comment]`).text(submitted_data["comment"]);
+                var cbc_comment   = $(`#collapse${cbc.id} span[data-cbc-comment]`)
+                                      .text(submitted_data["comment"]);
 
-                console.log("cbc table is filling");
-                console.log(cbc);
-                console.log("----------------");
                 for (key in submitted_data) {
                   let data_element = `data-cbc-${key.toLowerCase()}`
 
@@ -229,12 +180,6 @@ $(document).ready(() => {
                               .text(submitted_data[key])
                               .attr(`${data_element}`, submitted_data[key])
                 }
-
-
-                console.log("cbc table is done");
-                console.log(cbc);
-                console.log("----------------");
-
 
                 $('#edit_cbc_error').html('');
                 $(edit_cbc_modal).modal('hide');
@@ -262,15 +207,7 @@ $(document).ready(() => {
         edit_cbc_link.attr("data-cbc-mcv"),
         edit_cbc_link.attr("data-cbc-mch"),
         edit_cbc_link.attr("data-cbc-comment")
-      ]
-      // {
-      //   "id"      : edit_cbc_link.data("cbc-id"),
-      //   "wcb"     : edit_cbc_link.data("cbc-wcb"),
-      //   "hgb"     : edit_cbc_link.data("cbc-hgb"),
-      //   "mcv"     : edit_cbc_link.data("cbc-mcv"),
-      //   "mch"     : edit_cbc_link.data("cbc-mch"),
-      //   "comment" : edit_cbc_link.data("cbc-comment")
-      // }
+      ];
     }
 
     function get_cbc_from_edit_form(edit_cbc_form) {
@@ -280,7 +217,7 @@ $(document).ready(() => {
         $("#edit_cbc_form #MCV").val(),
         $("#edit_cbc_form #MCH").val(),
         $("#edit_cbc_form #comment").val()
-      ]
+      ];
     }
 
 
@@ -414,7 +351,7 @@ $(document).ready(() => {
                   <div class="col-12">
                     <hr>
                     <div class="mb-1">
-                      <h6 class="text-muted">Confirmed by Dr.Zizo.</h6>
+                      <h6 data-cbc-doctor class="text-muted">Confirmed by Dr.Zizo.</h6>
                         <p>
                           <span data-cbc-comment>${cbc["comment"]}</span>
                         </p>
