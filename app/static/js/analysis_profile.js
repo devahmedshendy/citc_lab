@@ -356,17 +356,29 @@ $(document).ready(() => {
       return $(`
           <div class="card">
             <div class="card-header" role="tab" id="heading${cbc['id']}">
-              <a href="#collapse${cbc['id']}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse${cbc['id']}" class="list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                  <!-- "analysis_type": "CBC Analysis" -->
-                  <h6 class="mb-1">CBC Analysis - <small>${cbc['id']}</small></h6>
-                  <!-- "created_at": "2017-05-29" -->
-                  <small>${cbc['updated_at']}</small>
-                </div>
-                <!-- "comment": "Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit." -->
-                <p class="mb-1">Comment: <span data-cbc-comment>${cbc["comment"]}</span></p>
-                <small class="text-muted">Approved by Dr.Zizo.</small>
-              </a>
+              <div>
+              <div class="d-flex w-100 justify-content-between">
+                <!-- "analysis_type": "CBC Analysis" -->
+                <h6 class="mb-1">
+                  CBC Analysis - <small>${cbc['id']}</small>
+                </h6>
+
+                <!-- "created_at": "2017-05-29" -->
+                <small>${cbc['updated_at']}</small>
+              </div>
+
+              <div class="d-flex w-100 justify-content-between">
+                <a href="#collapse${cbc['id']}" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapse${cbc['id']}" class="flex-column align-items-start btn btn-link btn-sm">
+                  Display Result
+                </a>
+
+                <a href="/analysis/personal_id/${cbc["patient_id"]}/cbc_id/${cbc["id"]}"
+                    class="mb-1 btn btn-link btn-sm"
+                    target="_blank"
+                    data-cbc-options-link="print_pdf">PDF
+                </a>
+              </div>
+              </div>
             </div>
 
             <div id="collapse${cbc["id"]}" class="collapse" role="tabpanel" aria-labelledby="heading${cbc["id"]}">
@@ -375,10 +387,6 @@ $(document).ready(() => {
                   <div class="container">
                     <div class="row">
                       <div id="cbc_edit_options" class="col align-self-center text-center">
-                        <a href="/analysis/personal_id/${cbc["patient_id"]}/cbc_id/${cbc["id"]}"
-                            target="_blank"
-                            data-cbc-options-link="print_pdf">Print PDF</a>
-                        |
                         <a href="#"
                             data-cbc-options-link="edit"
                             data-cbc-id="${cbc["id"]}"
@@ -404,6 +412,14 @@ $(document).ready(() => {
                   </div>
 
                   <div class="col-12">
+                    <hr>
+                    <div class="mb-1">
+                      <h6 class="text-muted">Confirmed by Dr.Zizo.</h6>
+                        <p>
+                          <span data-cbc-comment>${cbc["comment"]}</span>
+                        </p>
+                    </div>
+
                     <table id="table-${cbc["id"]}" class="table table-sm">
                       <thead>
                         <tr>
