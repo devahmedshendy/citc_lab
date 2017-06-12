@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    {% assets "print.css" %}
+          <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+    {% assets filters="cssmin", output="gen/print.css", "css/print.css" %}
+          <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+    <title>CBC Analysis PDF - CITC LAB</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+
+        <div class="card-header">
+          <div class="row">
+              <div class="offset-1 col-10">
+                <div class="row justify-content-center">
+                    <h5 class="text-center">CITC LAB, Mansurah Branch</h5>
+                </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="card-block">
+          <div class="row">
+              <table id='patient_details' class="table table-sm">
+                <tbody>
+                  <tr>
+                    <td class="font-weight-normal">Patient Name</td>
+                    <td>{{cbc.name}}</td>
+
+                    <td class="font-weight-normal">Created At</td>
+                    <td>{{cbc.created_at}}</td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-normal">Patient ID</td>
+                    <td>{{cbc.personal_id}}</td>
+
+                    <td class="font-weight-normal">Updated At</td>
+                    <td>{{cbc.updated_at}}</td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-normal">Patient Gender</td>
+                    <td>{{cbc.gender}}</td>
+
+                    <td class="font-weight-normal">Approved</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-normal">Patient Age</td>
+                    <td>{{cbc.age}}</td>
+
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+
+          <hr>
+          <br>
+
+          <h5 class="card-title text-center">CBC Analysis</h5>
+          <!-- <div class="card-block"> -->
+          <div class="row">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Value</th>
+                    <th>Normal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope='row'>WCB</th>
+                    <td data-cbc-wcb>{{cbc.WCB}}</td>
+                    <td>3.70 - 10.10</td>
+                  </tr>
+                  <tr>
+                    <th scope='row'>HGB</th>
+                    <td data-cbc-hgb>{{cbc.HGB}}</td>
+                    <td>12.9 - 15.9</td>
+                  </tr>
+                  <tr>
+                    <th scope='row'>MCV</th>
+                    <td data-cbc-mcv>{{cbc.MCV}}</td>
+                    <td>81.1 - 96.0</td>
+                  </tr>
+                  <tr>
+                    <th scope='row'>MCH</th>
+                    <td data-cbc-mch>{{cbc.MCH}}</td>
+                    <td>27.0 - 31.2</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Comment</th>
+                    <td data-cbc-comment colspan="2">{{cbc.comment}}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Doctor</th>
+                    <td data-cbc-doctor colspan="2">Zizo</td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+
+          <div class="card-footer text-muted text-center">
+            <small>CITC LAB, Mansurah Branch, Jihan St. TEL: +20 0000000, FAX: +20 00</small>
+          </div>
+        </div>
+
+    </div>
+  </div>
+  </body>
+</html>

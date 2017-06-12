@@ -1,8 +1,10 @@
 from flask import request, session, url_for, redirect, render_template, flash
+from flask_weasyprint import HTML, render_pdf
 from flask_login import login_user, login_required, logout_user, current_user
-from datetime import datetime
 from flask_sqlalchemy import sqlalchemy
 from sqlalchemy import desc
+
+from datetime import datetime
 
 from app import app, db
 from app.models import *
@@ -100,7 +102,7 @@ def login():
             if user and User.verify_password(password, user.hashed_password):
                 login_user(user)
                 user.authenticated = True
-                flash(Enums["LOGIN_DONE"] + user.username, "success")
+                flash(Enums["LOGIN_DONE"] + user.username, "success!")
 
                 # We need to check if next is safe_url or not
                 # print request.args.get('next')
@@ -451,3 +453,44 @@ def edit_cbc_profile(personal_id=None, cbc_id=None):
         messages_list["error"].append(Enums["UNEXPECTED_ERROR"])
 
         return json.dumps(messages_list)
+
+
+
+""" CBC: Print Analysis """
+# This needs https://www.cairographics.org/download/ to be installed \
+# in the server hosting this website.
+@app.route('/analysis/personal_id/<string:personal_id>/cbc_id/<string:cbc_id>', methods=['GET'])
+@login_required
+def print_cbc_analysis(personal_id=None, cbc_id=None):
+    messages_list = {}
+
+    cbc_analysis = CBCAnalysis.query \
+                        .join(Patient, Patient.id==CBCAnalysis.patient_id) \
+                        .filter(CBCAnalysis.id == cbc_id) \
+                        .add_columns(Patient.personal_id,
+                                    Patient.name,
+                                    Patient.age,
+                                    Patient.gender,
+                                    CBCAnalysis.id,
+                                    CBCAnalysis.comment,
+                                    CBCAnalysis.WCB,
+                                    CBCAnalysis.HGB,
+                                    CBCAnalysis.MCV,
+                                    CBCAnalysis.MCH,
+                                    CBCAnalysis.created_at,
+                                    CBCAnalysis.updated_at).first()
+
+
+
+
+    if (not cbc_analysis):
+        messages_list["error"] = []
+        messages_list["error"].append(Enums["NO_SUCH_CBC_ANALYSIS"] )
+
+        return json.dumps(messages_list)
+
+
+
+    template = 'cbc_analysis_pdf.html'
+    html = render_template(template, cbc=cbc_analysis)
+    return render_pdf(HTML(string=html))

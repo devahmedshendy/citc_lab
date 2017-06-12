@@ -2,13 +2,13 @@ Enums = {
     # Success Messages
     'REGISTERATION_DONE'            : 'Registeration has been done successfully!',
     'LOGIN_DONE'                    : 'Login successful for ',
-    'LOGOUT_DONE'                   : 'Logout done successfully.',
-    'PATIENT_ADDED'                 : 'Patient has been added successfully.',
-    'PATIENT_PROFILE_UPDATE_DONE'   : 'Patient has been updated successfully.',
-    'PATIENT_PROFILE_DELET_DONE'    : 'Patient profile has been delete successfully.',
-    'CBC_ANALYSIS_ADD_DONE'         : 'The CBC Analysis has been added successfully',
-    'CBC_ANALYSIS_EDIT_DONE'        : 'The CBC Analysis has been edited successfully',
-    'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully',
+    'LOGOUT_DONE'                   : 'Logout done successfully!',
+    'PATIENT_ADDED'                 : 'Patient has been added successfully!',
+    'PATIENT_PROFILE_UPDATE_DONE'   : 'Patient has been updated successfully!',
+    'PATIENT_PROFILE_DELET_DONE'    : 'Patient profile has been delete successfully!',
+    'CBC_ANALYSIS_ADD_DONE'         : 'The CBC Analysis has been added successfully!',
+    'CBC_ANALYSIS_EDIT_DONE'        : 'The CBC Analysis has been edited successfully!',
+    'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully!',
 
     # User Login Error Messages
     'NO_SUCH_USER'                  : 'Sorry, but there is no such user in our system.',
