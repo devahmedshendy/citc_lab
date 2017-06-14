@@ -36,7 +36,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/shendy/Desktop/mainStock/self-development/projects-arena/workspaces/python/citc_cbc/venv"
+set -gx VIRTUAL_ENV "/Users/shendy/Desktop/mainStock/self-development/projects-arena/my-git-repos/citc_lab/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

@@ -1,4 +1,4 @@
-#!/Users/shendy/Desktop/mainStock/self-development/projects-arena/workspaces/python/citc_cbc/venv/bin/python
+#!/Users/shendy/Desktop/mainStock/self-development/projects-arena/my-git-repos/citc_lab/venv/bin/python
 
 import sys
 import getopt

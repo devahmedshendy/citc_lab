@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/shendy/Desktop/mainStock/self-development/projects-arena/workspaces/python/citc_cbc/venv"
+VIRTUAL_ENV="/Users/shendy/Desktop/mainStock/self-development/projects-arena/my-git-repos/citc_lab/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
