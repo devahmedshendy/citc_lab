@@ -1,82 +1,117 @@
-import MySQLdb
+import MySQLdb, sqlite3
+from os.path import isfile
+
 from app import db as application_db
 from app import app
 from app.models import User
+
+from config import db_settings
 
 #----
 #
 #
 #
 #### CONSTANTS ####
-# Database Login Credentials
-DB_HOST = app.config['DB_HOST']
-DB_USER = app.config['DB_USER']
-DB_PASSWD = app.config['DB_PASSWD']
-
-# Master Branch Databse
-DB_NAME = app.config['DB_NAME']
-
 # Default Users
-SUPER_USER = app.config['DEFAULT_SUPER_USER']
-ADMIN      = app.config['DEFAULT_ADMIN']
-DOCTOR     = app.config['DEFAULT_DOCTOR']
-EMPLOYEE   = app.config['DEFAULT_EMPLOYEE']
+SUPER_USER  = { "firstname": "Super",
+                "lastname": "User",
+                "username": "superuser" }
+ADMIN       = { "firstname": "Admin",
+                "lastname": "User",
+                "username": "admin" }
+DOCTOR      = { "firstname": "Investigation",
+                "lastname": "Doctor",
+                "username": "doctor" }
+EMPLOYEE    = { "firstname": "Registeration",
+                "lastname": "Employee",
+                "username": "emp" }
 
 # Theme Settings
-STEP_CHAR = ">"
-WARN_CHAR = "!"
-ERR_CHAR  = "X"
-STEP_DONE = "  DONE!."
+STEP_INFO   = ">"
+STEP_WARN   = "!"
+STEP_ERR    = "X"
+STEP_DONE   = "  DONE!."
 
 #----
 #
 #
 #
 #### Functions ####
-# Is for creating the database of the project
-def create_database(cursor):
-    print "{} Create database with name '{}'...".format(STEP_CHAR, DB_NAME)
+def setup_database(db_settings):
+    DB_NAME = db_settings.value["NAME"]
 
-    try:
-        cursor.execute(
-            "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME)
-        )
+    if db_settings.type == 'mysql':
+        connection = MySQLdb.connect(host=db_settings.value["HOST"],
+                                    user=db_settings.value["USER"],
+                                    passwd=db_settings.value["PASSWD"])
+        c = connection.cursor()
 
-        print STEP_DONE
+        try:
+            print "{} Create database with name '{}'...".format(STEP_INFO, DB_NAME)
 
-    except (MySQLdb.Error, MySQLdb.Warning) as e:
-        error_no = list(e)[0]
-        error_msg = list(e)[1]
-        if error_no == 1007:
-            print "{} Database <{}> already exists.".format(WARN_CHAR, DB_NAME)
+            c.execute(
+                "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME)
+            )
 
-        else:
-            print "{} {}".format(ERR_CHAR, e)
+            print STEP_DONE
+
+        except (MySQLdb.Error, MySQLdb.Warning) as e:
+            if list(e)[0] == 1007:
+                print "{} Database <{}> already exists.".format(STEP_WARN, DB_NAME)
+
+            else:
+                print "{} {}".format(STEP_ERR, e)
+                exit(1)
+
+        except Exception as e:
+            print e
             exit(1)
 
-    except Exception as e:
-        print e
-        exit(1)
+        finally:
+            connection.close()
 
-# Creating default table defined in app/models.py
-def create_default_tables(db):
-    print "{} Create application tables for '{}' database..." \
-            .format(STEP_CHAR, DB_NAME)
+
+    if db_settings.type == 'sqlite':
+        db_file_path = 'app/' + db_settings.value["NAME"]
+
+        print "{} Checking sqlite database '{}'..." \
+                    .format(STEP_INFO, DB_NAME)
+
+        if not isfile(db_file_path):
+            try:
+                print "{} Create sqlite database '{}'..." \
+                            .format(STEP_INFO, DB_NAME)
+
+                open(db_file_path, 'a').close()
+
+                print STEP_DONE
+
+            except Exception as e:
+                print "{} {}".format(STEP_ERR, e)
+                exit(1)
+        else:
+            print STEP_DONE
+
+
+def create_default_tables(db, db_settings):
+    DB_NAME = db_settings.value["NAME"]
+
+    print "{} Create default tables for '{}'...".format(STEP_INFO, DB_NAME)
 
     try:
-        application_db.create_all()
+        db.create_all()
+        db.session.commit()
 
         print STEP_DONE
 
     except Exception as e:
-        print "{} {}".format(ERR_CHAR, e)
-        application_db.session.rollback()
+        db.session.rollback()
+        print "{} {}".format(STEP_ERR, e)
         exit(1)
 
-# Defining default users whose username is as password
-def create_default_user(firstname, lastname, username):
-    print "{} Create default '{}' user..." \
-            .format(STEP_CHAR, username)
+
+def create_default_user(db, firstname, lastname, username):
+    print "{} Create default '{}' user...".format(STEP_INFO, username)
 
     try:
         user = User()
@@ -85,32 +120,26 @@ def create_default_user(firstname, lastname, username):
         user.username  = username
         user.hash_password(username)
 
-        application_db.session.add(user)
-        application_db.session.commit()
+        db.session.add(user)
+        db.session.commit()
 
         print "  Username: {}".format(username)
         print "  Password: {}".format(username)
         print STEP_DONE
 
     except Exception as e:
-        print "{} {}".format(ERR_CHAR, e.message)
-        application_db.session.rollback()
+        db.session.rollback()
+        print "{} {}".format(STEP_ERR, e.message)
 
 #----
 #
 #
 #
 #### __main__ ####
-script_cursor = MySQLdb.connect(host=DB_HOST, user=DB_USER,
-                                passwd=DB_PASSWD).cursor()
+setup_database(db_settings)
+create_default_tables(application_db, db_settings)
 
-create_database(script_cursor)
-create_default_tables(application_db)
-
-create_default_user(**SUPER_USER)
-
-create_default_user(**ADMIN)
-create_default_user(**DOCTOR)
-create_default_user(**EMPLOYEE)
-
-script_cursor.close()
+create_default_user(application_db, **SUPER_USER)
+create_default_user(application_db, **ADMIN)
+create_default_user(application_db, **DOCTOR)
+create_default_user(application_db, **EMPLOYEE)

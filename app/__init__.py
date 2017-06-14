@@ -1,15 +1,13 @@
 from flask import Flask
-# from flask.ext.sqlalchemy import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
-
 from flask_assets import Environment
 from flask_login import LoginManager
 
+from config import app_config
 
 app = Flask(__name__)
 app.secret_key = 'this_is_my_secret_key'
-app.config.from_object('config')
-
+app.config.update(app_config)
 
 db  = SQLAlchemy(app)
 
