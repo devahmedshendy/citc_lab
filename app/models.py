@@ -1,4 +1,6 @@
 from app import app, db
+from flask_login import UserMixin
+# from app.db import Table, Column, Integer, String, DateTime, ForeignKey, relationship
 
 from datetime import datetime
 from bcrypt import hashpw, gensalt
@@ -6,7 +8,13 @@ from bcrypt import hashpw, gensalt
 from sqlalchemy.dialects.mysql import BIGINT
 
 
-class User(db.Model):
+
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.ForeignKey('users.id')),
+        db.Column('role_id', db.ForeignKey('roles.id'))
+)
+
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     # Columns map
@@ -17,6 +25,10 @@ class User(db.Model):
     hashed_password  = db.Column(db.String(160))
     created_at       = db.Column(db.DateTime)
     updated_at       = db.Column(db.DateTime)
+
+    # Join Relationship Map
+    roles            = db.relationship('Role', secondary=roles_users,
+                                        backref=db.backref('users', lazy='dynamic'))
 
     authenticated    = False
 
@@ -50,7 +62,16 @@ class User(db.Model):
 
 
     def __repr__(self):
-        return '<User %r %r>' % (self.firstname, self.lastname)
+        return 'User: %r %r' % (self.firstname, self.lastname)
+
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+
+    # Columns map
+    id            = db.Column(db.Integer, primary_key=True)
+    name          = db.Column(db.String(45), unique=True)
+    description   = db.Column(db.String(255))
 
 
 class Patient(db.Model):
@@ -67,6 +88,8 @@ class Patient(db.Model):
     gender        = db.Column(db.String(45))
     created_at    = db.Column(db.DateTime)
     updated_at    = db.Column(db.DateTime)
+
+    # Join Relationship Map
     cbc_analyzes  = db.relationship('CBCAnalysis', \
                                     backref='patient', \
                                     lazy='dynamic', \
@@ -88,6 +111,8 @@ class CBCAnalysis(db.Model):
     comment     = db.Column(db.String(45))
     created_at  = db.Column(db.DATETIME)
     updated_at  = db.Column(db.DATETIME)
+
+    # Join Relationship Map
     type_id     = db.Column(db.Integer, db.ForeignKey('analysis_types.id'))
     patient_id  = db.Column(db.Integer, db.ForeignKey('patients.id'))
 

@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_assets import Environment
 from flask_login import LoginManager
+from flask_principal import Principal
 
 from config import app_config
 
@@ -17,8 +18,8 @@ login_manager.init_app(app)
 
 assets = Environment(app)
 
-from app import views, models
+# load the extension
+principals = Principal(app)
 
-@login_manager.user_loader
-def load_user(id):
-    return models.User.query.get(int(id))
+
+from app import views, models

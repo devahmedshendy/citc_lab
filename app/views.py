@@ -1,21 +1,52 @@
-from flask import request, session, url_for, redirect, render_template, flash
+from flask import current_app, request, session, url_for, redirect, render_template, flash
 from flask_weasyprint import HTML, render_pdf
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import sqlalchemy
-from sqlalchemy import desc
+from flask_principal import Permission, RoleNeed, Identity, identity_changed, \
+     identity_loaded, UserNeed, AnonymousIdentity
 
 from datetime import datetime
+from sqlalchemy import desc
 
-from app import app, db
+from app import app, db, login_manager
 from app.models import *
-from app.constants import Enums
 from app.forms import *
+from app.constants import Enums
 
 import json, jsonify
 
+# Needs
+be_admin    = RoleNeed('admin')
+be_doctor   = RoleNeed('doctor')
+be_officer  = RoleNeed('officer')
+
+# Permissions
+admin_permission   = Permission(be_admin)
+doctor_permission  = Permission(be_doctor)
+officer_permission = Permission(be_officer)
+
+app_needs = [be_admin, be_doctor, be_officer]
+app_permissions = [admin_permission, doctor_permission, officer_permission]
 
 
-""" User: Index """
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender, identity):
+    identity.user = current_user
+
+    if hasattr(current_user, 'id'):
+        identity.provides.add(UserNeed(current_user.id))
+
+    if hasattr(current_user, 'roles'):
+        for role in current_user.roles:
+            identity.provides.add(RoleNeed(role.name))
+
+
+
+""" Index """
 @app.route('/')
 @login_required
 def index():
@@ -73,9 +104,11 @@ def register():
             template = 'register.html'
             return render_template(template, form=register_form)
 
-
-
-""" User: Login """
+#---------------------------
+##
+## Login/Logout Routes
+#---------------------------
+""" Login """
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     login_form = LoginForm(request.form)
@@ -102,12 +135,15 @@ def login():
             if user and User.verify_password(password, user.hashed_password):
                 login_user(user)
                 user.authenticated = True
+
+                identity = Identity(user.id)
+                identity_changed.send(app, identity=identity)
+
                 flash(Enums["LOGIN_DONE"] + user.username, "success!")
 
+                url  = url_for('index')
                 # We need to check if next is safe_url or not
-                # print request.args.get('next')
                 # next = request.args.get('next')
-                url = url_for('index')
                 return redirect(url)
 
             else:
@@ -124,20 +160,57 @@ def login():
 
 
 
-""" User: Logout """
+""" Logout """
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
 
+    for key in ('identity.name', 'identity.auth_type'):
+        session.pop(key, None)
+
+    identity_changed.send(current_app, identity=AnonymousIdentity())
+
     flash(Enums["LOGOUT_DONE"], "success")
     url = url_for('login')
     return redirect(url)
 
+#---------------------------
+##
+## User Routes
+#---------------------------
+""" Get Users """
+@app.route('/users', methods=['GET'])
+@admin_permission.require(http_exception=403)
+@login_required
+def get_users():
+    return '/users'
 
 
+
+""" Add User """
+@app.route('/users/new', methods=['GET', 'POST'])
+@admin_permission.require(http_exception=403)
+@login_required
+def add_user():
+    return '/users/new'
+
+
+
+""" Add User """
+@app.route('/users/edit', methods=['GET', 'POST'])
+@admin_permission.require(http_exception=403)
+@login_required
+def edit_user():
+    return '/users/edit'
+
+#---------------------------
+##
+## Patient Routes
+#---------------------------
 """ Patient: Add Patient Profile """
 @app.route('/patient/new', methods=['GET', 'POST'])
+@officer_permission.require(http_exception=403)
 @login_required
 def new_patient():
     patient_form = PatientForm(request.form)
