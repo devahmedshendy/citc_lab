@@ -1,5 +1,6 @@
-*.pyc
 app/static/.webassets-cache/
 app/static/gen/
+app/citc_lab_dev.db
 tasks_to_do.txt
 .DS_Store
+*.pyc
