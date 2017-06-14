@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <title>Home - CITC LAB</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">CITC LAB</a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto"></ul>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Firstname Lastname
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">Account Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div id="above-container"></div>
+      <div id="search-container" class="container">
+        <div class="row">
+          <p id="search-label" class="offset-3 col-6 text-center">
+            Edit User Settings
+          </p>
+        </div>
+        <!-- <div class="row">
+          <div class="offset-3 col-6">
+            <form role="search" action='' method=''>
+    					<div class="input-group">
+    						<input id='search-box' type="text" class="form-control" placeholder="Search...">
+
+    						<span class="input-group-btn">
+    							<button type="submit" class="btn btn-default">
+    								<span class="glyphicon glyphicon-search" aria-hidden="true">Search</span>
+    							</button>
+    						</span>
+    					</div>
+    				</form>
+          </div>
+        </div> -->
+
+        <hr>
+
+        <div class="row justify-content-center">
+          <div class="col-6">
+            <form class="" action="" method="">
+              <div class="form-group row">
+                <label for="firstname" class="col-3">First Name</label>
+                <div class="col-5">
+                  <input id='firstname' type="text" name="firstname" placeholder="First Name" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="lastname" class="col-3">Last Name</label>
+                <div class="col-5">
+                  <input id='lastname' type="text" name="lastname" placeholder="Last Name" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="username" class="col-3">Username</label>
+                <div class="col-5">
+                  <input id='patient_phone' type="text" name="patient_phone" placeholder="Patient Phone" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="role" class="col-3">Role</label>
+                <div class="col-5">
+                  <select class="form-control" name="" multiple>
+                    <option value="admin">Webapp Admin</option>
+                    <option value="doctor">Investigation Doctor</option>
+                    <option value="officer">Registration Officer</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-4">
+                  <button type="button" name="button" class="btn btn-outline-primary btn-block">Save Patient</button>
+                </div>
+                <div class="col-4">
+
+                  <button type="button" name="button" class="btn btn-outline-danger btn-block">Cancel</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="col-3">
+            <form class="" action="" method="">
+              <div class="form-group">
+                <label for="old_password" class="">Old Password</label>
+                <!-- <div class="col-5"> -->
+                  <input id='old_password' type="text" name="old_password" placeholder="Old Password" class="form-control">
+                <!-- </div> -->
+              </div>
+
+              <div class="form-group">
+                <label for="new_password" class="">New Password</label>
+                <!-- <div class="col-5"> -->
+                  <input id='new_password' type="password" name="new_password" placeholder="New Password" class="form-control">
+                <!-- </div> -->
+              </div>
+
+              <div class="form-group">
+                <label for="new_password_confirmation" class="">Confirm New Password</label>
+                <!-- <div class="col-5"> -->
+                  <input id='new_password_confirmation' type="text" name="new_password_confirmation" placeholder="Confirm New Password" class="form-control">
+                <!-- </div> -->
+              </div>
+
+              <div class="form-group">
+                <!-- <div class="offset-2 col-8"> -->
+                  <button type="button" name="button" class="btn btn-outline-primary btn-block">Change Password</button>
+                <!-- </div> -->
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="assets/js/main.js">
+
+    </script>
+  </body>
+</html>

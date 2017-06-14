@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <title>Home - CITC LAB</title>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">CITC LAB</a>
+        <a class="navbar-brand" href="users.html">Users</a>
+        <a class="navbar-brand" href="#">Patients</a>
+        <a class="navbar-brand" href="#">Analyzes</a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto"></ul>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Firstname Lastname
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">Account Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div id="above-container"></div>
+      <div id="search-container" class="container">
+        <div class="row">
+          <p id="search-label" class="offset-3 col-6 text-center">
+            Search for User <strong>|</strong> <a href="patient_new.html">Add New User</a>
+          </p>
+        </div>
+        <div class="row">
+          <div class="offset-3 col-6">
+            <form role="search" action='' method=''>
+    					<div class="input-group">
+    						<input id='search-box' type="text" class="form-control" placeholder="Search...">
+
+    						<span class="input-group-btn">
+    							<button type="submit" class="btn btn-default">
+    								<span class="glyphicon glyphicon-search" aria-hidden="true">Search</span>
+    							</button>
+    						</span>
+    					</div>
+    				</form>
+          </div>
+        </div>
+        <hr>
+
+        <div class="row">
+          <div class="offset-1 col-10">
+            <ul id="search-result" class="list-group">
+              <table class="table table-hover table-sm">
+                <thead>
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Ahmed Shendy</td>
+                    <td>Webapp Admin</td>
+                    <td>2017-06-02</td>
+                    <td>
+                      <a href="#">update</a>
+                      |
+                      <a href="#">delete</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Maher Saif</td>
+                    <td>Webapp Admin</td>
+                    <td>2017-06-05</td>
+                    <td>
+                      <a href="#">update</a>
+                      |
+                      <a href="#">delete</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Ayman Saif</td>
+                    <td>Investigation Doctor</td>
+                    <td>2017-06-03</td>
+                    <td>
+                      <a href="#">update</a>
+                      |
+                      <a href="#">delete</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Yasser Al Hawary</td>
+                    <td>Investigation Doctor</td>
+                    <td>2017-06-03</td>
+                    <td>
+                      <a href="#">update</a>
+                      |
+                      <a href="#">delete</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Mazen Mahran</td>
+                    <td>Registration Officer</td>
+                    <td>2017-06-03</td>
+                    <td>
+                      <a href="#">update</a>
+                      |
+                      <a href="#">delete</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- <a href="#" target="_blank">
+                <li class="list-group-item justify-content-between">
+                  Mohamed Sameh Rushdy
+                  <span>25 Years</span>
+                </li>
+              </a>
+              <a href="#" target="_blank">
+                <li class="list-group-item justify-content-between">
+                  Yasser Rahman Shokry
+                  <span>43 Years</span>
+                </li>
+              </a>
+              <a href="#" target="_blank">
+                <li class="list-group-item justify-content-between">
+                  Yomna Mostafa Mohamed
+                  <span>82 Years</span>
+                </li>
+              </a>
+              <a href="#" target="_blank">
+                <li class="list-group-item justify-content-between">
+                  Ramiz Hamed Al Morshdy
+                  <span>50 Years</span>
+                </li>
+              </a>
+              <a href="#" target="_blank">
+                <li class="list-group-item justify-content-between">
+                  Mai Mansour Himdan
+                  <span>39 Years</span>
+                </li>
+              </a> -->
+            </ul>
+
+          </div>
+
+          <br>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="assets/js/main.js">
+
+    </script>
+  </body>
+</html>
