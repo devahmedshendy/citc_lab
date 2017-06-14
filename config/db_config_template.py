@@ -4,7 +4,7 @@ Database = namedtuple('Database', "value type uri")
 
 # MySQL Database Information
 MYSQL_DB  = { "DRIVER"  : 'mysql+mysqldb',
-              "NAME"    : 'citc_lab_dev',
+              "NAME"    : 'citc_lab',
               "HOST"    : 'localhost',
               "USER"    : 'root',
               "PASSWD"  : 'root' }
