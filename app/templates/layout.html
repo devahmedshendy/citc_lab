@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-<!-- filters="cssmin" -->
+
     {% assets output="gen/main.css", "css/main.css" %}
       <link rel="stylesheet" href="{{ ASSET_URL }}">
     {% endassets %}
@@ -18,39 +18,58 @@
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">CITC LAB</a>
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+          <img class="d-inline-block align-top" width="25" height="25" src="{{ url_for('static', filename='favicon.ico') }}" alt="">
+          CITC LAB
+        </a>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto"></ul>
-
-          {% block add_analysis_dropdown %}{% endblock %}
-
           {% if current_user.is_authenticated %}
+            {% if current_user.role_id in [1, 5] %}
+              <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link {%- if '/' == request.path %} active {% endif %}" href="{{ url_for('index') }}">Home</a>
+                <a class="nav-item nav-link {%- if 'users' in request.path.split("/") %} active {% endif %}" href="{{ url_for('get_users') }}">Users</a>
+                <a class="nav-item nav-link {%- if 'patients' in request.path.split("/") %} active {% endif %}" href="#">Patients</a>
+                <a class="nav-item nav-link {%- if 'analyzes' in request.path.split("/") %} active {% endif %}" href="#">Analyzes</a>
+              </div>
+
+            {% else %}
+              <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link {%- if '/' == request.path %} active {% endif %}" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link {%- if 'patients' in request.path.split("/") %} active {% endif %}" href="#">Patients</a>
+                <a class="nav-item nav-link {%- if 'analyzes' in request.path.split("/") %} active {% endif %}" href="#">Analyzes</a>
+              </div>
+
+            {% endif %}
+
+            {% block add_analysis_dropdown %}{% endblock %}
+
             <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{current_user.firstname}} {{current_user.lastname}}
-              </button>
+              </a>
               <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="/account_settings">Account Settings</a>
+                <span class="navbar-text dropdown-item" >{{ current_user.get_role_desc() }}</span>
+                <a class="dropdown-item" href="{{ url_for('edit_account_settings') }}">Account Settings</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="/logout">Logout</a>
               </div>
             </div>
-
-          {% else %}
-            <a href="{{ url_for('login') }}" class="btn btn-secondary" aria-haspopup="true" aria-expanded="false">
-              Login
-            </a>
-            <a href="{{ url_for('register') }}" class="btn btn-secondary" aria-haspopup="true" aria-expanded="false">
-              Register
-            </a>
           {% endif %}
 
         </div>
       </nav>
     </div>
 
+    <br>
+    {% block body_header %}{% endblock %}
+
+    <hr>
+
+    {% block body_content %}{% endblock %}
     {% block body %}{%  endblock %}
+
+    {% block body_footer %}{% endblock %}
 
 
     <!-- <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script> -->

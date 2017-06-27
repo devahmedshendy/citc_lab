@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+
+
+{% block name_page %}
+  Add New User
+{% endblock %}
+
+{% block body_header %}
+  {% include 'alert.html' %}
+
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      <a href="{{ url_for('get_users') }}">Search for User</a> <strong>|</strong> Add New User
+    </p>
+  </div>
+{% endblock %}
+
+{% block body_content %}
+  <div class="row">
+    <div class="offset-3 col-6">
+      <form class="" action="{{ url_for('add_user') }}" method="POST">
+
+        {% for field in add_user_form %}
+          <div class="form-group row">
+            {{ field.label(class="offset-2 col-3") }}
+            <div class="col-5">
+              {{ field }}
+            </div>
+          </div>
+        {% endfor %}
+
+        <div class="form-group row">
+          <div class="offset-2 col-8">
+            <button type="submit" name="button" class="btn btn-primary btn-block">Create User</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+
+{% block page_name %}Users{% endblock %}
+
+{% block body_header %}
+  {% include 'alert.html' %}
+  
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      Search for User <strong>|</strong> <a href="{{ url_for('add_user') }}">Add New User</a>
+    </p>
+  </div>
+{% endblock %}
+
+{% block body_content %}
+<div class="row">
+  <div id='test' class="offset-1 col-10">
+    <table class="table table-hover table-sm">
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Role</th>
+          <th>Created At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+        <tr>
+          <td data-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">{{ user.firstname.title() }} {{ user.lastname.title() }}</td>
+          <td>{{ user.get_role_desc() }}</td>
+          <td>{{ user.created_at.split(" ")[0] }}</td>
+          <td>
+            <a href="{{ url_for('edit_user', user_id=user.id ) }}">view</a>
+            |
+            <a href="" data-delete-user data-user-id="{{user.id}}"
+               data-user-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">
+               delete
+             </a>
+          </td>
+        </tr>
+      {%- endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+  {% assets output='gen/users.min.js', "js/users.js" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+{% endblock %}

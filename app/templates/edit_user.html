@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+
+
+{% block name_page %}
+  {{ edit_user_form.firstname.data.title() }}{{ edit_user_form.lastname.data.title() }}
+{% endblock %}
+
+{% block body_header %}
+  {% include 'alert.html' %}
+
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      Edit User Settings
+    </p>
+  </div>
+{% endblock %}
+
+{% block body_content %}
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <form class="" action="{{ url_for('edit_user', user_id=user_id) }}" method="POST">
+        {% for field in edit_user_form %}
+          <div class="form-group row">
+            {{ field.label(class="col-3") }}
+            <div class="col-5">
+              {{ field }}
+            </div>
+          </div>
+        {% endfor %}
+
+        <div class="form-group row">
+          <div class="col-4">
+            <button type="submit" name="update_profile" class="btn btn-outline-primary btn-block" value='update_profile'>Update</button>
+          </div>
+          <div class="col-4">
+
+            <button type="submit" name="cancel" class="btn btn-outline-danger btn-block" value='cancel'>Cancel</button>
+          </div>
+        </div>
+
+
+      </form>
+    </div>
+
+    <div class="col-3">
+      <form class="" action="{{ url_for('edit_user', user_id=user_id) }}" method="POST">
+        {% for field in change_user_password_form %}
+          <div class="form-group">
+            {{ field }}
+          </div>
+        {% endfor %}
+
+        <div class="form-group">
+          <!-- <div class="offset-2 col-8"> -->
+            <button type="submit" name="change_password" class="btn btn-outline-primary btn-block" value="change_password">Change Password</button>
+          <!-- </div> -->
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

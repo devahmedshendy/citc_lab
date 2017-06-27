@@ -3,13 +3,9 @@
 
 {% block page_name %}Home{% endblock %}
 
+{% block body_header %}
+  {% include 'alert.html' %}
 
-{% block body %}
-<div id="above-container"></div>
-
-{% include 'alert.html' %}
-
-<div id="search-container">
   <div class="row">
     <p id="search-label" class="offset-3 col-6 text-center">
       Search for Patient <strong>|</strong> <a href="{{ url_for('new_patient') }}">Add New Patient</a>
@@ -32,8 +28,10 @@
       <!-- </form> -->
     </div>
   </div>
-  <hr>
+{% endblock %}
 
+{% block body_content %}
+<div id="search-container">
   <div class="row">
     <div class="offset-3 col-6">
       <ul id="search-result" class="list-group">

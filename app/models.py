@@ -9,10 +9,10 @@ from sqlalchemy.dialects.mysql import BIGINT
 
 
 
-roles_users = db.Table('roles_users',
-        db.Column('user_id', db.ForeignKey('users.id')),
-        db.Column('role_id', db.ForeignKey('roles.id'))
-)
+# roles_users = db.Table('roles_users',
+#         db.Column('user_id', db.ForeignKey('users.id')),
+#         db.Column('role_id', db.ForeignKey('roles.id'))
+# )
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -25,10 +25,7 @@ class User(db.Model, UserMixin):
     hashed_password  = db.Column(db.String(160))
     created_at       = db.Column(db.DateTime)
     updated_at       = db.Column(db.DateTime)
-
-    # Join Relationship Map
-    roles            = db.relationship('Role', secondary=roles_users,
-                                        backref=db.backref('users', lazy='dynamic'))
+    role_id          = db.Column('role_id', db.ForeignKey('roles.id'))
 
     authenticated    = False
 
@@ -50,8 +47,20 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return unicode(self.id)
 
+    def get_role_name(self):
+        role_name = None
+        if self.role_id != None:
+            role = Role.query.get(self.role_id)
+            role_name = role.name
+        return role_name
 
-    # @staticmethod
+    def get_role_desc(self):
+        role_desc = None
+        if self.role_id != None:
+            role = Role.query.get(self.role_id)
+            role_desc = role.description
+        return role_desc
+
     def hash_password(self, password):
         self.hashed_password = hashpw(password, gensalt())
 
@@ -109,8 +118,8 @@ class CBCAnalysis(db.Model):
     MCV         = db.Column(db.String(45))
     MCH         = db.Column(db.String(45))
     comment     = db.Column(db.String(45))
-    created_at  = db.Column(db.DATETIME)
-    updated_at  = db.Column(db.DATETIME)
+    created_at  = db.Column(db.DateTime)
+    updated_at  = db.Column(db.DateTime)
 
     # Join Relationship Map
     type_id     = db.Column(db.Integer, db.ForeignKey('analysis_types.id'))

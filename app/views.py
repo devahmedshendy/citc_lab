@@ -11,22 +11,25 @@ from sqlalchemy import desc
 from app import app, db, login_manager
 from app.models import *
 from app.forms import *
-from app.constants import Enums
+from app.constants import MSG
 
 import json, jsonify
 
-# Needs
-be_admin    = RoleNeed('admin')
-be_doctor   = RoleNeed('doctor')
-be_officer  = RoleNeed('officer')
+from werkzeug.exceptions import HTTPException
 
-# Permissions
-admin_permission   = Permission(be_admin)
-doctor_permission  = Permission(be_doctor)
-officer_permission = Permission(be_officer)
 
-app_needs = [be_admin, be_doctor, be_officer]
-app_permissions = [admin_permission, doctor_permission, officer_permission]
+# # Needs
+# be_admin    = RoleNeed('admin')
+# be_doctor   = RoleNeed('doctor')
+# be_officer  = RoleNeed('officer')
+#
+# # Permissions
+# admin_permission   = Permission(be_admin)
+# doctor_permission  = Permission(be_doctor)
+# officer_permission = Permission(be_officer)
+#
+# app_needs = [be_admin, be_doctor, be_officer]
+# app_permissions = [admin_permission, doctor_permission, officer_permission]
 
 
 @login_manager.user_loader
@@ -40,11 +43,15 @@ def on_identity_loaded(sender, identity):
     if hasattr(current_user, 'id'):
         identity.provides.add(UserNeed(current_user.id))
 
-    if hasattr(current_user, 'roles'):
-        for role in current_user.roles:
-            identity.provides.add(RoleNeed(role.name))
+    if hasattr(current_user, 'role_id'):
+        identity.provides.add(RoleNeed(current_user.get_role_name()))
 
+@app.errorhandler(403)
+def handle_403(e):
+    template = '403.html'
+    return render_template(template)
 
+    
 
 """ Index """
 @app.route('/')
@@ -55,54 +62,54 @@ def index():
 
 
 
-""" User: Register """
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    register_form = RegisterForm(request.form);
-
-    if request.method == 'GET':
-        template = 'register.html'
-        return render_template(template, form=register_form)
-
-
-    if register_form.validate_on_submit() == False:
-        for field, errors in register_form.errors.items():
-            for error in errors:
-                flash(error, "error")
-
-        template = 'register.html'
-        return render_template(template, form=register_form)
-
-
-    if register_form.validate_on_submit() == True:
-        password  = register_form.password.data
-
-        try:
-            user = User()
-            user.hash_password(password)
-
-            register_form.populate_obj(user)
-
-            db.session.add(user)
-            db.session.commit()
-
-            flash(Enums["REGISTERATION_DONE"], "success")
-            url = url_for('login')
-            return redirect(url)
-
-        except sqlalchemy.exc.IntegrityError as e:
-            print e.message
-
-            flash(Enums["DUPLICATE_USER"], "error")
-            template = 'register.html'
-            return render_template(template, form=register_form)
-
-        except Exception as e:
-            print e.message
-
-            flash(Enums["UNEXPECTED_ERROR"], "error")
-            template = 'register.html'
-            return render_template(template, form=register_form)
+# """ User: Register """
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     register_form = RegisterForm(request.form);
+#
+#     if request.method == 'GET':
+#         template = 'register.html'
+#         return render_template(template, form=register_form)
+#
+#
+#     if register_form.validate_on_submit() == False:
+#         for field, errors in register_form.errors.items():
+#             for error in errors:
+#                 flash(error, "error")
+#
+#         template = 'register.html'
+#         return render_template(template, form=register_form)
+#
+#
+#     if register_form.validate_on_submit() == True:
+#         password  = register_form.password.data
+#
+#         try:
+#             user = User()
+#             user.hash_password(password)
+#
+#             register_form.populate_obj(user)
+#
+#             db.session.add(user)
+#             db.session.commit()
+#
+#             flash(MSG["REGISTERATION_DONE"], "success")
+#             url = url_for('login')
+#             return redirect(url)
+#
+#         except sqlalchemy.exc.IntegrityError as e:
+#             print e.message
+#
+#             flash(MSG["DUPLICATE_USER"], "error")
+#             template = 'register.html'
+#             return render_template(template, form=register_form)
+#
+#         except Exception as e:
+#             print e.message
+#
+#             flash(MSG["UNEXPECTED_ERROR"], "error")
+#             template = 'register.html'
+#             return render_template(template, form=register_form)
 
 #---------------------------
 ##
@@ -139,7 +146,7 @@ def login():
                 identity = Identity(user.id)
                 identity_changed.send(app, identity=identity)
 
-                flash(Enums["LOGIN_DONE"] + user.username, "success!")
+                flash(MSG["LOGIN_DONE"] + user.username, "success!")
 
                 url  = url_for('index')
                 # We need to check if next is safe_url or not
@@ -147,14 +154,14 @@ def login():
                 return redirect(url)
 
             else:
-                flash(Enums["WRONG_CREDENTIALS"], "error")
+                flash(MSG["WRONG_CREDENTIALS"], "error")
                 template = 'login.html'
                 return render_template(template, form=login_form)
 
         except Exception as e:
             print e.message
 
-            flash(Enums["UNEXPECTED_ERROR"], "error")
+            flash(MSG["UNEXPECTED_ERROR"], "error")
             template = 'login.html'
             return render_template(template, form=login_form)
 
@@ -171,7 +178,7 @@ def logout():
 
     identity_changed.send(current_app, identity=AnonymousIdentity())
 
-    flash(Enums["LOGOUT_DONE"], "success")
+    flash(MSG["LOGOUT_DONE"], "success")
     url = url_for('login')
     return redirect(url)
 
@@ -179,30 +186,30 @@ def logout():
 ##
 ## User Routes
 #---------------------------
-""" Get Users """
-@app.route('/users', methods=['GET'])
-@admin_permission.require(http_exception=403)
-@login_required
-def get_users():
-    return '/users'
-
-
-
-""" Add User """
-@app.route('/users/new', methods=['GET', 'POST'])
-@admin_permission.require(http_exception=403)
-@login_required
-def add_user():
-    return '/users/new'
-
-
-
-""" Add User """
-@app.route('/users/edit', methods=['GET', 'POST'])
-@admin_permission.require(http_exception=403)
-@login_required
-def edit_user():
-    return '/users/edit'
+# """ Get Users """
+# @app.route('/users', methods=['GET'])
+# @admin_permission.require(http_exception=403)
+# @login_required
+# def get_users():
+#     return '/users'
+#
+#
+#
+# """ Add User """
+# @app.route('/users/new', methods=['GET', 'POST'])
+# @admin_permission.require(http_exception=403)
+# @login_required
+# def add_user():
+#     return '/users/new'
+#
+#
+#
+# """ Add User """
+# @app.route('/users/edit', methods=['GET', 'POST'])
+# @admin_permission.require(http_exception=403)
+# @login_required
+# def edit_user():
+#     return '/users/edit'
 
 #---------------------------
 ##
@@ -210,7 +217,6 @@ def edit_user():
 #---------------------------
 """ Patient: Add Patient Profile """
 @app.route('/patient/new', methods=['GET', 'POST'])
-@officer_permission.require(http_exception=403)
 @login_required
 def new_patient():
     patient_form = PatientForm(request.form)
@@ -233,14 +239,14 @@ def new_patient():
         personal_id = patient_form.personal_id.data
 
         if (len(personal_id) != 14):
-            flash(Enums["INVALID_PERSONAL_ID"], "error")
+            flash(MSG["INVALID_PERSONAL_ID"], "error")
             template = "new_patient.html"
             return render_template(template, form=patient_form)
 
 
         patient = Patient.query.filter_by(personal_id=personal_id).first()
         if (patient):
-            flash(Enums["DUPLICATE_PATIENT_ID"] % patient_form.personal_id.data, "error")
+            flash(MSG["DUPLICATE_PATIENT_ID"] % patient_form.personal_id.data, "error")
             template = "new_patient.html"
             return render_template(template, form=patient_form)
 
@@ -251,14 +257,14 @@ def new_patient():
             db.session.add(patient)
             db.session.commit()
 
-            flash(Enums["PATIENT_ADDED"], "success")
+            flash(MSG["PATIENT_ADDED"], "success")
             url = url_for('patient_analyzes', personal_id=patient.personal_id)
             return redirect(url)
 
         except Exception as e:
             print e.message
 
-            flash(Enums["UNEXPECTED_ERROR"], "error")
+            flash(MSG["UNEXPECTED_ERROR"], "error")
             template = "new_patient.html"
             return render_template(template, form=patient_form)
 
@@ -271,7 +277,7 @@ def edit_patient_profile(personal_id=None):
     patient = Patient.query.filter_by(personal_id=personal_id).first()
 
     if not patient:
-        flash(Enums["NO_SUCH_PATIENT"], "error")
+        flash(MSG["NO_SUCH_PATIENT"], "error")
         url = url_for('index')
         return redirect(url)
 
@@ -299,14 +305,14 @@ def edit_patient_profile(personal_id=None):
             db.session.add(patient)
             db.session.commit()
 
-            flash(Enums["PATIENT_PROFILE_UPDATE_DONE"], "success")
+            flash(MSG["PATIENT_PROFILE_UPDATE_DONE"], "success")
             url = url_for('patient_analyzes', personal_id=patient.personal_id)
             return redirect(url)
 
         except Exception as e:
             print e.message
 
-            flash(Enums["UNEXPECTED_ERROR"], "error")
+            flash(MSG["UNEXPECTED_ERROR"], "error")
             template = "patient_profile.html"
             return render_template(template, form=patient_form)
 
@@ -319,7 +325,7 @@ def delete_patient_profile(personal_id=None):
     patient = Patient.query.filter_by(personal_id=personal_id).first()
 
     if (not patient):
-        flash(Enums["NO_SUCH_PATIENT"], "error")
+        flash(MSG["NO_SUCH_PATIENT"], "error")
         url = url_for('index')
         return redirect(url)
 
@@ -327,13 +333,13 @@ def delete_patient_profile(personal_id=None):
         db.session.delete(patient)
         db.session.commit()
 
-        flash(Enums["PATIENT_PROFILE_DELET_DONE"], 'success')
+        flash(MSG["PATIENT_PROFILE_DELET_DONE"], 'success')
         url = url_for('index')
         return redirect(url)
     except Exception as e:
         print e.message
 
-        flash(Enums["UNEXPECTED_ERROR"], "error")
+        flash(MSG["UNEXPECTED_ERROR"], "error")
         url = url_for('index')
         return redirect(url)
 
@@ -377,7 +383,7 @@ def patient_analyzes(personal_id=None):
     cbc_analysis_form = CBCAnalysisForm(request.form)
 
     if not patient:
-        flash(Enums["NO_SUCH_PATIENT"], "error")
+        flash(MSG["NO_SUCH_PATIENT"], "error")
         url = url_for("index")
         return redirect(url)
 
@@ -437,14 +443,14 @@ def add_cbc_analysis(personal_id=None):
             db.session.add(cbc_analysis_model)
             db.session.commit()
 
-            messages_list["success"] = Enums["CBC_ANALYSIS_ADD_DONE"]
+            messages_list["success"] = MSG["CBC_ANALYSIS_ADD_DONE"]
             return json.dumps(messages_list)
 
         except Exception as e:
             print e.message
             messages_list["error"] = []
 
-            messages_list.append(Enums["UNEXPECTED_ERROR"])
+            messages_list.append(MSG["UNEXPECTED_ERROR"])
             return json.dumps(messages_list)
 
 
@@ -457,14 +463,14 @@ def delete_cbc_analysis(personal_id=None, cbc_id=None):
         # db.session.delete(cbc_analysis)
         db.session.commit()
 
-        flash(Enums["CBC_ANALYSIS_DELETE_DONE"], 'success')
+        flash(MSG["CBC_ANALYSIS_DELETE_DONE"], 'success')
         url = url_for('patient_analyzes', personal_id=personal_id)
         return redirect(url)
 
     except Exception as e:
         print e.message
 
-        flash(Enums["UNEXPECTED_ERROR"], "error")
+        flash(MSG["UNEXPECTED_ERROR"], "error")
         url = url_for('patient_analyzes', personal_id=personal_id)
         return redirect(url)
 
@@ -483,7 +489,7 @@ def edit_cbc_profile(personal_id=None, cbc_id=None):
 
     if (not cbc_analysis):
         messages_list["error"] = []
-        messages_list["error"].append(Enums["NO_SUCH_CBC_ANALYSIS"] )
+        messages_list["error"].append(MSG["NO_SUCH_CBC_ANALYSIS"] )
 
         return json.dumps(messages_list)
 
@@ -516,14 +522,14 @@ def edit_cbc_profile(personal_id=None, cbc_id=None):
         db.session.add(cbc_analysis)
         db.session.commit()
 
-        messages_list["success"] = Enums["CBC_ANALYSIS_EDIT_DONE"]
+        messages_list["success"] = MSG["CBC_ANALYSIS_EDIT_DONE"]
 
         return json.dumps(messages_list)
 
     except Exception as e:
         print e.message
         messages_list["error"] = []
-        messages_list["error"].append(Enums["UNEXPECTED_ERROR"])
+        messages_list["error"].append(MSG["UNEXPECTED_ERROR"])
 
         return json.dumps(messages_list)
 
@@ -558,7 +564,7 @@ def print_cbc_analysis(personal_id=None, cbc_id=None):
 
     if (not cbc_analysis):
         messages_list["error"] = []
-        messages_list["error"].append(Enums["NO_SUCH_CBC_ANALYSIS"] )
+        messages_list["error"].append(MSG["NO_SUCH_CBC_ANALYSIS"] )
 
         return json.dumps(messages_list)
 

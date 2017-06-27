@@ -23,3 +23,4 @@ principals = Principal(app)
 
 
 from app import views, models
+from app.routes import users
