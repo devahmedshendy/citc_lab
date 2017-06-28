@@ -40,9 +40,7 @@ def get_users(page=1):
                       .paginate(page, PER_PAGE["USERS"], False)
 
     tempate = 'users.html'
-    return render_template(tempate, users=users,
-                                    users_is_active="active",
-                                    page=page)
+    return render_template(tempate, users=users, page=page)
 
 
 
