@@ -3,13 +3,7 @@
 {% block page_name %}Users{% endblock %}
 
 {% block body_header %}
-  {% include 'alert.html' %}
-
-  <div class="row">
-    <p id="search-label" class="offset-3 col-6 text-center">
-      List of Users <strong>|</strong> <a href="{{ url_for('add_user') }}">Add New User</a>
-    </p>
-  </div>
+  {% include 'users_body_header.html' %}
 {% endblock %}
 
 {% block body_content %}
