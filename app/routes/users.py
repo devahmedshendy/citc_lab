@@ -37,7 +37,7 @@ def get_users(page=1):
                                   User.role_id.is_(None))) \
                       .filter(User.id != current_user.id) \
                       .order_by(desc("updated_at")) \
-                      .paginate(page, PAG_NUM["USERS"], False)
+                      .paginate(page, PER_PAGE["USERS"], False)
 
     tempate = 'users.html'
     return render_template(tempate, users=users,

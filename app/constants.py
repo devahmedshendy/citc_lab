@@ -41,6 +41,7 @@ MSG = {
     '403'                           : 'You are not authorized to access this page.',
 }
 
-PAG_NUM = {
+PER_PAGE = {
     'USERS' : 10,
+    'PATIENTS' : 10,
 }
