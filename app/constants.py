@@ -40,3 +40,7 @@ MSG = {
     'OPERATION_FAILED'              : 'Operation failed.',
     '403'                           : 'You are not authorized to access this page.',
 }
+
+PAG_NUM = {
+    'USERS' : 10,
+}

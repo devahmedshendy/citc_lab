@@ -7,7 +7,7 @@ from flask_login      import login_user, login_required, logout_user, current_us
 from app import app, db, login_manager
 from app.models import *
 from app.forms import *
-from app.constants import MSG
+from app.constants import *
 
 from datetime import datetime
 from sqlalchemy import desc, or_, and_
@@ -29,17 +29,20 @@ registration_officer_permission = Permission(be_registration_officer)
 
 """ Get Users """
 @app.route('/users', methods=['GET'])
+@app.route('/users/<int:page>', methods=['GET'])
 @login_required
 @admins_permission.require(http_exception=403)
-def get_users():
+def get_users(page=1):
     users = User.query.filter(or_(User.role_id.notin_([5]),
                                   User.role_id.is_(None))) \
                       .filter(User.id != current_user.id) \
                       .order_by(desc("updated_at")) \
-                      .all()
+                      .paginate(page, PAG_NUM["USERS"], False)
 
     tempate = 'users.html'
-    return render_template(tempate, users=users, users_is_active="active")
+    return render_template(tempate, users=users,
+                                    users_is_active="active",
+                                    page=page)
 
 
 

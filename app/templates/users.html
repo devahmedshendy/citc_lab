@@ -4,17 +4,69 @@
 
 {% block body_header %}
   {% include 'alert.html' %}
-  
+
   <div class="row">
     <p id="search-label" class="offset-3 col-6 text-center">
-      Search for User <strong>|</strong> <a href="{{ url_for('add_user') }}">Add New User</a>
+      List of Users <strong>|</strong> <a href="{{ url_for('add_user') }}">Add New User</a>
     </p>
   </div>
 {% endblock %}
 
 {% block body_content %}
 <div class="row">
-  <div id='test' class="offset-1 col-10">
+  <div class="offset-1 col-10">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination pagination-sm justify-content-end">
+        {% if users.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_users', page=users.prev_num) }}" aria-label="Previous">
+              Previous
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_users', page=users.prev_num)}}">
+              {{ users.prev_num}}
+            </a>
+          </li>
+
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+          </li>
+
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">
+            {{ page }}
+            <span class="sr-only">(current)</span>
+          </span>
+        </li>
+
+        {% if users.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_users', page=users.next_num)}}">
+              {{ users.next_num}}
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_users', page=users.next_num) }}" aria-label="Next">Next</a>
+          </li>
+
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Next</span>
+          </li>
+
+        {% endif %}
+
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div class="row">
+  <div class="offset-1 col-10">
     <table class="table table-hover table-sm">
       <thead>
         <tr>
@@ -25,15 +77,15 @@
         </tr>
       </thead>
       <tbody>
-      {% for user in users %}
+      {% for user in users.items %}
         <tr>
-          <td data-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">{{ user.firstname.title() }} {{ user.lastname.title() }}</td>
-          <td>{{ user.get_role_desc() }}</td>
-          <td>{{ user.created_at.split(" ")[0] }}</td>
-          <td>
+          <td width="25%" data-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">{{ user.firstname.title() }} {{ user.lastname.title() }}</td>
+          <td width="20%">{{ user.get_role_desc() }}</td>
+          <td width="10%">{{ user.created_at.split(" ")[0] }}</td>
+          <td width="10%">
             <a href="{{ url_for('edit_user', user_id=user.id ) }}">view</a>
             |
-            <a href="" data-delete-user data-user-id="{{user.id}}"
+            <a href="" data-delete-user data-user-id="{{ user.id }}"
                data-user-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">
                delete
              </a>
