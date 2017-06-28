@@ -29,7 +29,7 @@ registration_officer_permission = Permission(be_registration_officer)
 
 """ Get Users """
 @app.route('/users', methods=['GET'])
-@app.route('/users/<int:page>', methods=['GET'])
+@app.route('/users/page/<int:page>', methods=['GET'])
 @login_required
 @admins_permission.require(http_exception=403)
 def get_users(page=1):
@@ -329,6 +329,8 @@ def db_update_or_insert_user(user):
 
     except Exception as e:
         print e.message
+        db.session.rollback()
+
         return False
 
 def db_delete_user(user):
@@ -340,4 +342,6 @@ def db_delete_user(user):
 
     except Exception as e:
         print e.message
+        db.session.rollback()
+
         return False

@@ -64,7 +64,8 @@ class AddUserForm(FlaskForm):
                             render_kw={"placeholder": "Password Confirmation",
                                         "class": "form-control"})
 
-    role      = SelectField(u'Role',
+    role_id      = SelectField(u'Role',
+                            [InputRequired("Please select a role.")],
                             choices=[
                                 ("", "Select Role"),
                                 ("1", "Users Admin"),
@@ -91,7 +92,7 @@ class EditUserForm(FlaskForm):
                         render_kw={"placeholder": "Username",
                                     "class": "form-control"})
 
-    role      = SelectField(u'Role',
+    role_id      = SelectField(u'Role',
                             choices=[
                                 ("", "Select Role"),
                                 ("1", "Users Admin"),
@@ -117,7 +118,7 @@ class EditAccountForm(FlaskForm):
                         [InputRequired("Please enter your username.")],
                         render_kw={"placeholder": "Username",
                                     "class": "form-control"})
-    # 
+    #
     # role      = SelectField(u'Role',
     #                         choices=[
     #                             ("", "Select Role"),
@@ -163,6 +164,70 @@ class ChangeAccountPasswordForm(FlaskForm):
                             ],
                             render_kw={"placeholder": "New Password Confirmation",
                                         "class": "form-control"})
+
+
+
+class AddPatientForm(FlaskForm):
+    personal_id = StringField(u'Persoanl ID',
+                        [InputRequired("Please enter patient's ID.")],
+                        render_kw={"placeholder": "Personal ID",
+                                    "class": "form-control"})
+
+    name        = StringField(u'Name',
+                        [InputRequired("Please enter patient's name.")],
+                        render_kw={"placeholder": "Name",
+                                    "class": "form-control"})
+
+    address     = StringField(u'Address',
+                        [InputRequired("Please enter patient's address.")],
+                        render_kw={"placeholder": "Address",
+                                    "class": "form-control"})
+
+    phone       = StringField(u'Phone',
+                        [optional()],
+                        render_kw={"placeholder": "Phone",
+                                    "class": "form-control"})
+
+    age         = IntegerField(u"Age",
+                        [InputRequired("Please enter patient's age.")],
+                        render_kw={"placeholder": "Age",
+                                    "class": "form-control"})
+
+    gender      = SelectField(u'Gender',
+                        choices=[("Male", "Male"), ("Female", "Female")],
+                                render_kw={"class": "form-control"})
+
+
+
+class EditPatientForm(FlaskForm):
+    personal_id = StringField(u'Persoanl ID',
+                        [InputRequired("Please enter patient's ID.")],
+                        render_kw={"placeholder": "Personal ID",
+                                    "class": "form-control"})
+
+    name        = StringField(u'Name',
+                        [InputRequired("Please enter patient's name.")],
+                        render_kw={"placeholder": "Name",
+                                    "class": "form-control"})
+
+    address     = StringField(u'Address',
+                        [InputRequired("Please enter patient's address.")],
+                        render_kw={"placeholder": "Address",
+                                    "class": "form-control"})
+
+    phone       = StringField(u'Phone',
+                        [optional()],
+                        render_kw={"placeholder": "Phone",
+                                    "class": "form-control"})
+
+    age         = IntegerField(u"Age",
+                        [InputRequired("Please enter patient's age.")],
+                        render_kw={"placeholder": "Age",
+                                    "class": "form-control"})
+
+    gender      = SelectField(u'Gender',
+                        choices=[("Male", "Male"), ("Female", "Female")],
+                                render_kw={"class": "form-control"})
 
 
 
