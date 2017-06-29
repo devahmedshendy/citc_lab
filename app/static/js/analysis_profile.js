@@ -13,7 +13,7 @@ $(document).ready(() => {
 
     // === Analysis Profile Initialization ====
     let patient_id = $("#patient_id").text();
-    $.get(`/analysis/personal_id/${patient_id}?json=True`, (res) => {
+    $.get(`/analyzes/personal_id/${patient_id}?json=True`, (res) => {
         res = JSON.parse(res);
 
         displayCBCAnalyzesElements(patient_id, res);
@@ -80,7 +80,7 @@ $(document).ready(() => {
                 $('#add_cbc_error').html('');
                 $('#cbc_success').html($(success_col));
 
-                $.get(`/analysis/personal_id/${patient_id}?json=True`, (res) => {
+                $.get(`/analyzes/personal_id/${patient_id}?json=True`, (res) => {
                     res = JSON.parse(res)
 
                     displayCBCAnalyzesElements(patient_id, res)
@@ -309,7 +309,7 @@ $(document).ready(() => {
                   Display Result
                 </a>
 
-                <a href="/analysis/personal_id/${cbc["patient_id"]}/cbc_id/${cbc["id"]}"
+                <a href="/analyzes/personal_id/${cbc["patient_id"]}/cbc_id/${cbc["id"]}"
                     class="mb-1 btn btn-link btn-sm"
                     target="_blank"
                     data-cbc-options-link="print_pdf">PDF
@@ -411,7 +411,7 @@ $(document).ready(() => {
                   <div class="modal-body">
                     <p>Are you sure?.</p>
                   </div>
-                  <form action="/analysis/cbc_analysis/personal_id/${patient_id}/cbc_id/${cbc['id']}" method="GET">
+                  <form action="/analyzes/cbc_analyzes/personal_id/${patient_id}/cbc_id/${cbc['id']}" method="GET">
                     <div class="modal-footer">
                       <button type="submit" class="btn btn-danger">Yes, Sure</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -442,7 +442,7 @@ $(document).ready(() => {
                         <div id="edit_cbc_error" class="row"></div>
 
                         <form id="edit_cbc_form"
-                          action="/analysis/personal_id/26011231201016/cbc_id/${cbc_id}"
+                          action="/analyzes/personal_id/26011231201016/cbc_id/${cbc_id}"
                           method="POST">
 
                             <div class="form-group row">

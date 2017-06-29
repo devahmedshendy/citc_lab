@@ -61,7 +61,7 @@ $(document).ready(()=> {
               let updated_at = patient.updated_at.split("|")
 
               let anchorElement = $("<a></a>").attr({
-                "href": `/analysis/personal_id/${patient.personal_id}`
+                "href": `/analyzes/personal_id/${patient.personal_id}`
               });
 
               let listElement = $("<li></li>")

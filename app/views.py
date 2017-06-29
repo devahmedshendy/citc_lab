@@ -375,10 +375,15 @@ def list_of_patients():
 
 
 """ Patient: Analyzes Profile """
-@app.route('/analysis/personal_id/<string:personal_id>', methods=['GET'])
+@app.route('/analyzes/personal_id/<string:personal_id>', methods=['GET'])
+@app.route('/analyzes/patient_id/<string:patient_id>', methods=['GET'])
 @login_required
-def patient_analyzes(personal_id=None):
-    patient = Patient.query.filter_by(personal_id=personal_id).first()
+def patient_analyzes(personal_id=None, patient_id=None):
+    if patient_id:
+        patient = Patient.query.filter_by(patient_id=patient_id).first()
+    elif personal_id:
+        patient = Patient.query.filter_by(personal_id=personal_id).first()
+
     patient_form = PatientForm(obj=patient)
     cbc_analysis_form = CBCAnalysisForm(request.form)
 
