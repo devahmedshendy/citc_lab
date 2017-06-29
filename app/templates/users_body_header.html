@@ -1,0 +1,15 @@
+{% include 'alert.html' %}
+
+<div class="row">
+  {% if request.path == "/users/new" %}
+  <p id="search-label" class="offset-3 col-6 text-center">
+    <a href="{{ url_for('get_users') }}">List of Users</a> <strong>|</strong> Add New User
+  </p>
+
+  {% elif request.path.startswith("/users") %}
+  <p id="search-label" class="offset-3 col-6 text-center">
+    List of Users <strong>|</strong> <a href="{{ url_for('add_user') }}">Add New User</a>
+  </p>
+
+  {% endif %}
+</div>
