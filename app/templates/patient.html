@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+
+{% block name_page %}
+  {{ edit_patient_form.name.data.title() }}
+{% endblock %}
+
+{% block body_header %}
+  {% include 'alert.html' %}
+
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      Edit Patient Settings
+    </p>
+  </div>
+{% endblock %}
+
+{% block body_content %}
+  <div class="row">
+    <div class="offset-4 col-4">
+      <table class="table">
+        <tbody>
+          {% for field in edit_patient_form %}
+          <tr>
+            <th scope="row">{{ field.label.text }}</th>
+            <td id="patient_{{field.label.text.lower()}}">{{ field.data }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="offset-4 col-4">
+      <button id="back" type="button" name="back" value="back" class="btn btn-outline-info btn-block" role="button">Back</button>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% include 'alert.html' %}
+
+
+{% if current_user.role_id in [1, 5] %}
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      List of Patients
+    </p>
+  </div>
+
+{% elif request.path == "/patients/new" %}
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      <a href="{{ url_for('get_patients') }}">List of Patients</a> <strong>|</strong> Add New Patient
+    </p>
+  </div>
+  {% elif request.path.startswith("/patients") %}
+  <div class="row">
+    <p id="search-label" class="offset-3 col-6 text-center">
+      List of Patients <strong>|</strong> <a href="{{ url_for('add_patient') }}">Add New Patient</a>
+    </p>
+  </div>
+{% endif %}

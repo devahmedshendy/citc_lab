@@ -1,0 +1,110 @@
+{% extends 'layout.html' %}
+
+{% block page_name %}Patients{% endblock %}
+
+{% block body_header %}
+  {% include 'patients_body_header.html' %}
+{% endblock %}
+
+{% block body_content %}
+<div class="row">
+  <div class="offset-2 col-8">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination pagination-sm justify-content-end">
+        {% if patients.has_prev %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_patients', page=patients.prev_num) }}" aria-label="Previous">
+              Previous
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_patients', page=patients.prev_num)}}">
+              {{ patients.prev_num}}
+            </a>
+          </li>
+
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+          </li>
+
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">
+            {{ page }}
+            <span class="sr-only">(current)</span>
+          </span>
+        </li>
+
+        {% if patients.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_patients', page=patients.next_num)}}">
+              {{ patients.next_num}}
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('get_patients', page=patients.next_num) }}" aria-label="Next">Next</a>
+          </li>
+
+        {% else %}
+          <li class="page-item disabled">
+            <span class="page-link">Next</span>
+          </li>
+
+        {% endif %}
+
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<div class="row">
+  <div class="offset-2 col-8">
+    <table class="table table-hover table-sm">
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Personal ID</th>
+          <th>Created At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for patient in patients.items %}
+        <tr>
+          <td width="22%" data-fullname="{{ patient.name.title() }}">{{ patient.name.title() }}</td>
+          <td width="10%">{{ patient.personal_id }}</td>
+          <td width="10%">{{ patient.updated_at.strftime("%b %d, %Y") }}</td>
+          {% if current_user.role_id == 3 %}
+            <td width="20%">
+              <a href="{{ url_for('medical_profile', patient_id=patient.id ) }}">medical-profile</a>
+              |
+              <a href="{{ url_for('edit_patient', patient_id=patient.id ) }}">edit</a>
+              |
+              <a href="" data-delete-patient data-patient-id="{{ patient.id }}"
+                 data-patient-fullname="{{ patient.name.title() }}">
+                 delete
+               </a>
+            </td>
+
+          {% else %}
+            <td width="15%">
+              <a href="{{ url_for('medical_profile', patient_id=patient.id ) }}">medical-profile</a>
+              |
+              <a href="{{ url_for('display_patient', patient_id=patient.id ) }}">view</a>
+            </td>
+          {% endif %}
+        </tr>
+      {%- endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+  {% assets output='gen/patients.min.js', "js/patients.js" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+{% endblock %}

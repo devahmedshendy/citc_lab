@@ -200,7 +200,7 @@ class AddPatientForm(FlaskForm):
 
 
 class EditPatientForm(FlaskForm):
-    personal_id = StringField(u'Persoanl ID',
+    personal_id = StringField(u'Personal ID',
                         [InputRequired("Please enter patient's ID.")],
                         render_kw={"placeholder": "Personal ID",
                                     "class": "form-control"})
