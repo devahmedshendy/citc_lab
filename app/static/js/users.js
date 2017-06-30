@@ -55,41 +55,41 @@ $(document).ready(()=> {
   // ==== Users Page Functions ====
   // Get a Modal for Confiming Deleting User
   function get_confirm_delete_user_modal(id, fullname) {
-    let header = `
+    let modal_header = `
       <h5 class="modal-title">Delete User <strong>${fullname}</strong></h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     `
 
-    let body = `
+    let modal_body = `
       <p>Are you sure?</p>
     `
 
-    let footer = `
+    let modal_footer = `
       <form id='confirm_delete_user_form' action="/users/delete/${id}" method="POST">
         <button type="submit" class="btn btn-danger">Yes, Sure</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
       </form>
     `
-    return create_modal(header, body, footer);
+    return create_modal(modal_header, modal_body, modal_footer);
   }
 
-  function create_modal(header, body, footer) {
+  function create_modal(modal_header, modal_body, modal_footer) {
     return `
       <div id="confirm_delete_user_modal" class="modal fade">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              ${header}
+              ${modal_header}
             </div>
 
             <div class="modal-body">
-              ${body}
+              ${modal_body}
             </div>
 
             <div class="modal-footer">
-              ${footer}
+              ${modal_footer}
             </div>
           </div>
         </div>
