@@ -270,3 +270,25 @@ class CBCAnalysisForm(FlaskForm):
     MCH      = StringField('MCH',
                     [InputRequired("Please enter MCH value.")],
                     render_kw={"placeholder": "Mean Cell Hemoglubine"})
+
+
+
+class AddCBCForm(FlaskForm):
+    comment  = TextAreaField('Comment',
+                    [optional(), length(max=200)],
+                    render_kw={"placeholder": "Doctor comments...", "rows": "3"})
+
+    WCB      = StringField('WBC',
+                    [InputRequired("Please enter WBC value.")],
+                    render_kw={"placeholder": "White Blod Cells"})
+    HGB      = StringField('HGB',
+                    [InputRequired("Please enter HGB value.")],
+                    render_kw={"placeholder": "Hemoglibin"})
+
+    MCV      = StringField('MCV',
+                    [InputRequired("Please enter MCV value.")],
+                    render_kw={"placeholder": "Mean Corpuscular Volume"})
+
+    MCH      = StringField('MCH',
+                    [InputRequired("Please enter MCH value.")],
+                    render_kw={"placeholder": "Mean Cell Hemoglubine"})

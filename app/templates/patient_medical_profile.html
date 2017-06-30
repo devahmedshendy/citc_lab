@@ -4,14 +4,6 @@
 
 
 {% block add_analysis_dropdown %}
-  <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Add Analysis
-    </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <a class="dropdown-item" href="#" data-toggle="modal" data-target="#cbcModal">CBC Analysis</a>
-    </div>
-  </div>
 {% endblock %}
 
 {% block body_header %}
@@ -34,12 +26,6 @@
     <div class="col-4">
 
       <div class="row justify-content-center">
-        <!-- <div class="col-4">
-          <a id="edit_patient_profile" href="{{url_for('edit_patient_profile', personal_id=edit_patient_form.personal_id.data)}}" class="btn btn-outline-primary">Edit Profile</a>
-        </div>
-        <div class="col-4">
-          <a id="delete_patient_profile" href="#" class="btn btn-outline-danger" data-toggle="modal" data-target="#delete_patient_confirmation">Delete Profile</a>
-        </div> -->
         <strong>Patient Personal Details</strong>
       </div>
 
@@ -68,13 +54,17 @@
     <!-- Patient Analysis -->
     <div id="analyzes_container" class="col-6">
       <div class="row justify-content-center">
-        <!-- <div class="col-4">
-          <a id="edit_patient_profile" href="{{url_for('edit_patient_profile', personal_id=edit_patient_form.personal_id.data)}}" class="btn btn-outline-primary">Edit Profile</a>
-        </div>
-        <div class="col-4">
-          <a id="delete_patient_profile" href="#" class="btn btn-outline-danger" data-toggle="modal" data-target="#delete_patient_confirmation">Delete Profile</a>
-        </div> -->
         <strong>Patient Analyzes</strong>
+        {% if current_user.get_role_name() == "registration_officer" %}
+          <div class="btn-group">
+            <button type="button" class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Add
+            </button>
+            <div class="dropdown-menu">
+              <a id="add_cbc_link" class="dropdown-item" href="#" data-toggle="modal" data-target="#add_cbc_modal">CBC</a>
+            </div>
+          </div>
+        {% endif %}
       </div>
 
       <div class="row">
@@ -89,83 +79,29 @@
     </div>
   </div>
 
-
-  <!-- CBC Modal -->
-  <div class="row">
-    <div class="modal fade" id="cbcModal" tabindex="-1" role="dialog" aria-labelledby="cbcModalTitle" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="cbcModalTitle">Add CBC Analysis</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-
-          <div class="modal-body">
-              <div id="add_cbc_error" class='row'></div>
-
-              <form id="add_cbc_form" action="{{ url_for('add_cbc_analysis', personal_id=edit_patient_form.personal_id.data) }}" method="POST">
-                {% for field in cbc_analysis_form %}
-                  {% if field.label.text == 'Comment' %}
-                    <div class="form-group row">
-                      {{ field.label(class_="col-12 col-form-label text-center") }}
-                      <div class="offset-1 col-10">
-                        {{ field(class_="form-control") }}
-                      </div>
-                    </div>
-
-                  {% else %}
-                  <div class="form-group row">
-                    {{ field.label(class_="offset-2 col-2 col-form-label") }}
-                    <div class="col-6">
-                      {{ field(class_="form-control") }}
-                    </div>
-                  </div>
-
-                  {% endif %}
-                {% endfor %}
-              </form>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" name="cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button id="add_cbc_button" type="submit" name="add" class="btn btn-primary">Add</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div id="delete_patient_confirmation" class="modal fade">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>This will delete the patient profile with all of its analyzes.</p>
-          </div>
-          <form action="{{ url_for('delete_patient_profile', personal_id=edit_patient_form.personal_id.data) }}" method="GET">
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-danger">Yes, Sure</button>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 {% endblock %}
 
+
+
 {% block page_js %}
-  {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile.js" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-  {% endassets %}
+  {% if current_user.get_role_name() == "registration_officer" %}
+    {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile_officer.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+
+
+  {% elif current_user.get_role_name() == "investigation_doctor" %}
+    {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile_doctor.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+  {% else %}
+    {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+  {% endif %}
 {% endblock %}

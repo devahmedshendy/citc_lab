@@ -26,6 +26,215 @@ $(document).ready(() => {
 
     //-----------------------------------------
     //
+    // Handling Process of Adding New CBC
+    //-----------------------------------------
+    // CBC Add Link -> Clicked
+    $(document).on('click', '#add_cbc_link', (event) => {
+        var add_cbc_link = $(event.target)
+
+        // var patient_id = $("#patient_personal_details").attr('data-patient-id')
+        var add_cbc_modal = createModalToAddCBC(patient_id)
+
+        $(add_cbc_modal).modal('toggle');
+    });
+
+    // CBC Add Modal -> Add Button Clicked
+    $(document).on("click", "#add_cbc_button", (event) => {
+        $("#add_cbc_form").submit();
+    });
+
+    // CBC Add Modal -> Form Submitted
+    $(document).on("submit", "#add_cbc_form", (event) => {
+        event.preventDefault();
+
+        var submitted_data       = $(event.target).serialize();
+        var submitted_data_array = $(event.target).serializeArray();
+        var add_cbc_form         = $("#add_cbc_form");
+        var add_cbc_modal         = $(add_cbc_form).closest(".modal");
+        var action_url           = $("#add_cbc_form").attr("action");
+
+        var cbc_analysis_form_data = JSON.stringify({
+            "comment" : $("#comment").val(),
+            "WCB"     : $("#WCB").val(),
+            "HGB"     : $("#HGB").val(),
+            "MCV"     : $("#MCV").val(),
+            "MCH"     : $("#MCH").val()
+        })
+
+        $.ajax({
+            method: 'POST',
+            url: action_url,
+            contentType: 'application/json',
+            data: cbc_analysis_form_data
+        })
+        .done((data) => {
+            data = JSON.parse(data);
+
+            if (data.hasOwnProperty("error")) {
+                let errors_list  = data["error"]
+
+                clearAlert("#cbc_success")
+                showErrorAlert("#add_cbc_error", errors_list)
+
+            } else if (data.hasOwnProperty("success")) {
+                $(add_cbc_modal).modal("hide");
+
+                displayCBCAnalyzesElements();
+
+                let success_message = data["success"]
+                showSuccessAlert("#cbc_success", success_message);
+            }
+        });
+    });
+
+    //-----------------------------------------
+    //
+    // Handling Process of Editing CBC
+    //-----------------------------------------
+    // CBC Edit Link -> Clicked
+    $(document).on('click', '[data-cbc-edit]', (event) => {
+        var edit_cbc_link = $(event.target)
+
+        setGlobalCBC(...getCBCDataFromEditLink(edit_cbc_link))
+
+        var patient_id = $("#patient_personal_details").attr('data-patient-id')
+        var edit_cbc_modal = createModalWithEditCBCForm(patient_id, "cbc", cbc)
+
+        $(edit_cbc_modal).modal('toggle');
+    });
+
+    // CBC Edit Modal -> Save Button Clicked
+    $(document).on('click', "[data-button-type=save]", (event)=> {
+      $("#edit_cbc_form").submit();
+    });
+
+    // CBC Edit Modal -> Form Submitted
+    $(document).on('submit', "#edit_cbc_form", (event) => {
+        event.preventDefault();
+
+        var edit_cbc_form  = $(event.target);
+        var action_url = edit_cbc_form.attr("action");
+        cbc.id         = action_url.slice(-2);
+
+        var edit_cbc_link = $(`#collapse${cbc["id"]} [data-cbc-edit]`);
+
+        setGlobalCBC(id = cbc.id, ...getCBCDataFromEditCBCForm(edit_cbc_form));
+
+        var submitted_data = JSON.stringify({
+            "comment" : cbc.comment,  "WCB"     : cbc.wcb,
+            "HGB"     : cbc.hgb,      "MCV"     : cbc.mcv,
+            "MCH"     : cbc.mch });
+
+
+        // Send CBC data to save into database
+        $.ajax({
+          method: 'POST',
+          url: action_url,
+          contentType: 'application/json',
+          data: submitted_data
+        })
+        .done((messages) => {
+            messages = JSON.parse(messages);
+
+            if (messages.hasOwnProperty("error")) {
+                let errors_list = messages["error"];
+
+                clearAlert('#cbc_success');
+                showErrorAlert('#edit_cbc_error', errors_list);
+
+            } else if (messages.hasOwnProperty("success")) {
+                submitted_data = JSON.parse(submitted_data);
+
+                changeCBCCardWithSavedCBCData(submitted_data);
+
+                $(edit_cbc_modal).modal('hide');
+
+                let success_message = messages['success'];
+                showSuccessAlert("#cbc_success", success_message);
+            }
+        })
+        .fail((err) => {
+            console.log(err);
+        });
+
+    });
+
+    //-----------------------------------------
+    //
+    // Handling Delete CBC Process
+    //-----------------------------------------
+    // CBC Delete Link -> Clicked
+    $(document).on('click', '[data-cbc-delete]', (event) => {
+
+        var cbc_id = $(event.target).attr("data-cbc-id");
+        var confirm_delete_cbc_modal = createModalToConfirmCBCDelete(cbc_id);
+
+        $(confirm_delete_cbc_modal).modal('show');
+
+        console.log('data-cbc-delete');
+    });
+
+    // Confirm Delete CBC Modal -> Form Submitted
+    $(document).on('click', "#confirm_delete_cbc_button", (event) => {
+        event.preventDefault();
+
+        var confirm_delete_cbc_button = $(event.target);
+        var analysis_id             = $(confirm_delete_cbc_button).attr(`data-cbc-id`);
+
+        // Send Delete as a GET request to the server
+        $.ajax({
+          method: 'POST',
+          url: `/analyzes/cbc/${analysis_id}/delete`,
+        })
+        .done((messages) => {
+            var messages = JSON.parse(messages);
+
+            if (messages.hasOwnProperty("error")) {
+                let errors_list = messages["error"];
+
+                clearAlert("#cbc_success");
+                showErrorAlert("#confirm_delete_cbc_error", errors_list);
+
+            } else if (messages.hasOwnProperty("success")) {
+                $(`div[id^=confirm_delete_cbc]`).modal('hide');
+
+                displayCBCAnalyzesElements();
+
+                let success_message = messages['success']
+                showSuccessAlert("#cbc_success", success_message);
+            }
+        })
+        .fail((err) => {
+            console.log(err);
+
+        });
+
+    });
+
+    //-----------------------------------------
+    //
+    // Handling Modal Hidden Event
+    //-----------------------------------------
+    // Confirm CBC Delete Modal -> Hidden
+    $(document).on('hidden.bs.modal', 'div[id^=confirm_delete_cbc]', (event) => {
+      resetGlobalCBC();
+    });
+
+    // Add CBC Modal -> Hidden
+    $(document).on('hidden.bs.modal', '#add_cbc_modal', (event) => {
+      // $("#add_cbc_form")[0].reset();
+      $(event.target).remove();
+      resetGlobalCBC();
+    });
+
+    // Edit CBC Modal -> Hidden
+    $(document).on('hidden.bs.modal', '#edit_cbc_modal', (event) => {
+      $(event.target).remove();
+      resetGlobalCBC();
+    });
+
+    //-----------------------------------------
+    //
     // Analysis Profile Page Functions
     //-----------------------------------------
     function displayCBCAnalyzesElements() {
@@ -44,7 +253,7 @@ $(document).ready(() => {
     }
 
     function changeCBCCardWithSavedCBCData(submitted_data) {
-        let edit_cbc_link = $(`#collapse${cbc["id"]} [data-cbc-options-link=edit]`);
+        let edit_cbc_link = $(`#collapse${cbc["id"]} [data-cbc-edit]`);
         let cbc_table     = $(`#table-${cbc["id"]}`)
 
         for (key in submitted_data) {
@@ -63,15 +272,45 @@ $(document).ready(() => {
     }
 
 
-    // Error/Success Alert Functions
+    function getCBCDataFromEditLink(edit_cbc_link) {
+        cbc_data =  [ $(edit_cbc_link).attr("data-cbc-id"),
+                      $(edit_cbc_link).attr("data-cbc-wcb"),
+                      $(edit_cbc_link).attr("data-cbc-hgb"),
+                      $(edit_cbc_link).attr("data-cbc-mcv"),
+                      $(edit_cbc_link).attr("data-cbc-mch"),
+                      $(edit_cbc_link).attr("data-cbc-comment") ];
+
+        return cbc_data;
+    }
+
+    function getCBCDataFromEditCBCForm(edit_cbc_form) {
+        cbc_data = [ $(edit_cbc_form).find("#WCB").val(),
+                     $(edit_cbc_form).find("#HGB").val(),
+                     $(edit_cbc_form).find("#MCV").val(),
+                     $(edit_cbc_form).find("#MCH").val(),
+                     $(edit_cbc_form).find("#comment").val() ];
+
+         return cbc_data;
+    }
+
+
+    function setGlobalCBC(id, wcb, hgb, wcv, wch, comment) {
+        cbc = { "id"      : id,   "wcb"     : wcb,
+                "hgb"     : hgb,  "mcv"     : wcv,
+                "mch"     : wch,  "comment" : comment}
+    }
+
+    function resetGlobalCBC() {
+        cbc = { "id"      : 0,    "wcb"     : 0,
+                "hgb"     : 0,    "mcv"     : 0,
+                "mch"     : 0,    "comment" : "---"  }
+    }
+
+
+    // Create Alert to Display Error/Success Messages
     function showErrorAlert(alert_id, errors_list) {
       var error_alert = createErrorAlert(errors_list);
       $(alert_id).html(error_alert);
-    }
-
-    function showSuccessAlert(alert_id, success_message) {
-      var success_element = createSuccessAlert(success_message);
-      $(alert_id).html($(success_element));
     }
 
     function createErrorAlert(errors_list) {
@@ -85,15 +324,16 @@ $(document).ready(() => {
         return error_alert;
     }
 
+    function showSuccessAlert(alert_id, success_message) {
+      var success_element = createSuccessAlert(success_message);
+      $(alert_id).html($(success_element));
+    }
+
     function createSuccessAlert(success_message) {
         var success_message = $(`<p>${success_message}</p>`)
 
         var success_alert = createAlert("success", success_message)
         return success_alert;
-    }
-
-    function clearAlert(alert_id) {
-      $(alert_id).html('');
     }
 
     function createAlert(alert_type, alert_messages) {
@@ -124,8 +364,12 @@ $(document).ready(() => {
         return alert;
     }
 
+    function clearAlert(alert_id) {
+      $(alert_id).html('');
+    }
 
-    // CBC Card Functions
+
+    // Create Card for CBC Data
     function createCBCCard(patient_id, analysis_type, analysis_data) {
         let card_header = `
             <div class="d-flex w-100 justify-content-between">
@@ -150,7 +394,36 @@ $(document).ready(() => {
 
         let card_block = `
             <div class="row">
+              <div class="container">
+                <div class="row">
+                  <div id="cbc_edit_options" class="col align-self-center text-center">
+                    <a href="#"
+                        data-cbc-edit
+                        data-cbc-id="${analysis_data["id"]}"
+                        data-cbc-comment="${analysis_data["comment"]}"
+                        data-cbc-wcb="${analysis_data["WCB"]}"
+                        data-cbc-hgb="${analysis_data["HGB"]}"
+                        data-cbc-mcv="${analysis_data["MCV"]}"
+                        data-cbc-mch="${analysis_data["MCH"]}"
+                        data-toggle="modal"
+                        data-target="#edit_cbc_modal">Edit</a>
+                    |
+                    <a href="#"
+                        data-cbc-delete
+                        data-cbc-id="${analysis_data["id"]}"
+                        data-cbc-comment="${analysis_data["comment"]}"
+                        data-cbc-wcb="${analysis_data["WCB"]}"
+                        data-cbc-hgb="${analysis_data["HGB"]}"
+                        data-cbc-mcv="${analysis_data["MCV"]}"
+                        data-cbc-mch="${analysis_data["MCH"]}"
+                        data-toggle="modal"
+                        data-target="#confirm_delete_cbc${analysis_data["id"]}_modal">Delete</a>
+                  </div>
+                </div>
+              </div>
+
               <div class="col-12">
+                <hr>
                 <div class="mb-1">
                   <h6 data-cbc-doctor class="text-muted">Confirmed by Dr.Zizo.</h6>
                     <p>
@@ -199,9 +472,13 @@ $(document).ready(() => {
 
         let card = createCard(card_header, `heading${analysis_data['id']}`, card_block, `collapse${analysis_data["id"]}`)
 
+        // let confirm_delete_cbc_modal = createModalToConfirmCBCDelete(patient_id, analysis_type, analysis_data["id"])
+        //                                   .appendTo(card)
+
         return card
     }
 
+    // Create Concrete Card
     function createCard(card_header, card_header_id, card_block, card_block_id) {
         let card = $(`
             <div class="card">
@@ -220,12 +497,13 @@ $(document).ready(() => {
         return card
     }
 
-    // Confirm CBC Delete Modal Functions
-    function createModaToConfirmCBCDelete(patient_id, analysis_type, analysis_id) {
+
+    // Create Modal for Confirm Delete CBC Process
+    function createModalToConfirmCBCDelete(analysis_id) {
         let modal_header = `
-            <h5 class="modal-title">Delete CBC Analysis</h5>
+            <h5 class="modal-title" id="confirm_cbc${analysis_id}_modal_title">Delete CBC Analysis</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true">×</span>
             </button>
         `
 
@@ -235,18 +513,15 @@ $(document).ready(() => {
         `
 
         let modal_footer = `
-            <form id="confirm_delete_cbc_form" action="/patients/${patient_id}/analyzes/${analysis_type}/${analysis_id}/delete" method="GET">
-                <button type="submit" class="btn btn-danger">Yes, Sure</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </form>
+            <button type="button" name="cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button id="confirm_delete_cbc_button" type="submit" name="confirm" class="btn btn-danger" data-cbc-id="${analysis_id}">Confirm</button>
         `
 
         let confirm_delete_cbc_modal = createModal(`confirm_delete_cbc${analysis_id}_modal`, modal_header, modal_body, modal_footer)
         return confirm_delete_cbc_modal
     }
 
-
-    // CBC Edit Form Modal Functions
+    // Create Modal for Add CBC Process
     function createModalToAddCBC(patient_id) {
         let modal_header = `
             <h5 class="modal-title" id="add_cbc_modal_title">Add CBC Analysis</h5>
@@ -307,6 +582,7 @@ $(document).ready(() => {
         return add_cbc_modal
     }
 
+    // Create Modal for CBC Edit Process
     function createModalWithEditCBCForm(patient_id, analysis_type, analysis_data) {
         let modal_header = `
             <h5 class="modal-title" id="edit_cbc_modal_title">Edit CBC Analysis</h5>
@@ -370,6 +646,7 @@ $(document).ready(() => {
         return edit_cbc_modal;
     }
 
+    // Create Concrete Modal
     function createModal(modal_id, modal_header, modal_body, modal_footer) {
       let modal =  $(`
         <div id="${modal_id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="${modal_id}_title" aria-hidden="true">
@@ -393,4 +670,5 @@ $(document).ready(() => {
 
       return modal
     }
+  // }
 })

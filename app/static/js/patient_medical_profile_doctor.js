@@ -150,7 +150,25 @@ $(document).ready(() => {
 
         let card_block = `
             <div class="row">
+              <div class="container">
+                <div class="row">
+                  <div id="cbc_edit_options" class="col align-self-center text-center">
+                    <a href="#"
+                        data-cbc-options-link="edit"
+                        data-cbc-id="${analysis_data["id"]}"
+                        data-cbc-comment="${analysis_data["comment"]}"
+                        data-cbc-wcb="${analysis_data["WCB"]}"
+                        data-cbc-hgb="${analysis_data["HGB"]}"
+                        data-cbc-mcv="${analysis_data["MCV"]}"
+                        data-cbc-mch="${analysis_data["MCH"]}"
+                        data-toggle="modal"
+                        data-target="#edit_cbc_modal">Edit Comment</a>
+                  </div>
+                </div>
+              </div>
+
               <div class="col-12">
+                <hr>
                 <div class="mb-1">
                   <h6 data-cbc-doctor class="text-muted">Confirmed by Dr.Zizo.</h6>
                     <p>
@@ -218,156 +236,6 @@ $(document).ready(() => {
           `)
 
         return card
-    }
-
-    // Confirm CBC Delete Modal Functions
-    function createModaToConfirmCBCDelete(patient_id, analysis_type, analysis_id) {
-        let modal_header = `
-            <h5 class="modal-title">Delete CBC Analysis</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        `
-
-        let modal_body = `
-            <div id="confirm_delete_cbc_error" class="row"></div>
-            <p>Are you sure?.</p>
-        `
-
-        let modal_footer = `
-            <form id="confirm_delete_cbc_form" action="/patients/${patient_id}/analyzes/${analysis_type}/${analysis_id}/delete" method="GET">
-                <button type="submit" class="btn btn-danger">Yes, Sure</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </form>
-        `
-
-        let confirm_delete_cbc_modal = createModal(`confirm_delete_cbc${analysis_id}_modal`, modal_header, modal_body, modal_footer)
-        return confirm_delete_cbc_modal
-    }
-
-
-    // CBC Edit Form Modal Functions
-    function createModalToAddCBC(patient_id) {
-        let modal_header = `
-            <h5 class="modal-title" id="add_cbc_modal_title">Add CBC Analysis</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        `
-
-        let modal_body = `
-            <div id="add_cbc_error" class='row'></div>
-
-            <form id="add_cbc_form" action="/patients/${patient_id}/analyzes/cbc/new" method="POST">
-                <div class="form-group row">
-                  <label class="col-12 col-form-label text-center" for="comment">Comment</label>
-                  <div class="offset-1 col-10">
-                    <textarea class="form-control" id="comment" name="comment" placeholder="Doctor comments..." rows="3"></textarea>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="WCB">WCB</label>
-                  <div class="col-6">
-                    <input class="form-control" id="WCB" name="WCB" placeholder="White Blod Cells" type="text" >
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="HGB">HGB</label>
-                  <div class="col-6">
-                    <input class="form-control" id="HGB" name="HGB" placeholder="Hemoglibin" type="text">
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="MCV">MCV</label>
-                  <div class="col-6">
-                    <input class="form-control" id="MCV" name="MCV" placeholder="Mean Corpuscular Volume" type="text" >
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="MCH">MCH</label>
-                  <div class="col-6">
-                    <input class="form-control" id="MCH" name="MCH" placeholder="Mean Cell Hemoglubine" type="text" >
-                  </div>
-                </div>
-
-        </form>
-        `
-
-        let modal_footer = `
-            <button type="button" name="cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button id="add_cbc_button" type="submit" name="add" class="btn btn-primary">Add</button>
-        `
-
-        let add_cbc_modal = createModal("add_cbc_modal", modal_header, modal_body, modal_footer);
-
-        return add_cbc_modal
-    }
-
-    function createModalWithEditCBCForm(patient_id, analysis_type, analysis_data) {
-        let modal_header = `
-            <h5 class="modal-title" id="edit_cbc_modal_title">Edit CBC Analysis</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-        `
-
-        let modal_body = `
-            <div id="edit_cbc_error" class="row"></div>
-
-            <form id="edit_cbc_form"
-              action="/patients/${patient_id}/analyzes/${analysis_type}/edit/${analysis_data["id"]}"
-              method="POST">
-
-                <div class="form-group row">
-                  <label class="col-12 col-form-label text-center" for="comment">Comment</label>
-                  <div class="offset-1 col-10">
-                    <textarea class="form-control" id="comment" name="comment" placeholder="Doctor comments..." rows="3">${analysis_data["comment"] === '---' ? '' : analysis_data.comment}</textarea>
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="WCB">WCB</label>
-                  <div class="col-6">
-                    <input class="form-control" id="WCB" name="WCB" placeholder="White Blod Cells" type="text" value="${analysis_data.wcb}">
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="HGB">HGB</label>
-                  <div class="col-6">
-                    <input class="form-control" id="HGB" name="HGB" placeholder="Hemoglibin" type="text" value="${analysis_data.hgb}">
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="MCV">MCV</label>
-                  <div class="col-6">
-                    <input class="form-control" id="MCV" name="MCV" placeholder="Mean Corpuscular Volume" type="text" value="${analysis_data.mcv}">
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label class="offset-2 col-2 col-form-label" for="MCH">MCH</label>
-                  <div class="col-6">
-                    <input class="form-control" id="MCH" name="MCH" placeholder="Mean Cell Hemoglubine" type="text" value="${analysis_data.mch}">
-                  </div>
-                </div>
-
-            </form>
-        `
-
-        let modal_footer = `
-            <button id="cancel_save_cbc_button" type="button" name="cancel" data-dismiss="modal" class="btn btn-secondary">Cancel</button>
-            <button data-button-type="save" type="submit" name="save" class="btn btn-primary">Save</button>
-        `
-
-        let edit_cbc_modal = createModal("edit_cbc_modal", modal_header, modal_body, modal_footer)
-
-        return edit_cbc_modal;
     }
 
     function createModal(modal_id, modal_header, modal_body, modal_footer) {

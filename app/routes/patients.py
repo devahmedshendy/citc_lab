@@ -138,7 +138,7 @@ def display_patient(patient_id=None):
 
 
 
-""" Get Patient Analyzes """
+""" Get Patient Medical Profile """
 @app.route('/patients/<int:patient_id>/medical_profile', methods=['GET'], endpoint="medical_profile")
 @app.route('/patients/<int:patient_id>/analyzes', methods=['GET'])
 @login_required
@@ -151,10 +151,12 @@ def get_patient_analyzes(patient_id=None):
         return redirect(url)
 
     edit_patient_form = EditPatientForm(obj=patient)
+    add_cbc_form      = AddCBCForm()
 
     if request.method == "GET" and request.args.get("json") == None:
         template = 'patient_medical_profile.html'
         return render_template(template, edit_patient_form=edit_patient_form,
+                                         add_cbc_form=add_cbc_form,
                                          patient_id=patient.id)
 
     if request.method == "GET" and request.args.get("json") == "True":

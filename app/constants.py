@@ -6,13 +6,15 @@ MSG = {
     'PATIENT_ADDED'                 : 'Patient has been added successfully!',
     'PATIENT_PROFILE_UPDATE_DONE'   : 'Patient has been updated successfully!',
     'PATIENT_PROFILE_DELET_DONE'    : 'Patient profile has been delete successfully!',
-    'CBC_ANALYSIS_ADD_DONE'         : 'The CBC Analysis has been added successfully!',
-    'CBC_ANALYSIS_EDIT_DONE'        : 'The CBC Analysis has been edited successfully!',
-    'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully!',
     'USER_PROFILE_CREATED'          : 'User profile has been created successfully!',
     'USER_PROFILE_EDIT_DONE'        : 'User profile has been edited successfully!',
     'USER_PASSWORD_CHANGE_DONE'     : 'Password has been changed successfully!',
     'USER_PROFILE_DELETE_DONE'      : 'User profile has been deleted successfully!',
+
+    # CBC Analysis Success Messages
+    'CBC_ANALYSIS_ADD_DONE'         : 'The CBC Analysis has been added successfully!',
+    'CBC_ANALYSIS_EDIT_DONE'        : 'The CBC Analysis has been edited successfully!',
+    'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully!',
 
     # User Login Error Messages
     'NO_SUCH_USER'                  : 'Sorry, but there is no such user in our system.',
@@ -44,4 +46,8 @@ MSG = {
 PER_PAGE = {
     'USERS' : 10,
     'PATIENTS' : 10,
+}
+
+ANALYSIS_TO_ID = {
+    'cbc'   : 1,
 }
