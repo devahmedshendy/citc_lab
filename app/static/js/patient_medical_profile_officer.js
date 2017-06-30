@@ -84,7 +84,10 @@ $(document).ready(() => {
                 let success_message = data["success"]
                 showSuccessAlert("#cbc_success", success_message);
             }
-        });
+        })
+        .fail((err) => {
+            console.log(err);
+        });;
     });
 
     //-----------------------------------------
@@ -95,7 +98,7 @@ $(document).ready(() => {
     $(document).on('click', '[data-cbc-edit]', (event) => {
         var edit_cbc_link = $(event.target)
 
-        setGlobalCBC(...getCBCDataFromEditLink(edit_cbc_link))
+        setGlobalCBC(...getCBCDataFromLink(edit_cbc_link))
 
         var patient_id = $("#patient_personal_details").attr('data-patient-id')
         var edit_cbc_modal = createModalWithEditCBCForm(patient_id, "cbc", cbc)
@@ -272,13 +275,13 @@ $(document).ready(() => {
     }
 
 
-    function getCBCDataFromEditLink(edit_cbc_link) {
-        cbc_data =  [ $(edit_cbc_link).attr("data-cbc-id"),
-                      $(edit_cbc_link).attr("data-cbc-wcb"),
-                      $(edit_cbc_link).attr("data-cbc-hgb"),
-                      $(edit_cbc_link).attr("data-cbc-mcv"),
-                      $(edit_cbc_link).attr("data-cbc-mch"),
-                      $(edit_cbc_link).attr("data-cbc-comment") ];
+    function getCBCDataFromLink(link) {
+        cbc_data =  [ $(link).attr("data-cbc-id"),
+                      $(link).attr("data-cbc-wcb"),
+                      $(link).attr("data-cbc-hgb"),
+                      $(link).attr("data-cbc-mcv"),
+                      $(link).attr("data-cbc-mch"),
+                      $(link).attr("data-cbc-comment") ];
 
         return cbc_data;
     }

@@ -148,6 +148,38 @@ def delete_analysis(patient_id=None, analysis_type=None, analysis_id=None):
     return json.dumps(messages_list)
 
 
+""" Approve Analysis """
+@app.route('/analyzes/<string:analysis_type>/<int:analysis_id>/approve', methods=["POST"])
+@login_required
+@investigation_doctor_permission.require(http_exception=403)
+def approve_analysis(analysis_type=None, analysis_id=None):
+    messages_list = {}
+
+    submitted_data = request.get_json()
+
+    print submitted_data
+    cbc_analysis = CBCAnalysis.query.get(analysis_id)
+
+    if not cbc_analysis:
+        messages_list["error"] = []
+        messages_list["error"].append(MSG["NO_SUCH_CBC_ANALYSIS"] )
+
+        return json.dumps(messages_list)
+
+    cbc_analysis.approved = True
+    cbc_analysis.comment  = submitted_data["comment"]
+    cbc_analysis.comment_doctor = current_user.firstname.title() + " " + current_user.lastname.title()
+
+    if db_update_or_insert_analysis(cbc_analysis) == False:
+        messages_list["error"] = MSG["OPERATION_FAILED"]
+
+    else:
+        messages_list["success"] = MSG["CBC_ANALYSIS_APPROVED"]
+
+    return json.dumps(messages_list)
+
+
+
 def db_update_or_insert_analysis(cbc):
     cbc.updated_at = datetime.now()
 

@@ -6,6 +6,7 @@ from datetime import datetime
 from bcrypt import hashpw, gensalt
 
 from sqlalchemy.dialects.mysql import BIGINT
+from sqlalchemy.sql import expression
 
 
 
@@ -112,20 +113,22 @@ class Patient(db.Model):
 class CBCAnalysis(db.Model):
     __tablename__ = 'cbc_analysis'
 
-    id          = db.Column(db.Integer, primary_key=True)
-    WCB         = db.Column(db.String(45))
-    HGB         = db.Column(db.String(45))
-    MCV         = db.Column(db.String(45))
-    MCH         = db.Column(db.String(45))
-    comment     = db.Column(db.String(45))
-    created_at  = db.Column(db.DateTime)
-    updated_at  = db.Column(db.DateTime)
+    id              = db.Column(db.Integer, primary_key=True)
+    WCB             = db.Column(db.String(45))
+    HGB             = db.Column(db.String(45))
+    MCV             = db.Column(db.String(45))
+    MCH             = db.Column(db.String(45))
+    comment         = db.Column(db.String(200))
+    comment_doctor  = db.Column(db.String(45))
+    created_at      = db.Column(db.DateTime)
+    updated_at      = db.Column(db.DateTime)
+    approved        = db.Column(db.Boolean, server_default=expression.true(), default=True, nullable=False)
 
     # Join Relationship Map
     type_id     = db.Column(db.Integer, db.ForeignKey('analysis_types.id'))
     patient_id  = db.Column(db.Integer, db.ForeignKey('patients.id'))
 
-    def __init__(self, wcb, hgb, mcv, mch, type_id, patient_id, comment=None):
+    def __init__(self, wcb, hgb, mcv, mch, type_id, patient_id, comment=None, comment_doctor=None):
         self.WCB            = wcb
         self.HGB            = hgb
         self.MCV            = mcv
@@ -134,10 +137,11 @@ class CBCAnalysis(db.Model):
         self.updated_at     = datetime.now()
         self.type_id        = type_id
         self.patient_id     = patient_id
-        if comment == None or len(comment) == 0:
-            self.comment    = "---"
+        if comment_doctor == None or len(comment_doctor) == 0:
+            self.comment    = 'No Comment Yet.'
         else:
-            self.comment    = comment
+            self.comment        = comment
+            self.comment_doctor = comment_doctor
 
     def serialize(self):
         return {
@@ -147,7 +151,9 @@ class CBCAnalysis(db.Model):
             "MCV"       : self.MCV,
             "MCH"       : self.MCH,
             "comment"   : self.comment,
+            "comment_doctor": self.comment_doctor,
             "updated_at": self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
+            "approved"  : self.approved,
         }
 
 

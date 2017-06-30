@@ -15,6 +15,7 @@ MSG = {
     'CBC_ANALYSIS_ADD_DONE'         : 'The CBC Analysis has been added successfully!',
     'CBC_ANALYSIS_EDIT_DONE'        : 'The CBC Analysis has been edited successfully!',
     'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully!',
+    'CBC_ANALYSIS_APPROVED'         : 'The CBC Analysis has been approved!',
 
     # User Login Error Messages
     'NO_SUCH_USER'                  : 'Sorry, but there is no such user in our system.',
