@@ -40,7 +40,8 @@ $(document).ready(()=> {
 
       } else if ( messages.hasOwnProperty("success") ) {
         patient_row = $(`[data-patient-fullname="${fullname}"]`).parent().parent();
-        $(patient_row).remove()
+        // $(patient_row).remove();
+        location.reload();
 
         $("#confirm_delete_patient_modal").modal('hide');
       }
@@ -69,8 +70,8 @@ $(document).ready(()=> {
 
     let footer = `
       <form id='confirm_delete_patient_form' action="/patients/delete/${id}" method="POST">
-        <button type="submit" class="btn btn-danger">Yes, Sure</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-outline-info" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-outline-danger">Confirm</button>
       </form>
     `
     return create_modal(header, body, footer);

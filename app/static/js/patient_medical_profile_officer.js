@@ -561,8 +561,8 @@ $(document).ready(() => {
         `
 
         let modal_footer = `
-            <button type="button" name="cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button id="confirm_delete_cbc_button" type="submit" name="confirm" class="btn btn-danger" data-cbc-id="${analysis_id}">Confirm</button>
+            <button type="button" name="cancel" class="btn btn-outline-info" data-dismiss="modal">Cancel</button>
+            <button id="confirm_delete_cbc_button" type="submit" name="confirm" class="btn btn-outline-danger" data-cbc-id="${analysis_id}">Confirm</button>
         `
 
         let confirm_delete_cbc_modal = createModal(`confirm_delete_cbc${analysis_id}_modal`, modal_header, modal_body, modal_footer)
@@ -614,8 +614,8 @@ $(document).ready(() => {
         `
 
         let modal_footer = `
-            <button type="button" name="cancel" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button id="add_cbc_button" type="submit" name="add" class="btn btn-primary">Add</button>
+            <button type="button" name="cancel" class="btn btn-outline-info" data-dismiss="modal">Cancel</button>
+            <button id="add_cbc_button" type="submit" name="add" class="btn btn-outline-primary">Add</button>
         `
 
         let add_cbc_modal = createModal("add_cbc_modal", modal_header, modal_body, modal_footer);
@@ -670,8 +670,8 @@ $(document).ready(() => {
         `
 
         let modal_footer = `
-            <button id="cancel_save_cbc_button" type="button" name="cancel" data-dismiss="modal" class="btn btn-secondary">Cancel</button>
-            <button data-button-type="save" type="submit" name="save" class="btn btn-primary">Save</button>
+            <button id="cancel_save_cbc_button" type="button" name="cancel" data-dismiss="modal" class="btn btn-outline-info">Cancel</button>
+            <button data-button-type="save" type="submit" name="save" class="btn btn-outline-primary">Save</button>
         `
 
         let edit_cbc_modal = createModal("edit_cbc_modal", modal_header, modal_body, modal_footer)
