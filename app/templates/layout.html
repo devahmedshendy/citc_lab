@@ -30,14 +30,14 @@
                 <a class="nav-item nav-link {%- if '/' == request.path %} active {% endif %}" href="{{ url_for('index') }}">Home</a>
                 <a class="nav-item nav-link {%- if 'users' in request.path.split("/") %} active {% endif %}" href="{{ url_for('get_users') }}">Users</a>
                 <a class="nav-item nav-link {%- if 'patients' in request.path.split("/") %} active {% endif %}" href="{{ url_for('get_patients') }}">Patients</a>
-                <a class="nav-item nav-link {%- if 'analyzes' in request.path.split("/") %} active {% endif %}" href="#">Analyzes</a>
+                <a class="nav-item nav-link {%- if 'analyzes' in request.path.split("/") %} active {% endif %}" href="{{ url_for('get_analyzes') }}">Analyzes</a>
               </div>
 
             {% else %}
               <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link {%- if '/' == request.path %} active {% endif %}" href="{{ url_for('index') }}">Home <span class="sr-only">(current)</span></a>
                 <a class="nav-item nav-link {%- if 'patients' in request.path.split("/") %} active {% endif %}" href="{{ url_for('get_patients') }}">Patients</a>
-                <a class="nav-item nav-link {%- if 'analyzes' in request.path.split("/") %} active {% endif %}" href="#">Analyzes</a>
+                <a class="nav-item nav-link {%- if 'analyzes' in request.path.split("/") %} active {% endif %}" href="{{ url_for('get_analyzes') }}">Analyzes</a>
               </div>
 
             {% endif %}

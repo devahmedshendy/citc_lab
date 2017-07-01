@@ -122,7 +122,8 @@ class CBCAnalysis(db.Model):
     comment_doctor  = db.Column(db.String(45))
     created_at      = db.Column(db.DateTime)
     updated_at      = db.Column(db.DateTime)
-    approved        = db.Column(db.Boolean, server_default=expression.true(), default=True, nullable=False)
+    approved        = db.Column(db.Boolean, server_default=expression.false(), default=False, nullable=False)
+    approved_at     = db.Column(db.DateTime)
 
     # Join Relationship Map
     type_id     = db.Column(db.Integer, db.ForeignKey('analysis_types.id'))
@@ -155,6 +156,10 @@ class CBCAnalysis(db.Model):
             "updated_at": self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
             "approved"  : self.approved,
         }
+
+    def approve(self):
+        self.approved = True
+        self.approved_at = datetime.now()
 
 
 class AnalysisType(db.Model):

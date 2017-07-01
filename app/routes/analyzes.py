@@ -1,8 +1,9 @@
 from flask            import current_app, request, session, url_for, redirect, \
-                             render_template, flash
+                             render_template, flash, Response
 from flask_principal  import Permission, RoleNeed, Identity, identity_changed, \
                              identity_loaded, UserNeed, AnonymousIdentity
 from flask_login      import login_user, login_required, logout_user, current_user
+from flask_weasyprint import HTML, render_pdf
 
 from app import app, db, login_manager
 from app.models import *
@@ -22,6 +23,85 @@ investigation_doctor_permission = Permission(be_investigation_doctor)
 registration_officer_permission = Permission(be_registration_officer)
 
 
+
+""" Get Analyzes """
+@app.route('/analyzes', methods=['GET'])
+@app.route('/analyzes/page/<int:page>', methods=['GET'], endpoint='get_analyzes_by_page')
+@login_required
+def get_analyzes(page=1):
+    search_string = request.args.get('str')
+    print search_string
+
+    if search_string:
+        try:
+            int(search_string)
+            analyzes = CBCAnalysis.query \
+                        .join(Patient) \
+                        .order_by(CBCAnalysis.updated_at.desc()) \
+                        .add_columns(Patient.id.label("patient_id"),
+                                    Patient.personal_id,
+                                    Patient.name,
+                                    Patient.age,
+                                    Patient.gender,
+                                    CBCAnalysis.id,
+                                    CBCAnalysis.comment,
+                                    CBCAnalysis.comment_doctor,
+                                    CBCAnalysis.WCB,
+                                    CBCAnalysis.HGB,
+                                    CBCAnalysis.MCV,
+                                    CBCAnalysis.MCH,
+                                    CBCAnalysis.approved,
+                                    CBCAnalysis.updated_at) \
+                        .filter(Patient.personal_id.op('regexp')("^" + search_string + "")) \
+                        .paginate(page, PER_PAGE["ANALYZES"], False)
+
+        except ValueError:
+            print "is string"
+            analyzes = CBCAnalysis.query \
+                        .join(Patient) \
+                        .order_by(CBCAnalysis.updated_at.desc()) \
+                        .add_columns(Patient.id.label("patient_id"),
+                                    Patient.personal_id,
+                                    Patient.name,
+                                    Patient.age,
+                                    Patient.gender,
+                                    CBCAnalysis.id,
+                                    CBCAnalysis.comment,
+                                    CBCAnalysis.comment_doctor,
+                                    CBCAnalysis.WCB,
+                                    CBCAnalysis.HGB,
+                                    CBCAnalysis.MCV,
+                                    CBCAnalysis.MCH,
+                                    CBCAnalysis.approved,
+                                    CBCAnalysis.updated_at) \
+                        .filter(Patient.name.op('regexp')("^" + search_string + "")) \
+                        .paginate(page, PER_PAGE["ANALYZES"], False)
+
+    else:
+        analyzes = CBCAnalysis.query \
+                                .join(Patient) \
+                                .order_by(CBCAnalysis.updated_at.desc()) \
+                                .add_columns(Patient.id.label("patient_id"),
+                                            Patient.personal_id,
+                                            Patient.name,
+                                            Patient.age,
+                                            Patient.gender,
+                                            CBCAnalysis.id,
+                                            CBCAnalysis.comment,
+                                            CBCAnalysis.comment_doctor,
+                                            CBCAnalysis.WCB,
+                                            CBCAnalysis.HGB,
+                                            CBCAnalysis.MCV,
+                                            CBCAnalysis.MCH,
+                                            CBCAnalysis.approved,
+                                            CBCAnalysis.updated_at) \
+                                .paginate(page, PER_PAGE["ANALYZES"], False)
+
+    tempate = 'analyzes.html'
+    return render_template(tempate, analyzes=analyzes, page=page)
+
+
+
 """ Add Analysis """
 @app.route('/patients/<int:patient_id>/analyzes/<string:analysis_type>/new', methods=['POST'])
 @login_required
@@ -37,8 +117,9 @@ def add_analysis(patient_id=None, analysis_type=None):
                     cbc_submitted_data["MCV"],
                     cbc_submitted_data["MCH"],
                     ANALYSIS_TO_ID[analysis_type],
-                    patient_id,
-                    cbc_submitted_data["comment"])
+                    patient_id)
+
+    print cbc_analysis.approved
 
     cbc_analysis_form = CBCAnalysisForm(obj=cbc_analysis)
 
@@ -90,8 +171,6 @@ def edit_analysis(patient_id=None, analysis_type=None, analysis_id=None):
 
     cbc_analysis_form = CBCAnalysisForm()
 
-    print cbc_submitted_data["comment"]
-    cbc_analysis_form.comment.data = cbc_submitted_data["comment"]
     cbc_analysis_form.WCB.data = cbc_submitted_data["WCB"]
     cbc_analysis_form.HGB.data = cbc_submitted_data["HGB"]
     cbc_analysis_form.MCV.data = cbc_submitted_data["MCV"]
@@ -166,7 +245,7 @@ def approve_analysis(analysis_type=None, analysis_id=None):
 
         return json.dumps(messages_list)
 
-    cbc_analysis.approved = True
+    cbc_analysis.approve()
     cbc_analysis.comment  = submitted_data["comment"]
     cbc_analysis.comment_doctor = current_user.firstname.title() + " " + current_user.lastname.title()
 
@@ -177,6 +256,49 @@ def approve_analysis(analysis_type=None, analysis_id=None):
         messages_list["success"] = MSG["CBC_ANALYSIS_APPROVED"]
 
     return json.dumps(messages_list)
+
+
+""" Get Analysis As PDF """
+# This needs https://www.cairographics.org/download/ to be installed \
+# in the server hosting this website.
+@app.route('/patients/<int:patient_id>/analyzes/<string:analysis_type>/<int:analysis_id>/pdf', methods=["GET"])
+@login_required
+def get_analysis_as_pdf(patient_id=None, analysis_type=None, analysis_id=None):
+    messages_list = {}
+
+    if analysis_type == 'cbc':
+        cbc_analysis = CBCAnalysis.query \
+                            .join(Patient, Patient.id==CBCAnalysis.patient_id) \
+                            .filter(CBCAnalysis.id == analysis_id) \
+                            .add_columns(Patient.personal_id,
+                                        Patient.name,
+                                        Patient.age,
+                                        Patient.gender,
+                                        CBCAnalysis.id,
+                                        CBCAnalysis.comment,
+                                        CBCAnalysis.comment_doctor,
+                                        CBCAnalysis.WCB,
+                                        CBCAnalysis.HGB,
+                                        CBCAnalysis.MCV,
+                                        CBCAnalysis.MCH,
+                                        CBCAnalysis.created_at,
+                                        CBCAnalysis.approved,
+                                        CBCAnalysis.approved_at,
+                                        CBCAnalysis.updated_at).first()
+
+
+
+
+        if (not cbc_analysis):
+            messages_list["error"] = []
+            messages_list["error"].append(MSG["NO_SUCH_CBC_ANALYSIS"] )
+
+            return json.dumps(messages_list)
+
+
+        template = 'cbc_analysis_pdf.html'
+        html = render_template(template, cbc=cbc_analysis)
+        return render_pdf(HTML(string=html))
 
 
 
