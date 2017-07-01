@@ -17,10 +17,11 @@ MSG = {
     'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully!',
     'CBC_ANALYSIS_APPROVED'         : 'The CBC Analysis has been approved!',
 
-    # User Login Error Messages
+    # User Error Messages
     'NO_SUCH_USER'                  : 'Sorry, but there is no such user in our system.',
     'WRONG_CREDENTIALS'             : 'You provided wrong credentials, please try again.',
     'NO_LOGIN'                      : 'Please login first',
+    'WRONG_OLD_PASSWORD'            : 'You provided a wrong old password.',
 
     # User Registeration Error Messages
     'DUPLICATE_USER'                : 'This user is already registered.',

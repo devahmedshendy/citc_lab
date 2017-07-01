@@ -8,18 +8,34 @@
 
 {% block body_content %}
 <div class="row">
-  <div class="offset-2 col-8">
+  <div class="offset-2 col-6">
+    <form class="" action="{{ url_for('get_users_by_page', page=1) }}" method="GET">
+      <div class="input-group ">
+        <input type="text" name='str' class="form-control form-control-sm col-6" placeholder="Search by First Name..." value="{%- if request.args.get('str') %}{{ request.args.get('str') }}{% endif %}">
+
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-search" aria-hidden="true">Search</span>
+          </button>
+        </span>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-2">
     <nav aria-label="Page navigation example">
       <ul class="pagination pagination-sm justify-content-end">
         {% if users.has_prev %}
           <li class="page-item">
-            <a class="page-link" href="{{ url_for('get_users', page=users.prev_num) }}" aria-label="Previous">
+            <a class="page-link"
+                href="{% if request.args.get("str") %}
+                        {{ url_for('get_users_by_page', page=users.prev_num, str=request.args.get('str')) }}
+                      {% else %}
+                        {{ url_for('get_users_by_page', page=users.prev_num) }}
+                      {% endif %}
+                      "
+                aria-label="Previous">
               Previous
-            </a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="{{ url_for('get_users', page=users.prev_num)}}">
-              {{ users.prev_num}}
             </a>
           </li>
 
@@ -39,12 +55,16 @@
 
         {% if users.has_next %}
           <li class="page-item">
-            <a class="page-link" href="{{ url_for('get_users', page=users.next_num)}}">
-              {{ users.next_num}}
+            <a class="page-link"
+                href="{% if request.args.get("str") %}
+                        {{ url_for('get_users_by_page', page=users.next_num, str=request.args.get('str')) }}
+                      {% else %}
+                        {{ url_for('get_users_by_page', page=users.next_num) }}
+                      {% endif %}
+                      "
+                aria-label="Next">
+              Next
             </a>
-          </li>
-          <li class="page-item">
-            <a class="page-link" href="{{ url_for('get_users', page=users.next_num) }}" aria-label="Next">Next</a>
           </li>
 
         {% else %}
@@ -67,6 +87,7 @@
           <th>Full Name</th>
           <th>Role</th>
           <th>Created At</th>
+          <th>Updated At</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -75,7 +96,8 @@
         <tr>
           <td width="25%" data-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">{{ user.firstname.title() }} {{ user.lastname.title() }}</td>
           <td width="20%">{{ user.get_role_desc() }}</td>
-          <td width="10%">{{ user.updated_at.strftime("%b %d, %Y") }}</td>
+          <td width="10%">{{ user.created_at.strftime("%Y-%m-%d") }}</td>
+          <td width="10%">{{ user.updated_at.strftime("%Y-%m-%d") }}</td>
           <td width="10%">
             <a href="{{ url_for('edit_user', user_id=user.id ) }}">edit</a>
             |

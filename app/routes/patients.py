@@ -31,6 +31,8 @@ def get_patients(page=1):
     search_string = request.args.get('str')
 
     if search_string:
+        search_string = search_string.strip()
+
         try:
             int(search_string)
 
@@ -144,7 +146,7 @@ def edit_patient(patient_id=None):
 """ Display Patient Profile """
 @app.route('/patients/<int:patient_id>', methods=['GET', 'POST'])
 @login_required
-def display_patient(patient_id=None):
+def get_patient_personal_profile(patient_id=None):
     patient = Patient.query.get(patient_id)
 
     edit_patient_form = EditPatientForm(obj=patient)

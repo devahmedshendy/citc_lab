@@ -30,10 +30,12 @@ registration_officer_permission = Permission(be_registration_officer)
 @login_required
 def get_analyzes(page=1):
     search_string = request.args.get('str')
-    print search_string
 
     if search_string:
+        search_string = search_string.strip()
+
         try:
+
             int(search_string)
             analyzes = CBCAnalysis.query \
                         .join(Patient) \
@@ -51,12 +53,11 @@ def get_analyzes(page=1):
                                     CBCAnalysis.MCV,
                                     CBCAnalysis.MCH,
                                     CBCAnalysis.approved,
-                                    CBCAnalysis.updated_at) \
+                                    CBCAnalysis.approved_at) \
                         .filter(Patient.personal_id.op('regexp')("^" + search_string + "")) \
                         .paginate(page, PER_PAGE["ANALYZES"], False)
 
         except ValueError:
-            print "is string"
             analyzes = CBCAnalysis.query \
                         .join(Patient) \
                         .order_by(CBCAnalysis.updated_at.desc()) \
@@ -73,7 +74,7 @@ def get_analyzes(page=1):
                                     CBCAnalysis.MCV,
                                     CBCAnalysis.MCH,
                                     CBCAnalysis.approved,
-                                    CBCAnalysis.updated_at) \
+                                    CBCAnalysis.approved_at) \
                         .filter(Patient.name.op('regexp')("^" + search_string + "")) \
                         .paginate(page, PER_PAGE["ANALYZES"], False)
 
@@ -94,7 +95,7 @@ def get_analyzes(page=1):
                                             CBCAnalysis.MCV,
                                             CBCAnalysis.MCH,
                                             CBCAnalysis.approved,
-                                            CBCAnalysis.updated_at) \
+                                            CBCAnalysis.approved_at) \
                                 .paginate(page, PER_PAGE["ANALYZES"], False)
 
     tempate = 'analyzes.html'

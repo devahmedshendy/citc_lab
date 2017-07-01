@@ -87,32 +87,44 @@
         <tr>
           <th>ID</th>
           <th>Type</th>
-          <th>Patient Name</th>
-          <th>Patient ID</th>
+          <th>Patient</th>
+          <th></th>
           <th>Approved By</th>
-          <th>Updated At</th>
+          <th>Approved At</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
       {% for analysis in analyzes.items %}
-        <tr>
-          <td width="5%">{{ analysis.id }}</td>
-          <td width="5%">CBC</td>
+        <tr {% if not analysis.approved %} class="table-warning" {% endif %}>
+          <td width="2%">{{ analysis.id }}</td>
+          <td width="2%">CBC</td>
 
-          <td width="20%">
-            <a href="{{ url_for('medical_profile', patient_id=analysis.patient_id) }}">{{ analysis.name.title() }}</a>
+          <td width="15%">
+            <a href="{{ url_for('get_patient_personal_profile', patient_id=analysis.patient_id) }}">{{ analysis.name.title() }}</a>
           </td>
-          <td width="15%">{{ analysis.personal_id }}</td>
+
+          <td width="10%">
+            {{ analysis.personal_id }}
+          </td>
 
           {% if analysis.approved %}
-            <td width="15%">{{ analysis.comment_doctor.title() }}</td>
+            <td width="10%">{{ analysis.comment_doctor.title() }}</td>
           {% else %}
-            <td width="15%">Not Yet.</td>
+            <td width="10%"></td>
           {% endif %}
 
-          <td width="15%">{{ analysis.updated_at.strftime("%b %d, %Y") }}</td>
-          <td width="20%">
+          {% if analysis.approved %}
+            <td width="10%">{{ analysis.approved_at.strftime("%Y-%m-%d") }}</td>
+          {% else %}
+            <td width="10%"></td>
+          {% endif %}
+
+          <td width="25%">
+            <a href="{{ url_for('medical_profile', patient_id=analysis.patient_id) }}">
+              Medical Profile
+            </a>
+            |
             <a href="#"
                 data-cbc-id="{{analysis.id}}"
                 data-cbc-wcb="{{analysis.WCB}}"
@@ -129,7 +141,7 @@
                 {% endif %}
 
                 data-show-data-link>
-                Show Data
+                Analysis Data
             </a>
             |
             <a href="{{ url_for('get_analysis_as_pdf', patient_id=analysis.patient_id, analysis_type='cbc', analysis_id=analysis.id) }}"

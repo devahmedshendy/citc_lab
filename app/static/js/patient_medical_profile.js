@@ -174,10 +174,7 @@ $(document).ready(() => {
             <div class="row">
               <div class="col-12">
                 <div class="mb-1">
-                  <h6 data-cbc-doctor class="text-muted">Confirmed by Dr.Zizo.</h6>
-                    <p>
-                      <span data-cbc-comment>${analysis_data["comment"]}</span>
-                    </p>
+                  ${comment_element}
                 </div>
 
                 <table id="table-${analysis_data["id"]}" class="table table-sm">

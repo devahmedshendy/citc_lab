@@ -17,30 +17,39 @@ import json, jsonify
 # Needs - Roles
 be_superuser            = RoleNeed('superuser')
 be_users_admin          = RoleNeed('users_admin')
-be_investigation_doctor = RoleNeed('investigation_doctor')
-be_registration_officer = RoleNeed('registration_officer')
 
 # Permissions
 admins_permission               = Permission(be_users_admin, be_superuser)
-investigation_doctor_permission = Permission(be_investigation_doctor)
-registration_officer_permission = Permission(be_registration_officer)
 
 
 
 """ Get Users """
 @app.route('/users', methods=['GET'])
-@app.route('/users/page/<int:page>', methods=['GET'])
+@app.route('/users/page/<int:page>', methods=['GET'], endpoint='get_users_by_page')
 @login_required
 @admins_permission.require(http_exception=403)
 def get_users(page=1):
-    users = User.query.filter(or_(User.role_id.notin_([5]),
-                                  User.role_id.is_(None))) \
-                      .filter(User.id != current_user.id) \
-                      .order_by(desc("updated_at")) \
-                      .paginate(page, PER_PAGE["USERS"], False)
+    search_string = request.args.get('str')
 
-    tempate = 'users.html'
-    return render_template(tempate, users=users, page=page)
+    if search_string:
+        search_string = search_string.strip()
+        
+        users = User.query.filter(or_(User.role_id.notin_([5]),
+                                      User.role_id.is_(None))) \
+                          .filter(User.id != current_user.id) \
+                          .filter(User.firstname.op('regexp')("^" + search_string)) \
+                          .order_by(desc("updated_at")) \
+                          .paginate(page, PER_PAGE["USERS"], False)
+
+    else:
+        users = User.query.filter(or_(User.role_id.notin_([5]),
+                                      User.role_id.is_(None))) \
+                          .filter(User.id != current_user.id) \
+                          .order_by(desc("updated_at")) \
+                          .paginate(page, PER_PAGE["USERS"], False)
+
+    template = 'users.html'
+    return render_template(template, users=users, page=page)
 
 
 
