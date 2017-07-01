@@ -374,11 +374,81 @@ $(document).ready(() => {
 
     // Create Card for CBC Data
     function createCBCCard(patient_id, analysis_type, analysis_data) {
+        var comment_element = ''
+        var approved_element = ''
+        var cbc_edit_options = ''
+
+        if (analysis_data["approved"] == false) {
+            comment_element = `
+                <p class="text-muted">Not Approved Yet.</p>
+            `
+
+            cbc_edit_options = `
+                <div id="cbc_edit_options" class="col align-self-center text-center">
+                  <a href="#"
+                      data-cbc-edit
+                      data-cbc-id="${analysis_data["id"]}"
+                      data-cbc-comment="${analysis_data["comment"]}"
+                      data-cbc-wcb="${analysis_data["WCB"]}"
+                      data-cbc-hgb="${analysis_data["HGB"]}"
+                      data-cbc-mcv="${analysis_data["MCV"]}"
+                      data-cbc-mch="${analysis_data["MCH"]}"
+                      data-toggle="modal"
+                      data-target="#edit_cbc_modal">
+                      Edit
+                  </a>
+                  |
+                  <a href="#"
+                      data-cbc-delete
+                      data-cbc-id="${analysis_data["id"]}"
+                      data-cbc-comment="${analysis_data["comment"]}"
+                      data-cbc-wcb="${analysis_data["WCB"]}"
+                      data-cbc-hgb="${analysis_data["HGB"]}"
+                      data-cbc-mcv="${analysis_data["MCV"]}"
+                      data-cbc-mch="${analysis_data["MCH"]}"
+                      data-toggle="modal"
+                      data-target="#confirm_delete_cbc${analysis_data["id"]}_modal">
+                      Delete
+                  </a>
+                </div>
+            `
+
+        } else if (analysis_data["approved"] == true){
+            comment_element = `
+                <p data-cbc-doctor-name class="text-muted">Approved By Dr. <span style="font-weight: bold">${analysis_data["comment_doctor"]}</span>.</p>
+                <p>
+                  <span id="cbc${analysis_data["id"]}_comment" data-cbc-comment>${analysis_data["comment"]}</span>
+                </p>
+            `
+
+            approved_element = `
+                <span class="badge badge-success">Approved</span>
+            `
+
+            cbc_edit_options = `
+                <div id="cbc_edit_options" class="col align-self-center text-center">
+                    <a href="#"
+                        data-cbc-delete
+                        data-cbc-id="${analysis_data["id"]}"
+                        data-cbc-comment="${analysis_data["comment"]}"
+                        data-cbc-wcb="${analysis_data["WCB"]}"
+                        data-cbc-hgb="${analysis_data["HGB"]}"
+                        data-cbc-mcv="${analysis_data["MCV"]}"
+                        data-cbc-mch="${analysis_data["MCH"]}"
+                        data-toggle="modal"
+                        data-target="#confirm_delete_cbc${analysis_data["id"]}_modal">
+                        Delete
+                    </a>
+                </div>
+            `
+        }
+
         let card_header = `
             <div class="d-flex w-100 justify-content-between">
               <h6 class="mb-1">
                 CBC Analysis - <small>${analysis_data["id"]}</small>
               </h6>
+              ${approved_element}
               <small>${analysis_data["updated_at"]}</small>
             </div>
 
@@ -387,7 +457,7 @@ $(document).ready(() => {
                 Show Data
               </a>
 
-              <a href="/analyzes/patient_id/${patient_id}/cbc_id/${analysis_data["id"]}"
+              <a href="/patients/${patient_id}/analyzes/cbc/${analysis_data["id"]}/pdf"
                   class="mb-1 btn btn-link btn-sm"
                   target="_blank"
                   data-cbc-options-link="print_pdf">PDF
@@ -399,39 +469,14 @@ $(document).ready(() => {
             <div class="row">
               <div class="container">
                 <div class="row">
-                  <div id="cbc_edit_options" class="col align-self-center text-center">
-                    <a href="#"
-                        data-cbc-edit
-                        data-cbc-id="${analysis_data["id"]}"
-                        data-cbc-comment="${analysis_data["comment"]}"
-                        data-cbc-wcb="${analysis_data["WCB"]}"
-                        data-cbc-hgb="${analysis_data["HGB"]}"
-                        data-cbc-mcv="${analysis_data["MCV"]}"
-                        data-cbc-mch="${analysis_data["MCH"]}"
-                        data-toggle="modal"
-                        data-target="#edit_cbc_modal">Edit</a>
-                    |
-                    <a href="#"
-                        data-cbc-delete
-                        data-cbc-id="${analysis_data["id"]}"
-                        data-cbc-comment="${analysis_data["comment"]}"
-                        data-cbc-wcb="${analysis_data["WCB"]}"
-                        data-cbc-hgb="${analysis_data["HGB"]}"
-                        data-cbc-mcv="${analysis_data["MCV"]}"
-                        data-cbc-mch="${analysis_data["MCH"]}"
-                        data-toggle="modal"
-                        data-target="#confirm_delete_cbc${analysis_data["id"]}_modal">Delete</a>
-                  </div>
+                  ${cbc_edit_options}
                 </div>
               </div>
 
               <div class="col-12">
                 <hr>
                 <div class="mb-1">
-                  <h6 data-cbc-doctor class="text-muted">Confirmed by Dr.Zizo.</h6>
-                    <p>
-                      <span data-cbc-comment>${analysis_data["comment"]}</span>
-                    </p>
+                  ${comment_element}
                 </div>
 
                 <table id="table-${analysis_data["id"]}" class="table table-sm">
@@ -538,13 +583,6 @@ $(document).ready(() => {
 
             <form id="add_cbc_form" action="/patients/${patient_id}/analyzes/cbc/new" method="POST">
                 <div class="form-group row">
-                  <label class="col-12 col-form-label text-center" for="comment">Comment</label>
-                  <div class="offset-1 col-10">
-                    <textarea class="form-control" id="comment" name="comment" placeholder="Doctor comments..." rows="3"></textarea>
-                  </div>
-                </div>
-
-                <div class="form-group row">
                   <label class="offset-2 col-2 col-form-label" for="WCB">WCB</label>
                   <div class="col-6">
                     <input class="form-control" id="WCB" name="WCB" placeholder="White Blod Cells" type="text" >
@@ -600,14 +638,6 @@ $(document).ready(() => {
             <form id="edit_cbc_form"
               action="/patients/${patient_id}/analyzes/${analysis_type}/edit/${analysis_data["id"]}"
               method="POST">
-
-                <div class="form-group row">
-                  <label class="col-12 col-form-label text-center" for="comment">Comment</label>
-                  <div class="offset-1 col-10">
-                    <textarea class="form-control" id="comment" name="comment" placeholder="Doctor comments..." rows="3">${analysis_data["comment"] === '---' ? '' : analysis_data.comment}</textarea>
-                  </div>
-                </div>
-
                 <div class="form-group row">
                   <label class="offset-2 col-2 col-form-label" for="WCB">WCB</label>
                   <div class="col-6">

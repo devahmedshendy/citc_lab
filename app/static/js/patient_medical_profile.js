@@ -127,11 +127,33 @@ $(document).ready(() => {
 
     // CBC Card Functions
     function createCBCCard(patient_id, analysis_type, analysis_data) {
+        var comment_element = ''
+        var approved_element = ''
+
+        if (analysis_data["approved"] == false) {
+            comment_element = `
+              <p class="text-muted">Not Approved Yet.</p>
+            `
+
+        } else if (analysis_data["approved"] == true){
+            comment_element = `
+              <p data-cbc-doctor-name class="text-muted">Approved By Dr. <span style="font-weight: bold">${analysis_data["comment_doctor"]}</span>.</p>
+              <p>
+                <span id="cbc${analysis_data["id"]}_comment" data-cbc-comment>${analysis_data["comment"]}</span>
+              </p>
+            `
+
+            approved_element = `
+              <span class="badge badge-success">Approved</span>
+            `
+        }
+
         let card_header = `
             <div class="d-flex w-100 justify-content-between">
               <h6 class="mb-1">
                 CBC Analysis - <small>${analysis_data["id"]}</small>
               </h6>
+              ${approved_element}
               <small>${analysis_data["updated_at"]}</small>
             </div>
 
@@ -140,7 +162,7 @@ $(document).ready(() => {
                 Show Data
               </a>
 
-              <a href="/analyzes/patient_id/${patient_id}/cbc_id/${analysis_data["id"]}"
+              <a href="/patients/${patient_id}/analyzes/cbc/${analysis_data["id"]}/pdf"
                   class="mb-1 btn btn-link btn-sm"
                   target="_blank"
                   data-cbc-options-link="print_pdf">PDF

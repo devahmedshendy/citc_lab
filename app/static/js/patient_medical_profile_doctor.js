@@ -228,7 +228,7 @@ $(document).ready(() => {
                 Show Data
               </a>
 
-              <a href="/analyzes/patient_id/${patient_id}/cbc_id/${analysis_data["id"]}"
+              <a href="/patients/${patient_id}/analyzes/cbc/${analysis_data["id"]}/pdf"
                   class="mb-1 btn btn-link btn-sm"
                   target="_blank"
                   data-print-pdf-link="print_pdf">PDF
@@ -251,7 +251,7 @@ $(document).ready(() => {
                         data-cbc-mcv="${analysis_data["MCV"]}"
                         data-cbc-mch="${analysis_data["MCH"]}"
                         data-toggle="modal"
-                        data-target="#edit_comment_modal">Edit Comment</a>
+                        data-target="#edit_comment_modal">Write Comment</a>
                   </div>
                 </div>
               </div>
