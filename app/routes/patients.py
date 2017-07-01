@@ -25,14 +25,30 @@ registration_officer_permission = Permission(be_registration_officer)
 
 """ Get Patients """
 @app.route('/patients', methods=['GET'])
-@app.route('/patients/page/<int:page>', methods=['GET'])
+@app.route('/patients/page/<int:page>', methods=['GET'], endpoint='get_patients_by_page')
 @login_required
 def get_patients(page=1):
-    patients = Patient.query.order_by(desc("updated_at")) \
+    search_string = request.args.get('str')
+
+    if search_string:
+        try:
+            int(search_string)
+
+            patients = Patient.query.order_by(desc("updated_at")) \
+                            .filter(Patient.personal_id.op('regexp')("^" + search_string)) \
                             .paginate(page, PER_PAGE["PATIENTS"], False)
 
-    tempate = 'patients.html'
-    return render_template(tempate, patients=patients, page=page)
+        except ValueError:
+            patients = Patient.query.order_by(desc("updated_at")) \
+                            .filter(Patient.name.op('regexp')("^" + search_string)) \
+                            .paginate(page, PER_PAGE["PATIENTS"], False)
+
+    else:
+        patients = Patient.query.order_by(desc("updated_at")) \
+                    .paginate(page, PER_PAGE["PATIENTS"], False)
+
+    template = 'patients.html'
+    return render_template(template, patients=patients, page=page)
 
 
 
