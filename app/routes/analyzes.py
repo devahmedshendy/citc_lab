@@ -296,7 +296,7 @@ def get_analysis_as_pdf(patient_id=None, analysis_type=None, analysis_id=None):
             return json.dumps(messages_list)
 
 
-        template = 'cbc_analysis_pdf.html'
+        template = 'analysis_as_pdf.html'
         html = render_template(template, cbc=cbc_analysis)
         return render_pdf(HTML(string=html))
 

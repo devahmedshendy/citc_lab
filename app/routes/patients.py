@@ -149,7 +149,7 @@ def display_patient(patient_id=None):
 
     edit_patient_form = EditPatientForm(obj=patient)
 
-    tempate = 'patient.html'
+    tempate = 'patient_personal_profile.html'
     return render_template(tempate, edit_patient_form=edit_patient_form)
 
 

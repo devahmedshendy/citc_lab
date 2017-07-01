@@ -8,44 +8,13 @@
 
   <div class="row">
     <p id="search-label" class="offset-3 col-6 text-center">
-      Search for Patient <strong>|</strong> <a href="{{ url_for('new_patient') }}">Add New Patient</a>
+      Home Page for {{current_user.get_role_desc()}}
     </p>
-  </div>
-
-  <div class="row">
-    <div class="offset-3 col-6">
-       <!-- action='' method='' -->
-      <!-- <form role="search"> -->
-        <div class="input-group">
-          <input id='search-box' type="text" class="form-control" placeholder="Search by Personal ID...">
-
-          <span class="input-group-btn">
-            <button id="search-button" class="btn btn-default">
-              <span class="glyphicon glyphicon-search" aria-hidden="true">Search</span>
-            </button>
-          </span>
-        </div>
-      <!-- </form> -->
-    </div>
   </div>
 {% endblock %}
 
 {% block body_content %}
-<div id="search-container">
   <div class="row">
-    <div class="offset-3 col-6">
-      <ul id="search-result" class="list-group">
-      </ul>
-    </div>
-
-    <br>
+    <p class="offset-3 col-6 text-center">No Implementation Yet.</p>
   </div>
-
-</div>
-{% endblock %}
-
-{% block page_js %}
-  {% assets output='gen/min.js', "js/index.js" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-  {% endassets %}
 {% endblock %}

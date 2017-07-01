@@ -22,5 +22,5 @@ assets = Environment(app)
 principals = Principal(app)
 
 
-from app import views, models
-from app.routes import users, patients, analyzes
+from app import models
+from app.routes import main, users, patients, analyzes
