@@ -12,6 +12,8 @@ app.config.update(app_config)
 
 db  = SQLAlchemy(app)
 
+db.__init__(app)
+
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
