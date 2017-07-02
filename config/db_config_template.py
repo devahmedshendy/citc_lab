@@ -23,11 +23,9 @@ CLEARDB     = {  "DRIVER"  : 'mysql+mysqldb',
                  "HOST"    : 'us-cdbr-iron-east-03.cleardb.net',
                  "USER"    : 'bdbdf83b56d5d1',
                  "PASSWD"  : 'ae7444b9',
-                 "OPTIONS" : 'reconnect=true' }
-CLEARDB_URI = '{}://{}:{}@{}/{}?{}'.format(CLEARDB["DRIVER"],
+CLEARDB_URI = '{}://{}:{}@{}/{}'.format(CLEARDB["DRIVER"],
                                 CLEARDB["USER"], CLEARDB["PASSWD"],
-                                CLEARDB["HOST"], CLEARDB["NAME"],
-                                CLEARDB["OPTIONS"])
+                                CLEARDB["HOST"], CLEARDB["NAME"])
 
 
 mysql_settings  = Database(value=MYSQL_DB, type='mysql', uri=MYSQL_URI)
