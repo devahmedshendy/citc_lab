@@ -1,12 +1,12 @@
 from app import app
+from os import environ
 
-import os
 
-if os.environ["PORT"]:
-  port = int(os.environ["PORT"])
 
-else:
-  port = 5000
+port = 5000
+
+if "PORT" in environ:
+  port = int(environ["PORT"])
 
 app.debug = True
 app.run(host='0.0.0.0', port=port)
