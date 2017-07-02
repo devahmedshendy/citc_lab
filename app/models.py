@@ -112,7 +112,6 @@ class CBCAnalysis(db.Model):
     approved_at     = db.Column(db.DateTime)
 
     # Join Relationship Map
-    type_id     = db.Column(db.Integer, db.ForeignKey('analysis_types.id'))
     patient_id  = db.Column(db.Integer, db.ForeignKey('patients.id'))
 
     def __init__(self, wcb, hgb, mcv, mch, type_id, patient_id, comment=None, comment_doctor=None):
@@ -146,14 +145,3 @@ class CBCAnalysis(db.Model):
     def approve(self):
         self.approved = True
         self.approved_at = datetime.now()
-
-
-class AnalysisType(db.Model):
-    __tablename__ = 'analysis_types'
-
-    id          = db.Column(db.Integer, primary_key=True)
-    type        = db.Column(db.String(45))
-    cbc_analyzes    = db.relationship('CBCAnalysis', \
-                                      backref='analysis_type', \
-                                      lazy='dynamic', \
-                                      cascade='all, delete-orphan')
