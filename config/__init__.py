@@ -11,6 +11,6 @@ else:
     from db_config_template import mysql_settings, sqlite_settings
 
 
-db_settings = mysql_settings
+db_settings = sqlite_settings
 app_config["DB_TYPE"] = db_settings.type
 app_config["SQLALCHEMY_DATABASE_URI"] = db_settings.uri
