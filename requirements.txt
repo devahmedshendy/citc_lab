@@ -1,3 +1,4 @@
+blinker==1.4
 cairocffi==0.8.0
 CairoSVG==1.0.22
 cffi==1.10.0
@@ -9,6 +10,7 @@ Flask==0.12.2
 Flask-Assets==0.12
 Flask-CDN==1.5.3
 Flask-Login==0.4.0
+Flask-Principal==0.4.0
 Flask-SQLAlchemy==2.2
 Flask-WeasyPrint==0.5
 Flask-WTF==0.14.2
