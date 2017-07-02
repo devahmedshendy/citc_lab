@@ -20,12 +20,14 @@ from werkzeug.exceptions import HTTPException
 
 @login_manager.user_loader
 def load_user(id):
-    try:
-        user = User.query.get(int(id))
-        return user
-    except:
-        db.session.rollback()
-        return None
+    user = None
+    while not user:
+        try:
+            user = User.query.get(int(id))
+        except:
+            db.session.rollback()
+
+    return user
 
 
 @identity_loaded.connect_via(app)
