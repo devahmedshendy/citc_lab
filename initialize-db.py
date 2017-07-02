@@ -4,6 +4,7 @@ from os.path import isfile
 from app import db as application_db
 from app import app
 from app.models import *
+from app.constants import *
 
 from config import db_settings
 
@@ -17,8 +18,10 @@ ROOT     = { "firstname": "Super",
              "lastname": "User",
              "username": "superuser",
              "role_code": "root" }
+
 ROOT_ROLE = {
-    "name" : "Super User",
+    "id"   : ROLES["root"][0],
+    "name" : ROLES["root"][1],
     "code" : "root"
 }
 
@@ -26,8 +29,10 @@ ADMIN    = { "firstname": "Admin",
              "lastname": "User",
              "username": "admin",
              "role_code": "admin" }
+
 ADMIN_ROLE = {
-    "name" : "Users Admin",
+    "id"   : ROLES["admin"][0],
+    "name" : ROLES["admin"][1],
     "code" : "admin"
 }
 
@@ -35,8 +40,10 @@ DOCTOR   = { "firstname": "Investigation",
              "lastname": "Doctor",
              "username": "doctor",
              "role_code": "doctor" }
+
 DOCTOR_ROLE = {
-    "name" : "Investigation Doctor",
+    "id"   : ROLES["doctor"][0],
+    "name" : ROLES["doctor"][1],
     "code" : "doctor"
 }
 
@@ -44,8 +51,10 @@ EMPLOYEE = { "firstname": "Registeration",
              "lastname": "Employee",
              "username": "emp",
              "role_code": "officer" }
+
 OFFICER_ROLE = {
-    "name" : "Registration Officer",
+    "id"   : ROLES["officer"][0],
+    "name" : ROLES["officer"][1],
     "code" : "officer"
 }
 
@@ -144,7 +153,7 @@ def create_default_user(db, firstname, lastname, username, role_code):
         user.username  = username
         user.hash_password(username)
 
-        user.role = Role.query.filter(Role.code == role_code).first()
+        user.role_id = ROLES[role_code][0]
 
         db.session.add(user)
         db.session.commit()
@@ -158,11 +167,12 @@ def create_default_user(db, firstname, lastname, username, role_code):
         print "{} {}".format(STEP_ERR, e.message)
 
 
-def create_default_role(db, name, code):
+def create_default_role(db, id, name, code):
     print "{} Create default '{}' role...".format(STEP_INFO, code)
 
     try:
         role = Role()
+        role.id = id
         role.name = name
         role.code  = code
 

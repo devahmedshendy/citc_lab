@@ -55,10 +55,9 @@ ANALYSIS_TO_ID = {
     'cbc'       : 1,
 }
 
-
-ROLE_NAME_TO_CODE = {
-    'Super User'            : 'root',
-    'Users Admin'           : 'admin',
-    'Investigation Doctor'  : 'doctor',
-    'Registration Officer'  : 'officer',
+ROLES = {
+    'root'      :   ("10", 'Super User'),
+    'admin'     :   ("20", 'Users Admin'),
+    'doctor'    :   ("30", 'Investigation Doctor'),
+    'officer'   :   ("40", 'Registration Officer')
 }

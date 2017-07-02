@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 
 from app import db
 from app.models import User
+from app.constants import *
 
 
 
@@ -16,7 +17,7 @@ class LoginForm(FlaskForm):
 
 
 
-class AddUserForm(FlaskForm):
+class AddUserFormForRoot(FlaskForm):
     firstname = StringField(u'Firstname',
                         [InputRequired("Please enter user's firstname.")],
                         render_kw={"placeholder": "Firstname",
@@ -49,11 +50,50 @@ class AddUserForm(FlaskForm):
                             [InputRequired("Please select a role.")],
                             choices=[
                                 ("", "Select Role"),
-                                ("1", "Users Admin"),
-                                ("2", "Investigation Doctor"),
-                                ("3", "Registration Officer")
-                            ],
+                                ROLES["admin"],
+                                ROLES["doctor"],
+                                ROLES["officer"] ],
                             render_kw={"class": "form-control"})
+
+
+
+class AddUserFormForAdmin(FlaskForm):
+    firstname = StringField(u'Firstname',
+                        [InputRequired("Please enter user's firstname.")],
+                        render_kw={"placeholder": "Firstname",
+                                    "class": "form-control"})
+
+    lastname  = StringField(u'Lastname',
+                        [InputRequired("Please enter user's lastname.")],
+                        render_kw={"placeholder": "Lastname",
+                                    "class": "form-control"})
+
+    username  = StringField(u'Username',
+                        [InputRequired("Please enter user's username.")],
+                        render_kw={"placeholder": "Username",
+                                    "class": "form-control"})
+
+    password         = PasswordField(u'Password',
+                         [InputRequired("Please enter user's password.")],
+                         render_kw={"placeholder": "Password",
+                                     "class": "form-control"})
+
+    password_confirm  = PasswordField(u'Password Confirmation',
+                            [
+                                InputRequired("Please enter password confirmation."),
+                                EqualTo('password_confirm', message="Passwords must match.")
+                            ],
+                            render_kw={"placeholder": "Password Confirmation",
+                                        "class": "form-control"})
+
+    role_id      = SelectField(u'Role',
+                            [InputRequired("Please select a role.")],
+                            choices=[
+                                ("", "Select Role"),
+                                ROLES["doctor"],
+                                ROLES["officer"], ],
+                            render_kw={"class": "form-control"})
+
 
 
 
@@ -76,9 +116,8 @@ class EditUserFormForAdmin(FlaskForm):
     role_id      = SelectField(u'Role',
                             choices=[
                                 ("", "Select Role"),
-                                ("doctor", "Investigation Doctor"),
-                                ("officer", "Registration Officer")
-                            ],
+                                ROLES["doctor"],
+                                ROLES["officer"] ],
                             render_kw={"class": "form-control"})
 
 
@@ -102,10 +141,9 @@ class EditUserFormForRoot(FlaskForm):
     role_id      = SelectField(u'Role',
                             choices=[
                                 ("", "Select Role"),
-                                ("admin", "Users Admin"),
-                                ("doctor", "Investigation Doctor"),
-                                ("officer", "Registration Officer")
-                            ],
+                                ROLES["admin"],
+                                ROLES["doctor"],
+                                ROLES["officer"] ],
                             render_kw={"class": "form-control"})
 
 

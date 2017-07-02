@@ -30,7 +30,7 @@ def on_identity_loaded(sender, identity):
         identity.provides.add(UserNeed(current_user.id))
 
     if hasattr(current_user, 'role_id'):
-        identity.provides.add(RoleNeed(current_user.role.code))
+        identity.provides.add(RoleNeed(current_user.role.name))
 
 @app.errorhandler(403)
 def handle_403(e):

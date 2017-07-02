@@ -51,6 +51,12 @@ def get_users(page=1):
 @login_required
 @root_admin_permission.require(http_exception=403)
 def add_user():
+    if current_user.role.code == "root":
+        AddUserForm = AddUserFormForRoot
+
+    elif current_user.role.code == "admin":
+        AddUserForm = AddUserFormForAdmin
+
     if request.method == "GET":
         add_user_form = AddUserForm()
 
@@ -308,7 +314,6 @@ def edit_account_settings():
 @login_required
 @root_admin_permission.require(http_exception=403)
 def delete_user(user_id=None):
-    print user_id
     user = User.query.get(user_id)
     messages_list = {}
 

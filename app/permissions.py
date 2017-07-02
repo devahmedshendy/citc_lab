@@ -4,10 +4,10 @@ from app.constants import *
 
 
 # Roles Needed
-root_role    = RoleNeed(ROLE_NAME_TO_CODE["Super User"])
-admin_role   = RoleNeed(ROLE_NAME_TO_CODE["Users Admin"])
-doctor_role  = RoleNeed(ROLE_NAME_TO_CODE["Investigation Doctor"])
-officer_role = RoleNeed(ROLE_NAME_TO_CODE["Registration Officer"])
+root_role    = RoleNeed(ROLES["root"][1])
+admin_role   = RoleNeed(ROLES["admin"][1])
+doctor_role  = RoleNeed(ROLES["doctor"][1])
+officer_role = RoleNeed(ROLES["officer"][1])
 
 # Permissions
 doctor_permission = Permission(doctor_role)
