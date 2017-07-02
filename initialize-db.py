@@ -17,46 +17,30 @@ from config import db_settings
 ROOT     = { "firstname": "Super",
              "lastname": "User",
              "username": "superuser",
-             "role_code": "root" }
+             "role_name": "root" }
 
-ROOT_ROLE = {
-    "id"   : ROLES["root"][0],
-    "name" : ROLES["root"][1],
-    "code" : "root"
-}
+ROOT_ROLE = ROLES["root"]
 
-ADMIN    = { "firstname": "Admin",
-             "lastname": "User",
+ADMIN    = { "firstname": "Users",
+             "lastname": "Admin",
              "username": "admin",
-             "role_code": "admin" }
+             "role_name": "admin" }
 
-ADMIN_ROLE = {
-    "id"   : ROLES["admin"][0],
-    "name" : ROLES["admin"][1],
-    "code" : "admin"
-}
+ADMIN_ROLE = ROLES["admin"]
 
 DOCTOR   = { "firstname": "Investigation",
              "lastname": "Doctor",
              "username": "doctor",
-             "role_code": "doctor" }
+             "role_name": "doctor" }
 
-DOCTOR_ROLE = {
-    "id"   : ROLES["doctor"][0],
-    "name" : ROLES["doctor"][1],
-    "code" : "doctor"
-}
+DOCTOR_ROLE = ROLES["doctor"]
 
-EMPLOYEE = { "firstname": "Registeration",
-             "lastname": "Employee",
-             "username": "emp",
-             "role_code": "officer" }
+EMPLOYEE = { "firstname": "Registration",
+             "lastname": "Officer",
+             "username": "officer",
+             "role_name": "officer" }
 
-OFFICER_ROLE = {
-    "id"   : ROLES["officer"][0],
-    "name" : ROLES["officer"][1],
-    "code" : "officer"
-}
+OFFICER_ROLE = ROLES["officer"]
 
 # Theme Settings
 STEP_INFO   = ">"
@@ -143,7 +127,7 @@ def create_default_tables(db, db_settings):
         exit(1)
 
 
-def create_default_user(db, firstname, lastname, username, role_code):
+def create_default_user(db, firstname, lastname, username, role_name):
     print "{} Create default '{}' user...".format(STEP_INFO, username)
 
     try:
@@ -153,7 +137,7 @@ def create_default_user(db, firstname, lastname, username, role_code):
         user.username  = username
         user.hash_password(username)
 
-        user.role_id = ROLES[role_code][0]
+        user.role_id = ROLES[role_name][0]
 
         db.session.add(user)
         db.session.commit()
@@ -167,26 +151,23 @@ def create_default_user(db, firstname, lastname, username, role_code):
         print "{} {}".format(STEP_ERR, e.message)
 
 
-def create_default_role(db, id, name, code):
-    print "{} Create default '{}' role...".format(STEP_INFO, code)
+def create_default_role(db, id, name):
+    print "{} Create default '{}' role...".format(STEP_INFO, name)
 
     try:
         role = Role()
         role.id = id
         role.name = name
-        role.code  = code
 
         db.session.add(role)
         db.session.commit()
 
         print "  Role Name: {}".format(name)
-        print "  Role Code: {}".format(code)
         print STEP_DONE
 
     except Exception as e:
         db.session.rollback()
         print "{} {}".format(STEP_ERR, e.message)
-
 
 #----
 #
@@ -196,10 +177,10 @@ def create_default_role(db, id, name, code):
 setup_database(db_settings)
 create_default_tables(application_db, db_settings)
 
-create_default_role(application_db, **ROOT_ROLE)
-create_default_role(application_db, **ADMIN_ROLE)
-create_default_role(application_db, **DOCTOR_ROLE)
-create_default_role(application_db, **OFFICER_ROLE)
+create_default_role(application_db, *ROOT_ROLE)
+create_default_role(application_db, *ADMIN_ROLE)
+create_default_role(application_db, *DOCTOR_ROLE)
+create_default_role(application_db, *OFFICER_ROLE)
 
 create_default_user(application_db, **ROOT)
 create_default_user(application_db, **ADMIN)

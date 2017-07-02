@@ -96,7 +96,7 @@
       </thead>
       <tbody>
       {% for analysis in analyzes.items %}
-        <tr {% if not analysis.approved %} class="table-warning" {% endif %}>
+        <tr {% if not analysis.approved %} class="table-danger" {% endif %}>
           <td width="2%">{{ analysis.id }}</td>
           <td width="2%">CBC</td>
 

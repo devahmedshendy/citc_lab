@@ -30,7 +30,7 @@ def get_users(page=1):
         users = User.query.filter(User.id != current_user.id) \
                           .filter(User.username != 'superuser') \
                           .filter(User.role_id != current_user.role_id) \
-                          .filter(User.firstname.op('regexp')("^" + search_string)) \
+                          .filter(User.firstname.like(search_string + "%")) \
                           .order_by(desc("updated_at")) \
                           .paginate(page, PER_PAGE["USERS"], False)
 

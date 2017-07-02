@@ -29,12 +29,12 @@ def get_patients(page=1):
             int(search_string)
 
             patients = Patient.query.order_by(desc("updated_at")) \
-                            .filter(Patient.personal_id.op('regexp')("^" + search_string)) \
+                            .filter(Patient.personal_id.like(search_string + "%")) \
                             .paginate(page, PER_PAGE["PATIENTS"], False)
 
         except ValueError:
             patients = Patient.query.order_by(desc("updated_at")) \
-                            .filter(Patient.name.op('regexp')("^" + search_string)) \
+                            .filter(Patient.name.like(search_string + "%")) \
                             .paginate(page, PER_PAGE["PATIENTS"], False)
 
     else:

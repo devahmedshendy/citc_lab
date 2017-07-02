@@ -47,7 +47,7 @@ def get_analyzes(page=1):
                                     CBCAnalysis.MCH,
                                     CBCAnalysis.approved,
                                     CBCAnalysis.approved_at) \
-                        .filter(Patient.personal_id.op('regexp')("^" + search_string + "")) \
+                        .filter(Patient.personal_id.like(search_string + "%")) \
                         .paginate(page, PER_PAGE["ANALYZES"], False)
 
         except ValueError:
@@ -68,7 +68,7 @@ def get_analyzes(page=1):
                                     CBCAnalysis.MCH,
                                     CBCAnalysis.approved,
                                     CBCAnalysis.approved_at) \
-                        .filter(Patient.name.op('regexp')("^" + search_string + "")) \
+                        .filter(Patient.name.like(search_string + "%")) \
                         .paginate(page, PER_PAGE["ANALYZES"], False)
 
     else:

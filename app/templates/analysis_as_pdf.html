@@ -38,7 +38,7 @@
                     <td>{{cbc.personal_id}}</td>
 
                     <td class="font-weight-normal">Created At</td>
-                    <td>{{cbc.created_at}}</td>
+                    <td>{{cbc.created_at.strftime("%Y-%m-%d")}}</td>
                   </tr>
                   <tr>
                     <td class="font-weight-normal">Patient Gender</td>
@@ -58,7 +58,7 @@
 
                     <td class="font-weight-normal">Approved At</td>
                     {% if cbc.approved %}
-                      <td>{{cbc.approved_at}}</td>
+                      <td>{{cbc.approved_at.strftime("%Y-%m-%d")}}</td>
 
                     {% else %}
                       <td></td>

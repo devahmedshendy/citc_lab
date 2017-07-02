@@ -380,8 +380,8 @@ $(document).ready(() => {
         `
 
         let modal_footer = `
-            <button type="button" name="cancel" class="btn btn-outline-info" data-dismiss="modal">Cancel</button>
-            <button id="approve_comment_button" type="submit" name="approve" class="btn btn-outline-primary">Approve</button>
+            <button id="approve_comment_button" type="submit" name="approve" class="btn btn-outline-primary btn-block">Approve</button>
+            <button type="button" name="cancel" class="btn btn-outline-info btn-block" data-dismiss="modal">Cancel</button>
         `
 
         let edit_comment_modal = createModal("edit_comment_modal", modal_header, modal_body, modal_footer);

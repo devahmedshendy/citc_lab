@@ -1,7 +1,7 @@
 {% include 'alert.html' %}
 
 
-{% if current_user.role.name.lower() in ["root", "admin", "doctor"] %}
+{% if current_user.role.name in ["root", "admin", "doctor"] %}
   <div class="row">
     <p id="search-label" class="offset-3 col-6 text-center">
       List of Patients
