@@ -186,7 +186,6 @@ def get_patient_analyzes(patient_id=None):
 @login_required
 @officer_permission.require(http_exception=403)
 def delete_patient(patient_id=None):
-    print patient_id
     patient = Patient.query.get(patient_id)
     messages_list = {}
 

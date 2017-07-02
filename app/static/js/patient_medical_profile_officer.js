@@ -40,13 +40,6 @@ $(document).ready(() => {
 
     // CBC Add Modal -> Add Button Clicked
     $(document).on("click", "#add_cbc_button", (event) => {
-        $("#add_cbc_form").submit();
-    });
-
-    // CBC Add Modal -> Form Submitted
-    $(document).on("submit", "#add_cbc_form", (event) => {
-        event.preventDefault();
-
         var submitted_data       = $(event.target).serialize();
         var submitted_data_array = $(event.target).serializeArray();
         var add_cbc_form         = $("#add_cbc_form");
@@ -87,7 +80,7 @@ $(document).ready(() => {
         })
         .fail((err) => {
             console.log(err);
-        });;
+        });
     });
 
     //-----------------------------------------
@@ -108,16 +101,8 @@ $(document).ready(() => {
 
     // CBC Edit Modal -> Save Button Clicked
     $(document).on('click', "[data-button-type=save]", (event)=> {
-      $("#edit_cbc_form").submit();
-    });
-
-    // CBC Edit Modal -> Form Submitted
-    $(document).on('submit', "#edit_cbc_form", (event) => {
-        event.preventDefault();
-
-        var edit_cbc_form  = $(event.target);
+        var edit_cbc_form  = $("#edit_cbc_form");
         var action_url = edit_cbc_form.attr("action");
-        cbc.id         = action_url.slice(-2);
 
         var edit_cbc_link = $(`#collapse${cbc["id"]} [data-cbc-edit]`);
 
@@ -127,7 +112,6 @@ $(document).ready(() => {
             "comment" : cbc.comment,  "WCB"     : cbc.wcb,
             "HGB"     : cbc.hgb,      "MCV"     : cbc.mcv,
             "MCH"     : cbc.mch });
-
 
         // Send CBC data to save into database
         $.ajax({
@@ -173,8 +157,6 @@ $(document).ready(() => {
         var confirm_delete_cbc_modal = createModalToConfirmCBCDelete(cbc_id);
 
         $(confirm_delete_cbc_modal).modal('show');
-
-        console.log('data-cbc-delete');
     });
 
     // Confirm Delete CBC Modal -> Form Submitted
@@ -209,7 +191,6 @@ $(document).ready(() => {
         })
         .fail((err) => {
             console.log(err);
-
         });
 
     });

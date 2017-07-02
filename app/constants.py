@@ -56,8 +56,8 @@ ANALYSIS_TO_ID = {
 }
 
 ROLES = {
-    'root'      :   ("10", 'Super User'),
-    'admin'     :   ("20", 'Users Admin'),
-    'doctor'    :   ("30", 'Investigation Doctor'),
-    'officer'   :   ("40", 'Registration Officer')
+    'root'      :   ("10", 'root'),
+    'admin'     :   ("20", 'admin'),
+    'doctor'    :   ("30", 'doctor'),
+    'officer'   :   ("40", 'officer')
 }

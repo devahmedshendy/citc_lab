@@ -59,7 +59,7 @@
     <div id="analyzes_container" class="col-6">
       <div class="row justify-content-center">
         <strong>Patient Analyzes</strong>
-        {% if current_user.role.code == "officer" %}
+        {% if current_user.role.name.lower() == "officer" %}
           <div class="btn-group">
             <button type="button" class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Add
@@ -90,14 +90,14 @@
 
 
 {% block page_js %}
-  {% if current_user.role.code == "officer" %}
+  {% if current_user.role.name.lower() == "officer" %}
     {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile_officer.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
 
 
-  {% elif current_user.role.code == "doctor" %}
+  {% elif current_user.role.name.lower() == "doctor" %}
     {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile_doctor.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}

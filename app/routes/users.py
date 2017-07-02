@@ -20,7 +20,7 @@ import json, jsonify
 @app.route('/users', methods=['GET'])
 @app.route('/users/page/<int:page>', methods=['GET'], endpoint='get_users_by_page')
 @login_required
-@root_admin_permission.require(http_exception=403)
+@administrators_permission.require(http_exception=403)
 def get_users(page=1):
     search_string = request.args.get('str')
 
@@ -49,12 +49,12 @@ def get_users(page=1):
 """ Add User """
 @app.route('/users/new', methods=['GET', 'POST'])
 @login_required
-@root_admin_permission.require(http_exception=403)
+@administrators_permission.require(http_exception=403)
 def add_user():
-    if current_user.role.code == "root":
+    if current_user.role.name.lower() == "root":
         AddUserForm = AddUserFormForRoot
 
-    elif current_user.role.code == "admin":
+    elif current_user.role.name.lower() == "admin":
         AddUserForm = AddUserFormForAdmin
 
     if request.method == "GET":
@@ -96,7 +96,7 @@ def add_user():
 """ Edit User """
 @app.route('/users/edit/<int:user_id>', methods=['GET', 'POST'])
 @login_required
-@root_admin_permission.require(http_exception=403)
+@administrators_permission.require(http_exception=403)
 def edit_user(user_id=None):
     if (user_id == current_user.id):
         url = url_for('edit_account_settings')
@@ -105,10 +105,10 @@ def edit_user(user_id=None):
 
     user = User.query.get(user_id)
 
-    if current_user.role.code == "root":
+    if current_user.role.name.lower() == "root":
         EditUserForm = EditUserFormForRoot
 
-    elif current_user.role.code == "admin":
+    elif current_user.role.name.lower() == "admin":
         EditUserForm = EditUserFormForAdmin
 
 
@@ -312,12 +312,12 @@ def edit_account_settings():
 """ Delete User """
 @app.route('/users/delete/<int:user_id>', methods=['POST'])
 @login_required
-@root_admin_permission.require(http_exception=403)
+@administrators_permission.require(http_exception=403)
 def delete_user(user_id=None):
     user = User.query.get(user_id)
     messages_list = {}
 
-    if user.role.code == current_user.role.code:
+    if user.role.name.lower() == current_user.role.name.lower():
         messages_list["error"] = MSG["USER_DELETE_DENIED"]
 
     elif db_delete_user(user) == False:

@@ -9,18 +9,11 @@ from app import app, db, login_manager
 from app.models import *
 from app.forms import *
 from app.constants import *
+from app.permissions import *
 
 from datetime import datetime
 from sqlalchemy import desc, or_, and_
 import json, jsonify
-
-# Needs - Roles
-be_investigation_doctor = RoleNeed('investigation_doctor')
-be_registration_officer = RoleNeed('registration_officer')
-
-# Permissions
-doctor_permission = Permission(be_investigation_doctor)
-officer_permission = Permission(be_registration_officer)
 
 
 
@@ -120,12 +113,9 @@ def add_analysis(patient_id=None, analysis_type=None):
                     ANALYSIS_TO_ID[analysis_type],
                     patient_id)
 
-    print cbc_analysis.approved
-
     cbc_analysis_form = CBCAnalysisForm(obj=cbc_analysis)
 
     if cbc_analysis_form.validate_on_submit() == False:
-        print "validation error"
         messages_list["error"] = []
 
         for field, errors in cbc_analysis_form.errors.items():
