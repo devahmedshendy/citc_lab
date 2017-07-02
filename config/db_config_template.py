@@ -1,34 +1,17 @@
 from collections import namedtuple
+from os import environ
 
-Database = namedtuple('Database', "value type uri")
+Database = namedtuple('Database', "type uri")
 
 # MySQL Database Information
-MYSQL_DB  = { "DRIVER"  : 'mysql+mysqldb',
-              "NAME"    : 'citc_lab',
-              "HOST"    : 'localhost',
-              "USER"    : 'root',
-              "PASSWD"  : 'root' }
-MYSQL_URI = '{}://{}:{}@{}/{}'.format(MYSQL_DB["DRIVER"],
-                                MYSQL_DB["USER"], MYSQL_DB["PASSWD"],
-                                MYSQL_DB["HOST"], MYSQL_DB["NAME"])
+MYSQL_URI = 'mysql+mysqldb://root:root@localhost/citc_lab_dev'
+mysql_settings  = Database(type='mysql', uri=MYSQL_URI)
 
 # SQLite Database Information
-SQLITE_DB  = {  "DRIVER"  : 'sqlite',
-                "NAME"    : 'citc_lab_dev.db' }
-SQLITE_URI = '{}:///{}'.format(SQLITE_DB["DRIVER"], SQLITE_DB["NAME"])
+SQLITE_URI = 'sqlite:///citc_lab_dev.db'
+sqlite_settings = Database(type='sqlite', uri=SQLITE_URI)
 
 # ClearDB MySQL Heroku Addon Database Information
-CLEARDB     = {  "DRIVER"  : 'mysql+mysqldb',
-                 "NAME"    : 'heroku_9c5fb999c980059',
-                 "HOST"    : 'us-cdbr-iron-east-03.cleardb.net',
-                 "USER"    : 'bdbdf83b56d5d1',
-                 "PASSWD"  : 'ae7444b9' }
-
-CLEARDB_URI = '{}://{}:{}@{}/{}'.format(CLEARDB["DRIVER"],
-                                CLEARDB["USER"], CLEARDB["PASSWD"],
-                                CLEARDB["HOST"], CLEARDB["NAME"])
-
-
-mysql_settings  = Database(value=MYSQL_DB, type='mysql', uri=MYSQL_URI)
-sqlite_settings = Database(value=SQLITE_DB, type='sqlite', uri=SQLITE_URI)
-clearDB_settings = Database(value=CLEARDB, type='mysql', uri=CLEARDB_URI)
+if "CLEARDB_DATABASE_URL" in environ:
+    CLEARDB_URI = environ["CLEARDB_DATABASE_URL"]
+    clearDB_settings = Database(type='mysql', uri=CLEARDB_URI)

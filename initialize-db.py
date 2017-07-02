@@ -1,5 +1,6 @@
 import MySQLdb, sqlite3
 from os.path import isfile
+from urlparse import urlparse
 
 from app import db as application_db
 from app import app
@@ -56,10 +57,12 @@ STEP_DONE   = "  DONE!."
 def setup_database(db_settings):
     DB_NAME = db_settings.value["NAME"]
 
+    uri = urlparse(db_settings.uri)
+
     if db_settings.type == 'mysql':
-        connection = MySQLdb.connect(host=db_settings.value["HOST"],
-                                    user=db_settings.value["USER"],
-                                    passwd=db_settings.value["PASSWD"])
+        connection = MySQLdb.connect(host=uri.hostname,
+                                    user=uri.username,
+                                    passwd=uri.password)
         c = connection.cursor()
 
         try:
@@ -108,14 +111,27 @@ def setup_database(db_settings):
         else:
             print STEP_DONE
 
-
-def create_default_tables(db, db_settings):
-    DB_NAME = db_settings.value["NAME"]
-
-    print "{} Create default tables for '{}'...".format(STEP_INFO, DB_NAME)
+def clear_database(db):
+    print "{} Clear database...".format(STEP_INFO)
 
     try:
-        # db.drop_all()
+        db.drop_all()
+        db.session.commit()
+
+        print STEP_DONE
+
+    except Exception as e:
+        db.session.rollback()
+        print "{} {}".format(STEP_ERR, e)
+        exit(1)
+
+def create_default_tables(db):
+    clear_database(db)
+
+    print "{} Create default tables...".format(STEP_INFO)
+
+    try:
+        db.drop_all()
         db.create_all()
         db.session.commit()
 
@@ -174,8 +190,8 @@ def create_default_role(db, id, name):
 #
 #
 #### __main__ ####
-setup_database(db_settings)
-create_default_tables(application_db, db_settings)
+# setup_database(db_settings)
+create_default_tables(application_db)
 
 create_default_role(application_db, *ROOT_ROLE)
 create_default_role(application_db, *ADMIN_ROLE)
