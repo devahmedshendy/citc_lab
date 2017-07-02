@@ -13,5 +13,5 @@ sqlite_settings = Database(type='sqlite', uri=SQLITE_URI)
 
 # ClearDB MySQL Heroku Addon Database Information
 if "CLEARDB_DATABASE_URL" in environ:
-    CLEARDB_URI = environ["CLEARDB_DATABASE_URL"]
+    CLEARDB_URI = environ["CLEARDB_DATABASE_URL"].split("?")[0]
     clearDB_settings = Database(type='mysql', uri=CLEARDB_URI)
