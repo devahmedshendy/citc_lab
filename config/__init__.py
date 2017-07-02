@@ -7,9 +7,9 @@ else:
     from app_config_template import app_config
 
 if isfile('db_config.py'):
-    from db_config import mysql_settings, sqlite_settings
+    from db_config import mysql_settings, sqlite_settings, clearDB_settings
 else:
-    from db_config_template import mysql_settings, sqlite_settings
+    from db_config_template import mysql_settings, sqlite_settings, clearDB_settings
 
 
 db_settings = sqlite_settings

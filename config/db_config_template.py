@@ -17,6 +17,19 @@ SQLITE_DB  = {  "DRIVER"  : 'sqlite',
                 "NAME"    : 'citc_lab_dev.db' }
 SQLITE_URI = '{}:///{}'.format(SQLITE_DB["DRIVER"], SQLITE_DB["NAME"])
 
+# ClearDB MySQL Heroku Addon Database Information
+CLEARDB     = {  "DRIVER"  : 'mysql',
+                 "NAME"    : 'citc_lab',
+                 "HOST"    : 'us-cdbr-iron-east-03.cleardb.net',
+                 "USER"    : 'bdbdf83b56d5d1',
+                 "PASSWD"  : 'ae7444b9',
+                 "OPTIONS" : 'reconnect=true' }
+CLEARDB_URI = '{}://{}:{}@{}/{}?{}'.format(CLEARDB["DRIVER"],
+                                CLEARDB["USER"], CLEARDB["PASSWD"],
+                                CLEARDB["HOST"], CLEARDB["NAME"],
+                                CLEARDB["OPTIONS"])
+
 
 mysql_settings  = Database(value=MYSQL_DB, type='mysql', uri=MYSQL_URI)
 sqlite_settings = Database(value=SQLITE_DB, type='sqlite', uri=SQLITE_URI)
+clearDB_settings = Database(value=CLEARDB, type='mysql', uri=CLEARDB_URI)
