@@ -8,18 +8,11 @@ from app import app, db, login_manager
 from app.models import *
 from app.forms import *
 from app.constants import *
+from app.permissions import *
 
 from datetime import datetime
 from sqlalchemy import desc, or_, and_
 import json, jsonify
-
-
-# Needs - Roles
-be_superuser            = RoleNeed('superuser')
-be_users_admin          = RoleNeed('users_admin')
-
-# Permissions
-admins_permission               = Permission(be_users_admin, be_superuser)
 
 
 
@@ -27,24 +20,24 @@ admins_permission               = Permission(be_users_admin, be_superuser)
 @app.route('/users', methods=['GET'])
 @app.route('/users/page/<int:page>', methods=['GET'], endpoint='get_users_by_page')
 @login_required
-@admins_permission.require(http_exception=403)
+@root_admin_permission.require(http_exception=403)
 def get_users(page=1):
     search_string = request.args.get('str')
 
     if search_string:
         search_string = search_string.strip()
-        
-        users = User.query.filter(or_(User.role_id.notin_([5]),
-                                      User.role_id.is_(None))) \
-                          .filter(User.id != current_user.id) \
+
+        users = User.query.filter(User.id != current_user.id) \
+                          .filter(User.username != 'superuser') \
+                          .filter(User.role_id != current_user.role_id) \
                           .filter(User.firstname.op('regexp')("^" + search_string)) \
                           .order_by(desc("updated_at")) \
                           .paginate(page, PER_PAGE["USERS"], False)
 
     else:
-        users = User.query.filter(or_(User.role_id.notin_([5]),
-                                      User.role_id.is_(None))) \
-                          .filter(User.id != current_user.id) \
+        users = User.query.filter(User.id != current_user.id) \
+                          .filter(User.username != 'superuser') \
+                          .filter(User.role_id != current_user.role_id) \
                           .order_by(desc("updated_at")) \
                           .paginate(page, PER_PAGE["USERS"], False)
 
@@ -56,7 +49,7 @@ def get_users(page=1):
 """ Add User """
 @app.route('/users/new', methods=['GET', 'POST'])
 @login_required
-@admins_permission.require(http_exception=403)
+@root_admin_permission.require(http_exception=403)
 def add_user():
     if request.method == "GET":
         add_user_form = AddUserForm()
@@ -97,13 +90,21 @@ def add_user():
 """ Edit User """
 @app.route('/users/edit/<int:user_id>', methods=['GET', 'POST'])
 @login_required
-@admins_permission.require(http_exception=403)
+@root_admin_permission.require(http_exception=403)
 def edit_user(user_id=None):
     if (user_id == current_user.id):
         url = url_for('edit_account_settings')
         return redirect(url)
 
+
     user = User.query.get(user_id)
+
+    if current_user.role.code == "root":
+        EditUserForm = EditUserFormForRoot
+
+    elif current_user.role.code == "admin":
+        EditUserForm = EditUserFormForAdmin
+
 
     if request.method == 'GET':
         tempate = 'edit_user.html'
@@ -305,14 +306,13 @@ def edit_account_settings():
 """ Delete User """
 @app.route('/users/delete/<int:user_id>', methods=['POST'])
 @login_required
-@admins_permission.require(http_exception=403)
+@root_admin_permission.require(http_exception=403)
 def delete_user(user_id=None):
     print user_id
     user = User.query.get(user_id)
     messages_list = {}
 
-    print user.get_role_name()
-    if user.role_id == 1 or user.role_id == 5:
+    if user.role.code == current_user.role.code:
         messages_list["error"] = MSG["USER_DELETE_DENIED"]
 
     elif db_delete_user(user) == False:

@@ -10,11 +10,6 @@ from sqlalchemy.sql import expression
 
 
 
-# roles_users = db.Table('roles_users',
-#         db.Column('user_id', db.ForeignKey('users.id')),
-#         db.Column('role_id', db.ForeignKey('roles.id'))
-# )
-
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
@@ -26,7 +21,7 @@ class User(db.Model, UserMixin):
     hashed_password  = db.Column(db.String(160))
     created_at       = db.Column(db.DateTime)
     updated_at       = db.Column(db.DateTime)
-    role_id          = db.Column('role_id', db.ForeignKey('roles.id'))
+    role_id          = db.Column('role_id', db.ForeignKey('roles.id'), nullable=False)
 
     authenticated    = False
 
@@ -48,20 +43,6 @@ class User(db.Model, UserMixin):
     def get_id(self):
         return unicode(self.id)
 
-    def get_role_name(self):
-        role_name = None
-        if self.role_id != None:
-            role = Role.query.get(self.role_id)
-            role_name = role.name
-        return role_name
-
-    def get_role_desc(self):
-        role_desc = None
-        if self.role_id != None:
-            role = Role.query.get(self.role_id)
-            role_desc = role.description
-        return role_desc
-
     def hash_password(self, password):
         self.hashed_password = hashpw(password, gensalt())
 
@@ -75,13 +56,19 @@ class User(db.Model, UserMixin):
         return 'User: %r %r' % (self.firstname, self.lastname)
 
 
+
 class Role(db.Model):
     __tablename__ = 'roles'
 
     # Columns map
     id            = db.Column(db.Integer, primary_key=True)
     name          = db.Column(db.String(45), unique=True)
-    description   = db.Column(db.String(255))
+    code          = db.Column(db.String(45), unique=True)
+
+    users         = db.relationship("User",
+                                    backref="role",
+                                    lazy="dynamic")
+
 
 
 class Patient(db.Model):

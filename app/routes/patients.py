@@ -8,19 +8,11 @@ from app import app, db, login_manager
 from app.models import *
 from app.forms import *
 from app.constants import *
+from app.permissions import *
 
 from datetime import datetime
 from sqlalchemy import desc, or_, and_
 import json, jsonify
-
-# Needs - Roles
-be_investigation_doctor = RoleNeed('investigation_doctor')
-be_registration_officer = RoleNeed('registration_officer')
-
-# Permissions
-investigation_doctor_permission = Permission(be_investigation_doctor)
-registration_officer_permission = Permission(be_registration_officer)
-
 
 
 """ Get Patients """
@@ -57,7 +49,7 @@ def get_patients(page=1):
 """ Add Patient """
 @app.route('/patients/new', methods=['GET', 'POST'])
 @login_required
-@registration_officer_permission.require(http_exception=403)
+@officer_permission.require(http_exception=403)
 def add_patient():
     if request.method == "GET":
         add_patient_form = AddPatientForm()
@@ -95,7 +87,7 @@ def add_patient():
 """ Edit Patient """
 @app.route('/patients/edit/<int:patient_id>', methods=['GET', 'POST'])
 @login_required
-@registration_officer_permission.require(http_exception=403)
+@officer_permission.require(http_exception=403)
 def edit_patient(patient_id=None):
     patient = Patient.query.get(patient_id)
 
@@ -192,7 +184,7 @@ def get_patient_analyzes(patient_id=None):
 """ Delete Patient """
 @app.route('/patients/delete/<int:patient_id>', methods=['POST'])
 @login_required
-@registration_officer_permission.require(http_exception=403)
+@officer_permission.require(http_exception=403)
 def delete_patient(patient_id=None):
     print patient_id
     patient = Patient.query.get(patient_id)

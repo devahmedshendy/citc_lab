@@ -95,7 +95,7 @@
       {% for user in users.items %}
         <tr>
           <td width="25%" data-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">{{ user.firstname.title() }} {{ user.lastname.title() }}</td>
-          <td width="20%">{{ user.get_role_desc() }}</td>
+          <td width="20%">{{ user.role.name }}</td>
           <td width="10%">{{ user.created_at.strftime("%Y-%m-%d") }}</td>
           <td width="10%">{{ user.updated_at.strftime("%Y-%m-%d") }}</td>
           <td width="10%">

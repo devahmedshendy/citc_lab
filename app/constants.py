@@ -46,11 +46,19 @@ MSG = {
 }
 
 PER_PAGE = {
-    'USERS' : 10,
-    'PATIENTS' : 10,
-    'ANALYZES' : 10,
+    'USERS'     : 10,
+    'PATIENTS'  : 10,
+    'ANALYZES'  : 10,
 }
 
 ANALYSIS_TO_ID = {
-    'cbc'   : 1,
+    'cbc'       : 1,
+}
+
+
+ROLE_NAME_TO_CODE = {
+    'Super User'            : 'root',
+    'Users Admin'           : 'admin',
+    'Investigation Doctor'  : 'doctor',
+    'Registration Officer'  : 'officer',
 }

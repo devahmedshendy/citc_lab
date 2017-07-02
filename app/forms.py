@@ -6,32 +6,13 @@ from app import db
 from app.models import User
 
 
+
 class LoginForm(FlaskForm):
     username = StringField('username',
                         [InputRequired("Please enter your username.")])
 
     password = PasswordField('password',
                         [InputRequired("Please enter your password.")])
-
-
-# class RegisterForm(FlaskForm):
-#     firstname = StringField('firstname',
-#                         [InputRequired("Please enter your firstname.")])
-#
-#     lastname  = StringField('lastname',
-#                         [InputRequired("Please enter your lastname.")])
-#
-#     username  = StringField('username',
-#                         [InputRequired("Please enter your username.")])
-#
-#     password         = PasswordField('password',
-#                          [
-#                             InputRequired("Please enter your password."),
-#                             EqualTo('password_confirm', message="Passwords must match.")
-#                          ])
-#
-#     password_confirm  = PasswordField('password_confirm',
-#                                 [InputRequired("Please enter password confirmation.")])
 
 
 
@@ -76,7 +57,33 @@ class AddUserForm(FlaskForm):
 
 
 
-class EditUserForm(FlaskForm):
+class EditUserFormForAdmin(FlaskForm):
+    firstname = StringField(u'Firstname',
+                        [InputRequired("Please enter user's firstname.")],
+                        render_kw={"placeholder": "Firstname",
+                                    "class": "form-control"})
+
+    lastname  = StringField(u'Lastname',
+                        [InputRequired("Please enter user's lastname.")],
+                        render_kw={"placeholder": "Lastname",
+                                    "class": "form-control"})
+
+    username  = StringField(u'Username',
+                        [InputRequired("Please enter user's username.")],
+                        render_kw={"placeholder": "Username",
+                                    "class": "form-control"})
+
+    role_id      = SelectField(u'Role',
+                            choices=[
+                                ("", "Select Role"),
+                                ("2", "Investigation Doctor"),
+                                ("3", "Registration Officer")
+                            ],
+                            render_kw={"class": "form-control"})
+
+
+
+class EditUserFormForRoot(FlaskForm):
     firstname = StringField(u'Firstname',
                         [InputRequired("Please enter user's firstname.")],
                         render_kw={"placeholder": "Firstname",

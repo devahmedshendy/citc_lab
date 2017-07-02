@@ -19,8 +19,8 @@ be_investigation_doctor = RoleNeed('investigation_doctor')
 be_registration_officer = RoleNeed('registration_officer')
 
 # Permissions
-investigation_doctor_permission = Permission(be_investigation_doctor)
-registration_officer_permission = Permission(be_registration_officer)
+doctor_permission = Permission(be_investigation_doctor)
+officer_permission = Permission(be_registration_officer)
 
 
 
@@ -106,7 +106,7 @@ def get_analyzes(page=1):
 """ Add Analysis """
 @app.route('/patients/<int:patient_id>/analyzes/<string:analysis_type>/new', methods=['POST'])
 @login_required
-@registration_officer_permission.require(http_exception=403)
+@officer_permission.require(http_exception=403)
 def add_analysis(patient_id=None, analysis_type=None):
     messages_list = {}
 
@@ -151,7 +151,7 @@ def add_analysis(patient_id=None, analysis_type=None):
 """ Edit Analysis """
 @app.route('/patients/<int:patient_id>/analyzes/<string:analysis_type>/edit/<int:analysis_id>', methods=["POST"])
 @login_required
-@registration_officer_permission.require(http_exception=403)
+@officer_permission.require(http_exception=403)
 def edit_analysis(patient_id=None, analysis_type=None, analysis_id=None):
     messages_list = {}
 
@@ -206,7 +206,7 @@ def edit_analysis(patient_id=None, analysis_type=None, analysis_id=None):
 @app.route('/patients/<int:patient_id>/analyzes/<string:analysis_type>/<int:analysis_id>/delete', methods=["GET"])
 @app.route('/analyzes/<string:analysis_type>/<int:analysis_id>/delete', methods=["POST"])
 @login_required
-@registration_officer_permission.require(http_exception=403)
+@officer_permission.require(http_exception=403)
 def delete_analysis(patient_id=None, analysis_type=None, analysis_id=None):
     messages_list = {}
 
@@ -231,7 +231,7 @@ def delete_analysis(patient_id=None, analysis_type=None, analysis_id=None):
 """ Approve Analysis """
 @app.route('/analyzes/<string:analysis_type>/<int:analysis_id>/approve', methods=["POST"])
 @login_required
-@investigation_doctor_permission.require(http_exception=403)
+@doctor_permission.require(http_exception=403)
 def approve_analysis(analysis_type=None, analysis_id=None):
     messages_list = {}
 

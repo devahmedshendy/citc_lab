@@ -30,7 +30,7 @@ def on_identity_loaded(sender, identity):
         identity.provides.add(UserNeed(current_user.id))
 
     if hasattr(current_user, 'role_id'):
-        identity.provides.add(RoleNeed(current_user.get_role_name()))
+        identity.provides.add(RoleNeed(current_user.role.code))
 
 @app.errorhandler(403)
 def handle_403(e):
@@ -74,9 +74,9 @@ def login():
 
         try:
             user = User.query.filter_by(username=username).first()
+
             if user and User.verify_password(password, user.hashed_password):
                 login_user(user)
-                user.authenticated = True
 
                 identity = Identity(user.id)
                 identity_changed.send(app, identity=identity)
