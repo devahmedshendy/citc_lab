@@ -76,8 +76,8 @@ class EditUserFormForAdmin(FlaskForm):
     role_id      = SelectField(u'Role',
                             choices=[
                                 ("", "Select Role"),
-                                ("2", "Investigation Doctor"),
-                                ("3", "Registration Officer")
+                                ("doctor", "Investigation Doctor"),
+                                ("officer", "Registration Officer")
                             ],
                             render_kw={"class": "form-control"})
 
@@ -102,9 +102,9 @@ class EditUserFormForRoot(FlaskForm):
     role_id      = SelectField(u'Role',
                             choices=[
                                 ("", "Select Role"),
-                                ("1", "Users Admin"),
-                                ("2", "Investigation Doctor"),
-                                ("3", "Registration Officer")
+                                ("admin", "Users Admin"),
+                                ("doctor", "Investigation Doctor"),
+                                ("officer", "Registration Officer")
                             ],
                             render_kw={"class": "form-control"})
 
