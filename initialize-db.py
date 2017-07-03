@@ -13,9 +13,9 @@ from config import db_settings
 # CONSTANTS
 #--------------------------
 # Default Users
-ROOT     = { "firstname": "Super",
+ROOT     = { "firstname": "Root",
              "lastname": "User",
-             "username": "superuser",
+             "username": "root",
              "role_name": "root" }
 
 ADMIN    = { "firstname": "Users",
