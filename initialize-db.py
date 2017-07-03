@@ -55,7 +55,7 @@ STEP_DONE   = "  DONE!."
 # Functions
 #--------------------------
 def clear_database(db):
-    print "{} Clear database...".format(STEP_INFO)
+    print "{} Drop all tables...".format(STEP_INFO)
 
     try:
         db.drop_all()
