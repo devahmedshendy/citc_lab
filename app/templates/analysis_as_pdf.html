@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-    <title>{{cbc.name}} - CBC - {{cbc.updated_at}}</title>
+    <title>{{analysis.patient_name}} - CBC - {{analysis.cbc_created_at}}</title>
   </head>
   <body>
     <div class="container">
@@ -28,24 +28,24 @@
                 <tbody>
                   <tr>
                     <td class="font-weight-normal">Patient Name</td>
-                    <td>{{cbc.name}}</td>
+                    <td>{{analysis.patient_name}}</td>
 
                     <td class="font-weight-normal">Analysis ID</td>
-                    <td>{{ cbc.id }}</td>
+                    <td>{{ analysis.cbc_id }}</td>
                   </tr>
                   <tr>
                     <td class="font-weight-normal">Patient ID</td>
-                    <td>{{cbc.personal_id}}</td>
+                    <td>{{analysis.patient_personal_id}}</td>
 
                     <td class="font-weight-normal">Created At</td>
-                    <td>{{cbc.created_at.strftime("%Y-%m-%d")}}</td>
+                    <td>{{analysis.cbc_created_at.strftime("%Y-%m-%d")}}</td>
                   </tr>
                   <tr>
                     <td class="font-weight-normal">Patient Gender</td>
-                    <td>{{cbc.gender}}</td>
+                    <td>{{analysis.patient_gender}}</td>
 
                     <td class="font-weight-normal">Approved</td>
-                    {% if cbc.approved %}
+                    {% if analysis.cbc_approved %}
                       <td>Yes</td>
 
                     {% else %}
@@ -54,11 +54,11 @@
                   </tr>
                   <tr>
                     <td class="font-weight-normal">Patient Age</td>
-                    <td>{{cbc.age}}</td>
+                    <td>{{analysis.patient_age}}</td>
 
                     <td class="font-weight-normal">Approved At</td>
-                    {% if cbc.approved %}
-                      <td>{{cbc.approved_at.strftime("%Y-%m-%d")}}</td>
+                    {% if analysis.cbc_approved_at %}
+                      <td>{{analysis.cbc_approved_at.strftime("%Y-%m-%d")}}</td>
 
                     {% else %}
                       <td></td>
@@ -86,32 +86,32 @@
                 <tbody>
                   <tr>
                     <th scope='row'>WCB</th>
-                    <td data-cbc-wcb>{{cbc.WCB}}</td>
+                    <td data-cbc-wcb>{{analysis.WCB}}</td>
                     <td>3.70 - 10.10</td>
                   </tr>
                   <tr>
                     <th scope='row'>HGB</th>
-                    <td data-cbc-hgb>{{cbc.HGB}}</td>
+                    <td data-cbc-hgb>{{analysis.HGB}}</td>
                     <td>12.9 - 15.9</td>
                   </tr>
                   <tr>
                     <th scope='row'>MCV</th>
-                    <td data-cbc-mcv>{{cbc.MCV}}</td>
+                    <td data-cbc-mcv>{{analysis.MCV}}</td>
                     <td>81.1 - 96.0</td>
                   </tr>
                   <tr>
                     <th scope='row'>MCH</th>
-                    <td data-cbc-mch>{{cbc.MCH}}</td>
+                    <td data-cbc-mch>{{analysis.MCH}}</td>
                     <td>27.0 - 31.2</td>
                   </tr>
-                  {% if cbc.approved %}
+                  {% if analysis.cbc_approved_at %}
                     <tr>
                       <th scope="row">Comment</th>
-                      <td data-cbc-comment colspan="2">{{cbc.comment}}</td>
+                      <td data-cbc-comment colspan="2">{{analysis.cbc_comment}}</td>
                     </tr>
                     <tr>
                       <th scope="row">Doctor</th>
-                      <td data-cbc-doctor colspan="2">{{cbc.comment_doctor.title()}}</td>
+                      <td data-cbc-doctor colspan="2">{{analysis.cbc_comment_doctor.title()}}</td>
                     </tr>
 
                   {% else %}

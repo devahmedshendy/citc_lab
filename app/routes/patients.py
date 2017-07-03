@@ -1,5 +1,5 @@
 from flask            import current_app, request, session, url_for, redirect, \
-                             render_template, flash
+                             render_template, flash, Markup, abort
 from flask_principal  import Permission, RoleNeed, Identity, identity_changed, \
                              identity_loaded, UserNeed, AnonymousIdentity
 from flask_login      import login_user, login_required, logout_user, current_user
@@ -9,10 +9,13 @@ from app.models import *
 from app.forms import *
 from app.constants import *
 from app.permissions import *
+from app.services import *
 
 from datetime import datetime
 from sqlalchemy import desc, or_, and_
 import json, jsonify
+import sqlalchemy
+
 
 
 """ Get Patients """
@@ -63,24 +66,42 @@ def add_patient():
             for error in errors:
                 flash(error, "error")
 
-        template = 'add_patient.html'
-        return render_template(template, add_patient_form=add_patient_form)
-
     else:
         patient = Patient()
         add_patient_form.populate_obj(patient)
 
-        if db_update_or_insert_patient(patient) == False:
-            flash(MSG["OPERATION_FAILED"], "error")
+        try:
+            db.session.add(patient)
+            db.session.commit()
 
-            template = 'add_patient.html'
-            return render_template(template, add_patient_form=add_patient_form)
+            flash_message = (MSG["PATIENT_PROFILE_CREATE_DONE"], "success")
 
-        else:
-            flash(MSG["USER_PROFILE_CREATED"], "success")
-
+            flash(*flash_message)
             url = url_for('get_patients')
             return redirect(url)
+
+
+        except sqlalchemy.exc.IntegrityError as e:
+            print e.message
+            db.session.rollback()
+
+            if "UNIQUE" in e.message or "Duplicate" in e.message:
+                same_patient = patient_of_personal_id(patient.personal_id)
+
+                patient_profile_link = "<a href='/patients/%s'>%s</a>" % (same_patient.id, same_patient.name)
+                flash_message = (Markup( MSG["DUPLICATE_PERSONAL_ID"] % (patient_profile_link) ), "error")
+                flash(*flash_message)
+
+        except sqlalchemy.exc.DatabaseError as e:
+            print e.message
+            db.session.rollback()
+
+            flash_message = (MSG["OPERATION_FAILED"], "error")
+            flash(*flash_message)
+
+
+    template = 'add_patient.html'
+    return render_template(template, add_patient_form=add_patient_form)
 
 
 
@@ -89,7 +110,11 @@ def add_patient():
 @login_required
 @officer_permission.require(http_exception=403)
 def edit_patient(patient_id=None):
-    patient = Patient.query.get(patient_id)
+    patient = get_patient(patient_id=patient_id)
+
+    if not patient:
+        abort(404)
+
 
     if request.method == 'GET':
         tempate = 'edit_patient.html'
@@ -111,35 +136,52 @@ def edit_patient(patient_id=None):
                 for error in errors:
                     flash(error, "error")
 
+        else:
+            edit_patient_form.populate_obj(patient)
+
+            try:
+                print patient.personal_id
+                db.session.add(patient)
+                db.session.commit()
+
+                flash_message = (MSG["PATIENT_PROFILE_EDIT_DONE"], "success")
+                flash(*flash_message)
+
+            except sqlalchemy.exc.IntegrityError as e:
+                print e.message
+                db.session.rollback()
+
+                if "UNIQUE" in e.message or "Duplicate" in e.message:
+                    same_patient = get_patient(personal_id=edit_patient_form.personal_id.data)
+
+                    patient_profile_link = "<a href='/patients/%s'>%s</a>" % (same_patient.id, same_patient.name)
+
+                    flash_message = (Markup( MSG["DUPLICATE_PERSONAL_ID"] % (patient_profile_link) ), "error")
+                    flash(*flash_message)
+
+
+            except sqlalchemy.exc.DatabaseError as e:
+                print e.message
+                db.session.rollback()
+
+                flash_message = (MSG["OPERATION_FAILED"], "error")
+                flash(*flash_message)
+
             template = 'edit_patient.html'
             return render_template(template,
                                     edit_patient_form=edit_patient_form,
                                     patient_id=patient.id)
 
-        else:
-            edit_patient_form.populate_obj(patient)
-
-            if db_update_or_insert_patient(patient) == False:
-                flash(MSG['OPERATION_FAILED'], 'error')
-
-                template = 'edit_patient.html'
-                return render_template(template,
-                                        edit_patient_form=edit_patient_form,
-                                        patient_id=patient.id)
-
-            else:
-                flash(MSG["USER_PROFILE_EDIT_DONE"], "success")
-
-                url = url_for('edit_patient', patient_id=patient.id)
-                return redirect(url)
-
 
 
 """ Display Patient Profile """
-@app.route('/patients/<int:patient_id>', methods=['GET', 'POST'])
+@app.route('/patients/<int:patient_id>', methods=['GET'])
 @login_required
 def get_patient_personal_profile(patient_id=None):
-    patient = Patient.query.get(patient_id)
+    patient = get_patient(patient_id=patient_id)
+
+    if not patient:
+        abort(404)
 
     edit_patient_form = EditPatientForm(obj=patient)
 
@@ -153,12 +195,10 @@ def get_patient_personal_profile(patient_id=None):
 @app.route('/patients/<int:patient_id>/analyzes', methods=['GET'])
 @login_required
 def get_patient_analyzes(patient_id=None):
-    patient = Patient.query.get(patient_id)
+    patient = get_patient(patient_id=patient_id)
 
     if not patient:
-        flash(MSG["NO_SUCH_PATIENT"], "error")
-        url = url_for("index")
-        return redirect(url)
+        abort(404)
 
     edit_patient_form = EditPatientForm(obj=patient)
     add_cbc_form      = AddCBCForm()
@@ -172,8 +212,12 @@ def get_patient_analyzes(patient_id=None):
     if request.method == "GET" and request.args.get("json") == "True":
         cbc_analysis_list = []
 
-        query_result = CBCAnalysis.query.filter_by(patient_id=patient.id) \
-                            .order_by(desc("updated_at")).all()
+        query_result = analyzes_of_patient_in_desc_order(
+                            'cbc',
+                            patient.id,
+                            CBCAnalysis.updated_at
+                        )
+
         for cbc_analysis in query_result:
             cbc_analysis_list.append(cbc_analysis.serialize())
 
@@ -186,32 +230,27 @@ def get_patient_analyzes(patient_id=None):
 @login_required
 @officer_permission.require(http_exception=403)
 def delete_patient(patient_id=None):
-    patient = Patient.query.get(patient_id)
-    messages_list = {}
+    patient = get_patient(patient_id)
 
-    if db_delete_patient(patient) == False:
-        messages_list["error"] = MSG["OPERATION_FAILED"]
-
-    else:
-        messages_list["success"] = MSG["USER_PROFILE_DELETE_DONE"]
-
-    return json.dumps(messages_list)
-
-
-def db_update_or_insert_patient(patient):
-    patient.updated_at = datetime.now()
+    if not patient:
+        abort(404)
 
     try:
-        db.session.add(patient)
+        db.session.delete(patient)
         db.session.commit()
 
-        return True
+        flash_message = (MSG["PATIENT_PROFILE_DELETE_DONE"], "success")
 
-    except Exception as e:
+    except sqlalchemy.exc.DatabaseError as e:
         print e.message
         db.session.rollback()
 
-        return False
+        flash_message = (MSG["OPERATION_FAILED"], "error")
+
+    flash(*flash_message)
+    url = url_for('get_patients')
+    return redirect(url)
+
 
 def db_delete_patient(patient):
     try:

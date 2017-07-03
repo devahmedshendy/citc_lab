@@ -1,5 +1,6 @@
-{% include 'alert.html' %}
+<div id="delete_patient_success" class="row"></div>
 
+{% include 'alert.html' %}
 
 {% if current_user.role.name in ["root", "admin", "doctor"] %}
   <div class="row">

@@ -1,5 +1,4 @@
-import MySQLdb, sqlite3
-from os.path import isfile
+# import MySQLdb, sqlite3
 from urlparse import urlparse
 
 from app import db as application_db
@@ -9,108 +8,52 @@ from app.constants import *
 
 from config import db_settings
 
-#----
+#--------------------------
 #
-#
-#
-#### CONSTANTS ####
+# CONSTANTS
+#--------------------------
 # Default Users
 ROOT     = { "firstname": "Super",
              "lastname": "User",
              "username": "superuser",
              "role_name": "root" }
 
-ROOT_ROLE = ROLES["root"]
-
 ADMIN    = { "firstname": "Users",
              "lastname": "Admin",
              "username": "admin",
              "role_name": "admin" }
-
-ADMIN_ROLE = ROLES["admin"]
 
 DOCTOR   = { "firstname": "Investigation",
              "lastname": "Doctor",
              "username": "doctor",
              "role_name": "doctor" }
 
-DOCTOR_ROLE = ROLES["doctor"]
-
-EMPLOYEE = { "firstname": "Registration",
+OFFICER = { "firstname": "Registration",
              "lastname": "Officer",
              "username": "officer",
              "role_name": "officer" }
 
+# Default Roles
+ROOT_ROLE = ROLES["root"]
+ADMIN_ROLE = ROLES["admin"]
+DOCTOR_ROLE = ROLES["doctor"]
 OFFICER_ROLE = ROLES["officer"]
 
-# Theme Settings
+# Default Roles/Users into an Array
+DEFAULT_ROLES = [ ROLES["root"], ROLES["admin"],
+                  ROLES["doctor"], ROLES["officer"] ]
+DEFAULT_USERS = [ ROOT, ADMIN, DOCTOR, OFFICER]
+
+# Output Theming
 STEP_INFO   = ">"
 STEP_WARN   = "!"
 STEP_ERR    = "X"
 STEP_DONE   = "  DONE!."
 
-#----
+#--------------------------
 #
-#
-#
-#### Functions ####
-def setup_database(db_settings):
-    DB_NAME = db_settings.value["NAME"]
-
-    uri = urlparse(db_settings.uri)
-
-    if db_settings.type == 'mysql':
-        connection = MySQLdb.connect(host=uri.hostname,
-                                    user=uri.username,
-                                    passwd=uri.password)
-        c = connection.cursor()
-
-        try:
-            print "{} Create database with name '{}'...".format(STEP_INFO, DB_NAME)
-
-            c.execute(
-                "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME)
-            )
-
-            print STEP_DONE
-
-        except (MySQLdb.Error, MySQLdb.Warning) as e:
-            if list(e)[0] == 1007:
-                print "{} Database <{}> already exists.".format(STEP_WARN, DB_NAME)
-
-            else:
-                print "{} {}".format(STEP_ERR, e)
-                exit(1)
-
-        except Exception as e:
-            print e
-            exit(1)
-
-        finally:
-            connection.close()
-
-
-    if db_settings.type == 'sqlite':
-        db_file_path = 'app/' + db_settings.value["NAME"]
-
-        print "{} Checking sqlite database '{}'..." \
-                    .format(STEP_INFO, DB_NAME)
-
-        if not isfile(db_file_path):
-            try:
-                print "{} Create sqlite database '{}'..." \
-                            .format(STEP_INFO, DB_NAME)
-
-                open(db_file_path, 'a').close()
-
-                print STEP_DONE
-
-            except Exception as e:
-                print "{} {}".format(STEP_ERR, e)
-                exit(1)
-        else:
-            print STEP_DONE
-
+# Functions
+#--------------------------
 def clear_database(db):
     print "{} Clear database...".format(STEP_INFO)
 
@@ -124,6 +67,7 @@ def clear_database(db):
         db.session.rollback()
         print "{} {}".format(STEP_ERR, e)
         exit(1)
+
 
 def create_default_tables(db):
     clear_database(db)
@@ -185,20 +129,14 @@ def create_default_role(db, id, name):
         db.session.rollback()
         print "{} {}".format(STEP_ERR, e.message)
 
-#----
+#--------------------------
 #
-#
-#
-#### __main__ ####
-# setup_database(db_settings)
+# __main__
+#--------------------------
 create_default_tables(application_db)
 
-create_default_role(application_db, *ROOT_ROLE)
-create_default_role(application_db, *ADMIN_ROLE)
-create_default_role(application_db, *DOCTOR_ROLE)
-create_default_role(application_db, *OFFICER_ROLE)
+for DEFAULT_ROLE in DEFAULT_ROLES:
+    create_default_role(application_db, *DEFAULT_ROLE)
 
-create_default_user(application_db, **ROOT)
-create_default_user(application_db, **ADMIN)
-create_default_user(application_db, **DOCTOR)
-create_default_user(application_db, **EMPLOYEE)
+for DEFAULT_USER in DEFAULT_USERS:
+    create_default_user(application_db, **DEFAULT_USER)

@@ -18,6 +18,4 @@ if "CLEARDB_DATABASE_URL" in environ:
 
 else:
     db_settings = sqlite_settings
-
-app_config["DB_TYPE"] = db_settings.type
-app_config["SQLALCHEMY_DATABASE_URI"] = db_settings.uri
+    app_config["SQLALCHEMY_DATABASE_URI"] = db_settings.uri

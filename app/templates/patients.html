@@ -96,7 +96,7 @@
           <td width="15%" data-fullname="{{ patient.name.title() }}">{{ patient.name.title() }}</td>
           <td width="10%">{{ patient.personal_id }}</td>
           <td width="10%">{{ patient.updated_at.strftime("%Y-%m-%d") }}</td>
-          {% if current_user.role.name.lower() == "officer" %}
+          {% if current_user.role.name == "officer" %}
             <td width="20%">
               <a href="{{ url_for('medical_profile', patient_id=patient.id ) }}">Medical Profile</a>
               |

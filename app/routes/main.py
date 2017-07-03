@@ -29,7 +29,6 @@ def load_user(id):
 
     return user
 
-
 @identity_loaded.connect_via(app)
 def on_identity_loaded(sender, identity):
     identity.user = current_user
@@ -40,10 +39,16 @@ def on_identity_loaded(sender, identity):
     if hasattr(current_user, 'role_id'):
         identity.provides.add(RoleNeed(current_user.role.name))
 
+
 @app.errorhandler(403)
 def handle_403(e):
     template = '403.html'
-    return render_template(template)
+    return render_template(template), 403
+
+@app.errorhandler(404)
+def handle_403(e):
+    template = '404.html'
+    return render_template(template), 404
 
 
 

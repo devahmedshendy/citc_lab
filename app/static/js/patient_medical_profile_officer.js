@@ -66,7 +66,7 @@ $(document).ready(() => {
             if (data.hasOwnProperty("error")) {
                 let errors_list  = data["error"]
 
-                clearAlert("#cbc_success")
+                clearAlert("#add_cbc_success")
                 showErrorAlert("#add_cbc_error", errors_list)
 
             } else if (data.hasOwnProperty("success")) {
@@ -75,7 +75,7 @@ $(document).ready(() => {
                 displayCBCAnalyzesElements();
 
                 let success_message = data["success"]
-                showSuccessAlert("#cbc_success", success_message);
+                showSuccessAlert("#add_cbc_success", success_message);
             }
         })
         .fail((err) => {
@@ -126,7 +126,7 @@ $(document).ready(() => {
             if (messages.hasOwnProperty("error")) {
                 let errors_list = messages["error"];
 
-                clearAlert('#cbc_success');
+                clearAlert('#add_cbc_success');
                 showErrorAlert('#edit_cbc_error', errors_list);
 
             } else if (messages.hasOwnProperty("success")) {
@@ -137,7 +137,7 @@ $(document).ready(() => {
                 $(edit_cbc_modal).modal('hide');
 
                 let success_message = messages['success'];
-                showSuccessAlert("#cbc_success", success_message);
+                showSuccessAlert("#add_cbc_success", success_message);
             }
         })
         .fail((err) => {
@@ -152,7 +152,6 @@ $(document).ready(() => {
     //-----------------------------------------
     // CBC Delete Link -> Clicked
     $(document).on('click', '[data-cbc-delete]', (event) => {
-
         var cbc_id = $(event.target).attr("data-cbc-id");
         var confirm_delete_cbc_modal = createModalToConfirmCBCDelete(cbc_id);
 
@@ -164,7 +163,7 @@ $(document).ready(() => {
         event.preventDefault();
 
         var confirm_delete_cbc_button = $(event.target);
-        var analysis_id             = $(confirm_delete_cbc_button).attr(`data-cbc-id`);
+        var analysis_id               = $(confirm_delete_cbc_button).attr(`data-cbc-id`);
 
         // Send Delete as a GET request to the server
         $.ajax({
@@ -177,7 +176,7 @@ $(document).ready(() => {
             if (messages.hasOwnProperty("error")) {
                 let errors_list = messages["error"];
 
-                clearAlert("#cbc_success");
+                clearAlert("#add_cbc_success");
                 showErrorAlert("#confirm_delete_cbc_error", errors_list);
 
             } else if (messages.hasOwnProperty("success")) {
@@ -186,7 +185,7 @@ $(document).ready(() => {
                 displayCBCAnalyzesElements();
 
                 let success_message = messages['success']
-                showSuccessAlert("#cbc_success", success_message);
+                showSuccessAlert("#add_cbc_success", success_message);
             }
         })
         .fail((err) => {

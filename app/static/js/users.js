@@ -16,23 +16,23 @@ $(document).ready(()=> {
   })
 
   // Confirm Delete User Form -> Submitted
-  $(document).on('submit', '#confirm_delete_user_form', (event)=> {
-    event.preventDefault();
-
-    var action_url = $(event.target).attr('action');
-    var fullname = $(".modal-title strong").text();
-
-    deleteUser(action_url);
-  });
+  // $(document).on('submit', '#confirm_delete_user_form', (event)=> {
+  //   event.preventDefault();
+  //
+  //   var action_url = $(event.target).attr('action');
+  //   var fullname = $(".modal-title strong").text();
+  //
+  //   deleteUser(action_url);
+  // });
 
   //-----------------------------------------
   //
   // Handling Modal Hidden Event
   //-----------------------------------------
   // Confirm Delete User Modal -> Hidden
-  $(document).on('hidden.bs.modal', '#confirm_delete_user_modal', (event)=> {
-    $(event.target).remove();
-  })
+  // $(document).on('hidden.bs.modal', '#confirm_delete_user_modal', (event)=> {
+  //   $(event.target).remove();
+  // })
 
   //-----------------------------------------
   //

@@ -23,7 +23,7 @@
           {% for field in edit_patient_form %}
           <tr>
             <th scope="row">{{ field.label.text }}</th>
-            <td id="patient_{{field.label.text.lower()}}">{{ field.data }}</td>
+            <td id="patient_{{field.label.text}}">{{ field.data }}</td>
           </tr>
           {% endfor %}
         </tbody>

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body_header %}
-  <div id="cbc_success" class='row'></div>
+  <div id="add_cbc_success" class='row'></div>
 
   {% include 'alert.html' %}
 
@@ -40,7 +40,7 @@
               {% for field in edit_patient_form %}
               <tr>
                 <th scope="row">{{ field.label.text }}</th>
-                <td id="patient_{{field.label.text.lower()}}">{{ field.data }}</td>
+                <td id="patient_{{field.label.text}}">{{ field.data }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -59,7 +59,7 @@
     <div id="analyzes_container" class="col-6">
       <div class="row justify-content-center">
         <strong>Patient Analyzes</strong>
-        {% if current_user.role.name.lower() == "officer" %}
+        {% if current_user.role.name == "officer" %}
           <div class="btn-group">
             <button type="button" class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Add
@@ -90,14 +90,14 @@
 
 
 {% block page_js %}
-  {% if current_user.role.name.lower() == "officer" %}
+  {% if current_user.role.name == "officer" %}
     {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile_officer.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
 
 
-  {% elif current_user.role.name.lower() == "doctor" %}
+  {% elif current_user.role.name == "doctor" %}
     {% assets output='gen/patient_medical_profile.min.js', "js/patient_medical_profile_doctor.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}

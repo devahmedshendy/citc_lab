@@ -67,7 +67,7 @@ $(document).ready(() => {
                 let errors_list  = data["error"]
                 let cbc_error_element = get_cbc_error_element(errors_list)
 
-                $('#cbc_success').html('');
+                $('#add_cbc_success').html('');
                 $('#add_cbc_error').html($(cbc_error_element));
 
             } else if (data.hasOwnProperty("success")) {
@@ -75,10 +75,10 @@ $(document).ready(() => {
                 $("#cbcModal").modal("hide");
 
                 let success_message = data["success"]
-                let success_col   = get_cbc_success_element(success_message);
+                let success_col   = get_add_cbc_success_element(success_message);
 
                 $('#add_cbc_error').html('');
-                $('#cbc_success').html($(success_col));
+                $('#add_cbc_success').html($(success_col));
 
                 $.get(`/analyzes/personal_id/${patient_id}?json=True`, (res) => {
                     res = JSON.parse(res)
@@ -159,7 +159,7 @@ $(document).ready(() => {
                 let errors_list = messages["error"]
                 let error_element = get_cbc_error_element(errors_list)
 
-                $('#cbc_success').html('');
+                $('#add_cbc_success').html('');
                 $('#edit_cbc_error').html($(error_element));
 
             } else if (messages.hasOwnProperty("success")) {
@@ -185,9 +185,9 @@ $(document).ready(() => {
                 $(edit_cbc_modal).modal('hide');
 
                 let success_message = messages['success']
-                let success_element = get_cbc_success_element(success_message)
+                let success_element = get_add_cbc_success_element(success_message)
 
-                $('#cbc_success').html($(success_element));
+                $('#add_cbc_success').html($(success_element));
             }
         })
         .fail((err) => {
@@ -244,7 +244,7 @@ $(document).ready(() => {
     }
 
 
-    function get_cbc_success_element(success_message='') {
+    function get_add_cbc_success_element(success_message='') {
       return $(`
           <div class='offset-3 col-6'>
               <div class='alert alert-success alert-dismissible fade show' role='alert'>

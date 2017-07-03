@@ -61,14 +61,14 @@ $(document).ready(() => {
           if (messages.hasOwnProperty("error")) {
             let errors_list = messages["error"];
 
-            clearAlert("#cbc_success");
+            clearAlert("#add_cbc_success");
             showErrorAlert("#edit_comment_error", errors_list);
 
           } else if (messages.hasOwnProperty("success")) {
             $(edit_comment_modal).modal('hide');
 
             let success_message = messages["success"];
-            showSuccessAlert("#cbc_success", success_message);
+            showSuccessAlert("#add_cbc_success", success_message);
 
           }
       })

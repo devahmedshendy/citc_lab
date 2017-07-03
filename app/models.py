@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
 
 
     def __repr__(self):
-        return 'User: %r %r' % (self.firstname, self.lastname)
+        return 'User: %s %s' % (self.firstname, self.lastname)
 
 
 
@@ -96,6 +96,10 @@ class Patient(db.Model):
         self.updated_at     = datetime.now()
 
 
+    def __repr__(self):
+        return "Patient: %s" % (self.name)
+
+
 class CBCAnalysis(db.Model):
     __tablename__ = 'cbc_analysis'
 
@@ -131,17 +135,21 @@ class CBCAnalysis(db.Model):
 
     def serialize(self):
         return {
-            "id"        : self.id,
-            "WCB"       : self.WCB,
-            "HGB"       : self.HGB,
-            "MCV"       : self.MCV,
-            "MCH"       : self.MCH,
-            "comment"   : self.comment,
-            "comment_doctor": self.comment_doctor,
-            "updated_at": self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
-            "approved"  : self.approved,
+            "id"                : self.id,
+            "WCB"               : self.WCB,
+            "HGB"               : self.HGB,
+            "MCV"               : self.MCV,
+            "MCH"               : self.MCH,
+            "comment"           : self.comment,
+            "comment_doctor"    : self.comment_doctor,
+            "updated_at"        : self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
+            "approved"          : self.approved,
         }
 
     def approve(self):
         self.approved = True
         self.approved_at = datetime.now()
+
+
+    def __repr__(self):
+        return "CBC: %s" % (self.id)
