@@ -14,9 +14,11 @@ $(document).ready(() => {
       "comment" : "",
       "comment_doctor": "",
       "approved": false,
+      "approved_at": ""
     }
 
     var patient_id = $("#patient_personal_details").attr("data-patient-id");
+    var patient_id = $("#patient_personal_details").attr("data-patient-name");
 
     $('#patient_analyzes_list').slimScroll({
         wheelStep: 3,
@@ -27,59 +29,88 @@ $(document).ready(() => {
 
     //-----------------------------------------
     //
-    // Handling Process of Adding New CBC
+    // Handling Process of Checking "Not-Approved-Yet"
     //-----------------------------------------
-    $(document).on('click', "[data-show-data-link]", (event) => {
-        var edit_comment_link = $(event.target);
+    $("input[name='not_approved_yet']").change((event) => {
+        var not_approved_yet_element = $(event.target)
 
-        console.log($(edit_comment_link)[0]);
-        setGlobalCBC(...getCBCDataFromLink(edit_comment_link))
-
-        console.log(cbc);
-
-        var edit_comment_modal = createModalToShowData(patient_id, "cbc", cbc)
-        $(edit_comment_modal).modal('show');
+        $(not_approved_yet_element).closest('form').submit();
     });
 
-    $(document).on('click', '#approve_comment_button', (event) => {
-      var edit_comment_modal = $(event.target).closest('.modal');
-      var action_url = $("#edit_comment_form").attr("action");
+    //-----------------------------------------
+    //
+    // Handling Process of Showing CBC Data
+    //-----------------------------------------
+    $(document).on('click', "[data-show-cbc-data-link]", (event) => {
+        var show_cbc_data_link = $(event.target);
+        var analysis_data_span = $(event.target).parent().find("span")
 
-      var comment = JSON.stringify({
-        "comment": $("#comment").val(),
-      })
+        setGlobalCBC(...getCBCDataFromLink(analysis_data_span))
 
-      $.ajax({
-        method: "POST",
-        url: action_url,
-        contentType: 'application/json',
-        data: comment
-      })
-      .done((messages) => {
-          messages = JSON.parse(messages);
-
-          if (messages.hasOwnProperty("error")) {
-            let errors_list = messages["error"];
-
-            clearAlert("#add_cbc_success");
-            showErrorAlert("#edit_comment_error", errors_list);
-
-          } else if (messages.hasOwnProperty("success")) {
-            $(edit_comment_modal).modal('hide');
-
-            let success_message = messages["success"];
-            showSuccessAlert("#add_cbc_success", success_message);
-
-          }
-      })
-      .fail((err) => {
-          console.log(err);
-      });
+        var show_cbc_data_modal = createModalToShowData(patient_id, "cbc", cbc)
+        $(show_cbc_data_modal).modal('show');
     });
 
-
-    $(document).on('hidden.bs.modal', '#edit_comment_modal', (event) => {
+    $(document).on('hidden.bs.modal', '#show_cbc_data_modal', (event) => {
       $(event.target).remove();
+    });
+
+    //-----------------------------------------
+    //
+    // Handling Process of Approving CBC
+    //-----------------------------------------
+    $(document).on('click', '[data-approve-cbc]', (event) => {
+      var approve_cbc_link = $(event.target);
+      var analysis_data_span = $(approve_cbc_link).parent().find("span")
+
+      setGlobalCBC(...getCBCDataFromLink(analysis_data_span))
+
+      var approve_cbc_modal = createModalToApproveCBC(patient_id, "cbc", cbc)
+      $(approve_cbc_modal).modal('show');
+    });
+
+    $(document).on('hidden.bs.modal', '#approve_cbc_modal', (event) => {
+      $(event.target).remove();
+    });
+
+
+    $(document).on('click', '#approve_cbc_button', (event) => {
+      console.log('here');
+      var show_cbc_data_modal = $(event.target).closest('.modal');
+      $("#approve_cbc_form").submit()
+
+      // var action_url = $("#approve_cbc_form").attr("action");
+
+      // var comment = JSON.stringify({
+      //   "comment": $("#comment").val(),
+      // })
+      //
+      // $.ajax({
+      //   method: "POST",
+      //   url: action_url,
+      //   contentType: 'application/json',
+      //   data: comment
+      // })
+      // .done((messages) => {
+      //     messages = JSON.parse(messages);
+      //
+      //     if (messages.hasOwnProperty("error")) {
+      //       let errors_list = messages["error"];
+      //
+      //       clearAlert("#add_cbc_success");
+      //       showErrorAlert("#approve_cbc_error", errors_list);
+      //
+      //     } else if (messages.hasOwnProperty("success")) {
+      //       $(show_cbc_data_modal).modal('hide');
+      //
+      //       let success_message = messages["success"];
+      //       showSuccessAlert("#add_cbc_success", success_message);
+      //
+      //     }
+      // })
+      // .fail((err) => {
+      //     console.log(err);
+      // });
     });
 
     //-----------------------------------------
@@ -114,23 +145,26 @@ $(document).ready(() => {
                       $(link).attr("data-cbc-mch"),
                       $(link).attr("data-cbc-comment"),
                       $(link).attr("data-cbc-comment-doctor"),
-                      $(link).attr("data-cbc-approved"), ];
+                      $(link).attr("data-cbc-approved"),
+                      $(link).attr("data-cbc-approved-at"),];
 
         return cbc_data;
     }
 
-    function setGlobalCBC(id, wcb, hgb, wcv, wch, comment, comment_doctor, approved) {
-        cbc = { "id"      : id,                   "wcb"     : wcb,
-                "hgb"     : hgb,                  "mcv"     : wcv,
-                "mch"     : wch,                  "comment" : comment,
-                "comment_doctor": comment_doctor, "approved": (approved == "true"), }
+    function setGlobalCBC(id, wcb, hgb, wcv, wch, comment, comment_doctor, approved, approved_at) {
+        cbc = { "id"              : id,             "wcb"       : wcb,
+                "hgb"             : hgb,            "mcv"       : wcv,
+                "mch"             : wch,            "comment"   : comment,
+                "comment_doctor"  : comment_doctor, "approved"  : (approved == "True"),
+                "approved_at"     : approved_at}
     }
 
     function resetGlobalCBC() {
-        cbc = { "id"      : 0,        "wcb"     : 0,
-                "hgb"     : 0,        "mcv"     : 0,
-                "mch"     : 0,        "comment" : '',
-                "comment_doctor": '', "approved": false, }
+        cbc = { "id"              : 0,        "wcb"       : 0,
+                "hgb"             : 0,        "mcv"       : 0,
+                "mch"             : 0,        "comment"   : '',
+                "comment_doctor"  : '',       "approved"  : false,
+                "approved_at"     : ''}
     }
 
 
@@ -223,7 +257,7 @@ $(document).ready(() => {
             <div class="row">
               <div class="container">
                 <div class="row">
-                  <div id="cbc_edit_options" class="col align-self-center text-center">
+                  <div id="cbc_action_links" class="col align-self-center text-center">
                     <a href="#"
                         data-cbc-edit
                         data-cbc-id="${analysis_data["id"]}"
@@ -334,15 +368,21 @@ $(document).ready(() => {
 
         } else if (analysis_data["approved"] == true){
             comment_element = `
-              <p data-cbc-doctor-name class="text-muted">Approved By Dr. <span style="font-weight: bold">${analysis_data["comment_doctor"]}</span>.</p>
+              <p data-cbc-doctor-name class="text-muted">
+                By Dr.<strong>${analysis_data["comment_doctor"]}</strong> at ${analysis_data["approved_at"]}
+              </p>
+
               <p class='form-control-static'>
+                <span data-cbc-doctor-name class="text-muted">
+                  <strong>Comment</strong>:
+                </span>
                 <span id="cbc${analysis_data["id"]}_comment">${analysis_data["comment"]}</span>
               </p>
             `
         }
 
         let modal_header = `
-            <h5 class="modal-title" id="edit_comment_modal_title">Analysis Data</h5>
+            <h5 class="modal-title" id="show_cbc_data_modal_title">Analysis Data</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -393,9 +433,75 @@ $(document).ready(() => {
             <a href="" name="cancel" class="btn btn-info btn-block" data-dismiss="modal">Cancel</a>
         `
 
-        let edit_comment_modal = createModal("edit_comment_modal", modal_header, modal_body, modal_footer);
+        let show_cbc_data_modal = createModal("show_cbc_data_modal", modal_header, modal_body, modal_footer);
 
-        return edit_comment_modal
+        return show_cbc_data_modal
+    }
+
+
+    function createModalToApproveCBC(patient_id, analysis_type, analysis_data) {
+      console.log(analysis_data);
+        let modal_header = `
+            <h5 class="modal-title" id="approve_cbc_modal_title">Approve Analysis of {{patient}}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        `
+
+        let modal_body = `
+            <div id="approve_cbc_error" class='row'></div>
+
+            <form id="approve_cbc_form" action="/analyzes/cbc/${analysis_data["id"]}/approve" method="POST">
+                <div class="form-group row">
+                  <label class="col-12 col-form-label text-center" for="comment">Comment</label>
+                  <div class="offset-1 col-10">
+                    <textarea class="form-control" id="comment" name="comment" placeholder="Doctor comments..." rows="3"></textarea>
+                  </div>
+                </div>
+            </form>
+
+            <div class='row'>
+                <div class='offset-1 col-10'>
+                    <table class='table'>
+                      <thead>
+                        <tr>
+                          <th>Item</th>
+                          <th>Value</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">WCB</th>
+                          <td>${analysis_data["wcb"]}</td>
+                        </tr>
+
+                        <tr>
+                          <th scope="row">HGB</th>
+                          <td>${analysis_data["hgb"]}</td>
+
+                        <tr>
+                          <th scope="row">MCV</th>
+                          <td>${analysis_data["mcv"]}</td>
+                        </tr>
+
+                        <tr>
+                          <th scope="row">MCH</th>
+                          <td>${analysis_data["mch"]}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        `
+
+        let modal_footer = `
+            <button id="approve_cbc_button" type="submit" name="approve" class="btn btn-outline-primary btn-block">Approve</button>
+            <button type="button" name="cancel" class="btn btn-outline-info btn-block" data-dismiss="modal">Cancel</button>
+        `
+
+        let approve_cbc_modal = createModal("approve_cbc_modal", modal_header, modal_body, modal_footer);
+
+        return approve_cbc_modal
     }
 
     function createModal(modal_id, modal_header, modal_body, modal_footer) {

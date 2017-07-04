@@ -20,6 +20,20 @@
           </button>
         </span>
       </div>
+
+      <div class="form-check">
+        <label class="form-check-label">
+          <input class="form-check-input"
+                type="checkbox"
+                name="not_approved_yet"
+                "
+                {% if not_approved_yet %}
+                  checked
+                {% endif %}
+                ">
+                Not-Approved-Yet
+        </label>
+      </div>
     </form>
   </div>
 
@@ -80,76 +94,122 @@
   </div>
 </div>
 
+<div class="offset-1 col-10">
+  <hr>
+</div>
+
 <div class="row">
   <div class="offset-1 col-10">
     <table class="table table-hover table-sm">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Type</th>
-          <th>Patient</th>
-          <th></th>
-          <th>Approved By</th>
-          <th>Approved At</th>
-          <th>Action</th>
+          <th width="2%">ID</th>
+          <th width="2%">Type</th>
+          <th width="25%">Patient</th>
+          <th width="15%"></th>
+          <th width="25%">Approved By</th>
+
+          <th width="30%">Action</th>
         </tr>
       </thead>
       <tbody>
       {% for analysis in analyzes.items %}
-        <tr {% if not analysis.cbc_approved %} class="table-danger" {% endif %}>
-          <td width="2%">{{ analysis.cbc_id }}</td>
-          <td width="2%">CBC</td>
+        <tr {% if not analysis.cbc_approved %} class="table-info" {% endif %}>
+          <td>{{ analysis.cbc_id }}</td>
+          <td>CBC</td>
 
-          <td width="15%">
+          <td>
             <a href="{{ url_for('get_patient_personal_profile', patient_id=analysis.patient_id) }}">{{ analysis.patient_name.title() }}</a>
           </td>
 
-          <td width="10%">
+          <td>
             {{ analysis.patient_personal_id }}
           </td>
 
           {% if analysis.cbc_approved %}
-            <td width="10%">{{ analysis.cbc_comment_doctor.title() }}</td>
+            <td>{{ analysis.cbc_comment_doctor.title() }}</td>
           {% else %}
-            <td width="10%"></td>
+            <td></td>
           {% endif %}
+
 
           {% if analysis.cbc_approved %}
-            <td width="10%">{{ analysis.cbc_approved_at.strftime("%Y-%m-%d") }}</td>
+            <td>
+              <span hidden
+                    data-cbc-id="{{analysis.cbc_id}}"
+                    data-cbc-wcb="{{analysis.cbc_wcb}}"
+                    data-cbc-hgb="{{analysis.cbc_hgb}}"
+                    data-cbc-mcv="{{analysis.cbc_mcv}}"
+                    data-cbc-mch="{{analysis.cbc_mch}}"
+                    data-cbc-comment="{{analysis.cbc_comment}}"
+                    data-cbc-comment-doctor="{{analysis.cbc_comment_doctor}}"
+                    data-cbc-approved="{{analysis.cbc_approved}}"
+                    data-cbc-approved-at="{{analysis.cbc_approved_at.strftime("%Y-%m-%d")}}"
+                    data-analysis-data
+              ></span>
+              <a href="{{ url_for('medical_profile', patient_id=analysis.patient_id) }}">
+                Med Profile
+              </a>
+              |
+              <a href="#"
+                  data-cbc-id="{{analysis.cbc_id}}"
+                  data-cbc-wcb="{{analysis.cbc_wcb}}"
+                  data-cbc-hgb="{{analysis.cbc_hgb}}"
+                  data-cbc-mcv="{{analysis.cbc_mcv}}"
+                  data-cbc-mch="{{analysis.cbc_mch}}"
+                  data-cbc-comment="{{analysis.cbc_comment}}"
+                  data-cbc-comment-doctor="{{analysis.cbc_comment_doctor}}"
+                  data-cbc-approved-at="{{analysis.cbc_approved_at.strftime("%Y-%m-%d")}}"
+                  data-show-cbc-data-link>
+                  Show
+              </a>
+              |
+              <a href="{{ url_for('print_analysis', patient_id=analysis.patient_id, analysis_type='cbc', analysis_id=analysis.cbc_id) }}"
+                  target="_blank"
+                  data-edit-comment-link>
+                  Print
+              </a>
+            </td>
+
           {% else %}
-            <td width="10%"></td>
+            <td>
+              <span hidden
+                    data-cbc-id="{{analysis.cbc_id}}"
+                    data-cbc-wcb="{{analysis.cbc_wcb}}"
+                    data-cbc-hgb="{{analysis.cbc_hgb}}"
+                    data-cbc-mcv="{{analysis.cbc_mcv}}"
+                    data-cbc-mch="{{analysis.cbc_mch}}"
+                    data-cbc-comment="{{analysis.cbc_comment}}"
+                    data-cbc-comment-doctor="{{analysis.cbc_comment_doctor}}"
+                    data-cbc-approved
+                    data-cbc-approved-at
+                    data-analysis-data
+              ></span>
+              <a href="{{ url_for('medical_profile', patient_id=analysis.patient_id) }}">
+                Med Profile
+              </a>
+              |
+              <a href="#"
+                  data-cbc-id="{{analysis.cbc_id}}"
+                  data-cbc-wcb="{{analysis.cbc_wcb}}"
+                  data-cbc-hgb="{{analysis.cbc_hgb}}"
+                  data-cbc-mcv="{{analysis.cbc_mcv}}"
+                  data-cbc-mch="{{analysis.cbc_mch}}"
+                  data-cbc-comment="{{analysis.cbc_comment}}"
+                  data-cbc-comment-doctor="{{analysis.cbc_comment_doctor}}"
+                  data-cbc-approved-at
+                  data-show-cbc-data-link>
+                  Show
+              </a>
+              {% if current_user.role.name == 'doctor' %}
+                |
+                <a href="{{ url_for('approve_analysis', analysis_type='cbc', analysis_id=analysis.cbc_id) }}"
+                   data-approve-cbc>
+                  Approve
+                </a>
+              {% endif %}
+            </td>
           {% endif %}
-
-          <td width="25%">
-            <a href="{{ url_for('medical_profile', patient_id=analysis.patient_id) }}">
-              Medical Profile
-            </a>
-            |
-            <a href="#"
-                data-cbc-id="{{analysis.cbc_id}}"
-                data-cbc-wcb="{{analysis.cbc_wcb}}"
-                data-cbc-hgb="{{analysis.cbc_hgb}}"
-                data-cbc-mcv="{{analysis.cbc_mcv}}"
-                data-cbc-mch="{{analysis.cbc_mch}}"
-                data-cbc-comment="{{analysis.cbc_comment}}"
-                data-cbc-comment-doctor="{{analysis.cbc_comment_doctor}}"
-                {% if analysis.cbc_approved %}
-                  data-cbc-approved=true
-
-                {% else %}
-                  data-cbc-approved=flase
-                {% endif %}
-
-                data-show-data-link>
-                Analysis Data
-            </a>
-            |
-            <a href="{{ url_for('get_analysis_as_pdf', patient_id=analysis.patient_id, analysis_type='cbc', analysis_id=analysis.cbc_id) }}"
-                target="_blank"
-                data-edit-comment-link>
-                PDF
-            </a>
-          </td>
         </tr>
       {%- endfor %}
       </tbody>

@@ -21,7 +21,7 @@ $(document).ready(() => {
         wheelStep: 3,
         alwaysVisible: true,
         railVisible: true,
-        height: '400px',
+        height: '315px',
     });
 
     //-----------------------------------------
@@ -129,6 +129,7 @@ $(document).ready(() => {
     function createCBCCard(patient_id, analysis_type, analysis_data) {
         var comment_element = ''
         var approved_element = ''
+        var print_pdf_element = ''
 
         if (analysis_data["approved"] == false) {
             comment_element = `
@@ -146,6 +147,14 @@ $(document).ready(() => {
             approved_element = `
               <span class="badge badge-success">Approved</span>
             `
+
+            print_pdf_element = `
+              <a href="/patients/${patient_id}/analyzes/cbc/${analysis_data["id"]}/print_as_pdf"
+                  class="mb-1 btn btn-link btn-sm"
+                  target="_blank"
+                  data-cbc-options-link="print_pdf">Print
+              </a>
+            `
         }
 
         let card_header = `
@@ -162,11 +171,7 @@ $(document).ready(() => {
                 Show Data
               </a>
 
-              <a href="/patients/${patient_id}/analyzes/cbc/${analysis_data["id"]}/pdf"
-                  class="mb-1 btn btn-link btn-sm"
-                  target="_blank"
-                  data-cbc-options-link="print_pdf">PDF
-              </a>
+              ${print_pdf_element}
             </div>
         `
 

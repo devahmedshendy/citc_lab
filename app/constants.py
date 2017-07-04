@@ -29,13 +29,16 @@ MSG = {
     'NO_SUCH_PATIENT'               : 'There is no such patient in the system.',
 
     # CBC Analysis - Success Messages
-    'CBC_ANALYSIS_ADD_DONE'         : 'The CBC Analysis has been added successfully!',
-    'CBC_ANALYSIS_EDIT_DONE'        : 'The CBC Analysis has been edited successfully!',
-    'CBC_ANALYSIS_DELETE_DONE'      : 'The CBC Analysis has been deleted successfully!',
-    'CBC_ANALYSIS_APPROVED'         : 'The CBC Analysis has been approved!',
+    'ANALYSIS_ADD_DONE'         : 'Analysis has been added successfully!',
+    'ANALYSIS_EDIT_DONE'        : 'Analysis has been edited successfully!',
+    'ANALYSIS_DELETE_DONE'      : 'Analysis has been deleted successfully!',
+    'ANALYSIS_APPROVE_DONE'         : 'Analysis has been approved successfully!',
 
     # CBC Analysis - Error Messages
-    'NO_SUCH_ANALYSIS'          : 'No such analysis for this patient.',
+    'NO_SUCH_ANALYSIS'              : 'No such analysis for this patient.',
+    'ANALYSIS_ALREADY_APPROVED'     : 'Analysis has been approved before.',
+    'ANALYSIS_NEED_APPROVE'         : 'Analysis has not been approved yet.',
+    'APPROVED_ANALYSIS_EDIT_DENIED' : 'Approved analysis can not be edited.',
 
     # General Error Messages
     'UNEXPECTED_ERROR'              : 'Unexpected error.',

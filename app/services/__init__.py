@@ -1,2 +1,2 @@
 from patient_service import *
-from cbc_analysis_service import *
+from analysis_service import *

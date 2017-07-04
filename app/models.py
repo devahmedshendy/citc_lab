@@ -134,17 +134,32 @@ class CBCAnalysis(db.Model):
             self.comment_doctor = comment_doctor
 
     def serialize(self):
-        return {
-            "id"                : self.id,
-            "WCB"               : self.WCB,
-            "HGB"               : self.HGB,
-            "MCV"               : self.MCV,
-            "MCH"               : self.MCH,
-            "comment"           : self.comment,
-            "comment_doctor"    : self.comment_doctor,
-            "updated_at"        : self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
-            "approved"          : self.approved,
-        }
+        if self.approved:
+            return {
+                "id"                : self.id,
+                "WCB"               : self.WCB,
+                "HGB"               : self.HGB,
+                "MCV"               : self.MCV,
+                "MCH"               : self.MCH,
+                "comment"           : self.comment,
+                "comment_doctor"    : self.comment_doctor,
+                "approved"          : self.approved,
+                "approved_at"       : self.approved_at.strftime("%Y-%m-%d"),
+                "updated_at"        : self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
+            }
+
+        else:
+            return {
+                "id"                : self.id,
+                "WCB"               : self.WCB,
+                "HGB"               : self.HGB,
+                "MCV"               : self.MCV,
+                "MCH"               : self.MCH,
+                "comment"           : self.comment,
+                "comment_doctor"    : self.comment_doctor,
+                "approved"          : self.approved,
+                "updated_at"        : self.updated_at.strftime("%b %d, %Y - %I:%M %p"),
+            }
 
     def approve(self):
         self.approved = True

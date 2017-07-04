@@ -325,7 +325,7 @@ def edit_account_settings():
 @login_required
 @administrators_permission.require(http_exception=403)
 def delete_user(user_id=None):
-    user = get_user(user_id)
+    user = User.query.get(user_id)
     messages_list = {}
 
     if not user:

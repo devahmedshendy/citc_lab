@@ -1,0 +1,156 @@
+{% extends 'layout.html' %}
+
+{% block page_name %}Approve CBC Analysis{% endblock %}
+
+
+{% block add_analysis_dropdown %}
+{% endblock %}
+
+{% block body_header %}
+  <div id="approve_cbc_analysis_success" class='row'></div>
+
+  {% include 'alert.html' %}
+
+  <div class="row">
+    <p id="patient-profile-label" class="offset-3 col-6 text-center">
+      Approve CBC Analysis
+    </p>
+  </div>
+{% endblock %}
+
+{% block body_content %}
+<div class="container">
+  <div class="row justify-content-around">
+
+    <!-- Patient Details -->
+    <div class="col-4">
+
+      <div class="row justify-content-center">
+        <strong>Patient Personal Details</strong>
+      </div>
+
+      <div class="row">
+        <hr class="col">
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <table id="patient_personal_details" data-patient-id="2" class="table">
+            <tbody>
+              <tr>
+                <th scope="row">Personal ID</th>
+                <td data-patient-id="{{ patient['personal_id'] }}">{{ patient["personal_id"] }}</td>
+              </tr>
+
+              <tr>
+                <th scope="row">Name</th>
+                <td data-patient-id="{{ patient['name'] }}">{{ patient["name"] }}</td>
+              </tr>
+
+              <tr>
+                <th scope="row">Address</th>
+                <td data-patient-address="{{ patient['address'] }}">{{ patient["address"] }}</td>
+              </tr>
+
+              <tr>
+                <th scope="row">Phone</th>
+                <td data-patient-phone="{{ patient['phone'] }}">{{ patient["phone"] }}</td>
+              </tr>
+
+              <tr>
+                <th scope="row">Age</th>
+                <td data-patient-age="{{ patient['age'] }}">{{ patient["age"] }}</td>
+              </tr>
+
+              <tr>
+                <th scope="row">Gender</th>
+                <td data-patient-gender="{{ patient['gender'] }}">{{ patient["gender"] }}</td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-12">
+          <button id="back" type="button" name="back" value="back" class="btn btn-info btn-block" role="button">Back</button>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- Patient Analysis -->
+    <div class="col-5">
+      <div class="row justify-content-center">
+        <strong>Analysis Data</strong>
+      </div>
+
+      <div class="row">
+        <hr class="col">
+      </div>
+
+
+      <div class="row justify-content-center">
+          <div class="col-10">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Value</th>
+                    <th>Normal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">WCB</th>
+                    <td data-cbc-wcb="{{analysis['WCB']}}">{{analysis['WCB']}}</td>
+                    <td>3.70 - 10.10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">HGB</th>
+                    <td data-cbc-hgb="{{analysis['HGB']}}">{{analysis['HGB']}}</td>
+                    <td>12.9 - 15.9</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">MCV</th>
+                    <td data-cbc-mcv="{{analysis['MCV']}}">{{analysis['MCV']}}</td>
+                    <td>81.1 - 96.0</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">MCH</th>
+                    <td data-cbc-mch="{{analysis['MCH']}}">{{analysis['MCH']}}</td>
+                    <td>27.0 - 31.2</td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+
+          <div class="col-12">
+            <form id="edit_comment_form" action="{{ url_for('approve_analysis', analysis_type='cbc', analysis_id=analysis['id']) }}" method="POST">
+                <div class="form-group row">
+
+                  <textarea class="form-control" id="comment" name="comment" placeholder="Doctor comments..." rows="3"></textarea>
+
+                </div>
+
+                <div class="form-group row">
+                  <button type="submit" name="approve" class="btn btn-primary btn-block">Approve</button>
+                </div>
+            </form>
+          </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+
+{% block page_js %}
+  {% assets output='gen/approve_cbc_analysis.min.js', "js/approve_cbc_analysis.js" %}
+      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+  {% endassets %}
+{% endblock %}

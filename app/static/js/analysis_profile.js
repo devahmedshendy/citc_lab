@@ -323,7 +323,7 @@ $(document).ready(() => {
                 <div class="row">
                   <div class="container">
                     <div class="row">
-                      <div id="cbc_edit_options" class="col align-self-center text-center">
+                      <div id="cbc_action_links" class="col align-self-center text-center">
                         <a href="#"
                             data-cbc-options-link="edit"
                             data-cbc-id="${cbc["id"]}"

@@ -13,11 +13,11 @@ from app.permissions import *
 from app.services import *
 
 from datetime import datetime
-from sqlalchemy import desc, or_, and_
+from sqlalchemy import desc, or_, and_, text
 import json, jsonify
 
 
-analyzes_joined_patient_columns = [
+required_columns_for_analyzes = [
     Patient.id.label("patient_id"),
     Patient.personal_id.label("patient_personal_id"),
     Patient.name.label("patient_name"),
@@ -31,10 +31,11 @@ analyzes_joined_patient_columns = [
     CBCAnalysis.MCV.label("cbc_mcv"),
     CBCAnalysis.MCH.label("cbc_mch"),
     CBCAnalysis.approved.label("cbc_approved"),
-    CBCAnalysis.approved_at.label("cbc_approved_at")
+    CBCAnalysis.approved_at.label("cbc_approved_at"),
+    CBCAnalysis.approved_at.label("cbc_created_at")
 ]
 
-analysis_joined_patient_columns = [
+required_columns_for_analysis = [
     Patient.id.label("patient_id"),
     Patient.personal_id.label("patient_personal_id"),
     Patient.name.label("patient_name"),
@@ -58,45 +59,85 @@ analysis_joined_patient_columns = [
 @app.route('/analyzes/page/<int:page>', methods=['GET'], endpoint='get_analyzes_by_page')
 @login_required
 def get_analyzes(page=1):
-    search_string = request.args.get('str')
+    order_field           = 'cbc_id'
+    pagination_properties = [page, PER_PAGE["ANALYZES"], False]
+    search_string         = request.args.get('str')
 
-    if search_string:
+
+    if request.args.get('not_approved_yet') == "on":
+        not_approved_yet = True
+    else:
+        not_approved_yet = False
+
+
+    if search_string and not_approved_yet:
         search_string = search_string.strip()
+        filters       = [ text("cbc_approved=0") ]
 
         try:
-
             int(search_string)
 
-            analyzes = paginated_analyzes_joined_patient_like_filter(
-                'cbc',
-                'cbc_id',
-                Patient.personal_id,
-                analyzes_joined_patient_columns,
-                [page, PER_PAGE["ANALYZES"], False],
-                search_string + "%"
+            analyzes = search_for_personal_id(
+                search_string=search_string + "%",
+                order_field=order_field,
+                required_columns=required_columns_for_analyzes,
+                pagination_properties=pagination_properties,
+                filters=filters
             )
 
         except ValueError:
-            analyzes = paginated_analyzes_joined_patient_like_filter(
-                'cbc',
-                'cbc_id',
-                Patient.name,
-                analyzes_joined_patient_columns,
-                [page, PER_PAGE["ANALYZES"], False],
-                search_string + "%"
+            analyzes = search_for_patient_name(
+                search_string=search_string + "%",
+                order_field=order_field,
+                required_columns=required_columns_for_analyzes,
+                pagination_properties=pagination_properties,
+                filters=filters
             )
 
-    else:
-        print 'ererere'
-        analyzes = paginated_analyzes_joined_patient(
-            'cbc',
-            'cbc_id',
-            analyzes_joined_patient_columns,
-            [page, PER_PAGE["ANALYZES"], False]
+
+    elif search_string and not not_approved_yet:
+        search_string = search_string.strip()
+
+        try:
+            int(search_string)
+
+            analyzes = search_for_personal_id(
+                search_string=search_string + "%",
+                order_field=order_field,
+                required_columns=required_columns_for_analyzes,
+                pagination_properties=pagination_properties,
+            )
+
+        except ValueError:
+            analyzes = search_for_patient_name(
+                search_string=search_string + "%",
+                order_field=order_field,
+                required_columns=required_columns_for_analyzes,
+                pagination_properties=pagination_properties
+            )
+
+
+    elif not_approved_yet:
+        filters       = [ text("cbc_approved=0") ]
+
+        analyzes = get_all_analyzes_joined_patient(
+            order_field=order_field,
+            required_columns=required_columns_for_analyzes,
+            pagination_properties=pagination_properties,
+            filters=filters
         )
 
+
+    else:
+        analyzes = get_all_analyzes_joined_patient(
+            order_field=order_field,
+            required_columns=required_columns_for_analyzes,
+            pagination_properties=pagination_properties
+        )
+
+
     tempate = 'analyzes.html'
-    return render_template(tempate, analyzes=analyzes, page=page)
+    return render_template(tempate, not_approved_yet=not_approved_yet, analyzes=analyzes, page=page)
 
 
 
@@ -118,7 +159,7 @@ def add_analysis(analysis_type=None, patient_id=None):
                     ANALYSIS_TO_ID[analysis_type],
                     patient_id)
 
-    cbc_analysis_form = CBCAnalysisForm(obj=cbc_analysis)
+    cbc_analysis_form = EditCBCAnalysisForm(obj=cbc_analysis)
 
     if cbc_analysis_form.validate_on_submit() == False:
         messages_list["error"] = []
@@ -132,7 +173,7 @@ def add_analysis(analysis_type=None, patient_id=None):
             db.session.add(cbc_analysis)
             db.session.commit()
 
-            messages_list["success"] = MSG["CBC_ANALYSIS_ADD_DONE"]
+            messages_list["success"] = MSG["ANALYSIS_ADD_DONE"]
 
         except sqlalchemy.exc.DatabaseError as e:
             print e.message
@@ -153,18 +194,21 @@ def add_analysis(analysis_type=None, patient_id=None):
 def edit_analysis(analysis_type=None, analysis_id=None, patient_id=None):
     messages_list = {}
 
-    print patient_id
-    cbc_analysis = analysis_of_id(analysis_type, analysis_id)
+    cbc_analysis = get_analysis_of_id(analysis_type, analysis_id)
 
     if not cbc_analysis:
         messages_list["error"] = [ MSG["NO_SUCH_ANALYSIS"] ]
 
         return json.dumps(messages_list)
 
+    if cbc_analysis.approved:
+        messages_list["error"] = [ MSG["APPROVED_ANALYSIS_EDIT_DENIED"] ]
+
+        return json.dumps(messages_list)
 
     cbc_submitted_data = request.get_json()
 
-    cbc_analysis_form = CBCAnalysisForm()
+    cbc_analysis_form = EditCBCAnalysisForm()
 
     cbc_analysis_form.WCB.data = cbc_submitted_data["WCB"]
     cbc_analysis_form.HGB.data = cbc_submitted_data["HGB"]
@@ -186,7 +230,7 @@ def edit_analysis(analysis_type=None, analysis_id=None, patient_id=None):
             db.session.add(cbc_analysis)
             db.session.commit()
 
-            messages_list["success"] = MSG["CBC_ANALYSIS_EDIT_DONE"]
+            messages_list["success"] = MSG["ANALYSIS_EDIT_DONE"]
 
         except sqlalchemy.exc.DatabaseError as e:
             print e.message
@@ -207,7 +251,7 @@ def edit_analysis(analysis_type=None, analysis_id=None, patient_id=None):
 def delete_analysis(analysis_type=None, analysis_id=None, patient_id=None):
     messages_list = {}
 
-    cbc_analysis = analysis_of_id(analysis_type, analysis_id)
+    cbc_analysis = get_analysis_of_id(analysis_type, analysis_id)
 
     if not cbc_analysis:
         messages_list["error"] = [ MSG["NO_SUCH_ANALYSIS"] ]
@@ -218,7 +262,7 @@ def delete_analysis(analysis_type=None, analysis_id=None, patient_id=None):
         db.session.delete(cbc_analysis)
         db.session.commit()
 
-        messages_list["success"] = MSG["CBC_ANALYSIS_DELETE_DONE"]
+        messages_list["success"] = MSG["ANALYSIS_DELETE_DONE"]
 
     except sqlalchemy.exc.DatabaseError as e:
         print e.message
@@ -231,115 +275,81 @@ def delete_analysis(analysis_type=None, analysis_id=None, patient_id=None):
 
 
 """ Approve Analysis """
-@app.route('/analyzes/<string:analysis_type>/<int:analysis_id>/approve', methods=["POST"])
+@app.route('/analyzes/<string:analysis_type>/<int:analysis_id>/approve', methods=["GET", "POST"])
 @login_required
 @doctor_permission.require(http_exception=403)
 def approve_analysis(analysis_type=None, analysis_id=None):
-    messages_list = {}
-
-    submitted_data = request.get_json()
-
-    cbc_analysis = analysis_of_id(analysis_type, analysis_id)
+    cbc_analysis = get_analysis_of_id(analysis_type, analysis_id)
 
     if not cbc_analysis:
-        messages_list["error"] = []
-        messages_list["error"].append(MSG["NO_SUCH_ANALYSIS"] )
+        abort(404)
 
-        return json.dumps(messages_list)
+    if request.method == "GET":
+        if cbc_analysis.approved:
+            flash_message = (MSG["ANALYSIS_ALREADY_APPROVED"], "error")
+            flash(*flash_message)
 
-    cbc_analysis.approve()
-    cbc_analysis.comment  = submitted_data["comment"]
-    cbc_analysis.comment_doctor = current_user.firstname.title() + " " + current_user.lastname.title()
-    cbc_analysis.updated_at = datetime.now()
+            url = url_for('get_analyzes')
+            response = redirect(url)
 
-    try:
-        db.session.add(cbc_analysis)
-        db.session.commit()
+        else:
+            patient = get_patient(patient_id=cbc_analysis.patient_id)
 
-        messages_list["success"] = MSG["CBC_ANALYSIS_APPROVED"]
+            template = "approve_cbc_analysis.html"
+            response = render_template(template, analysis=cbc_analysis, patient=patient)
 
-    except sqlalchemy.exc.DatabaseError as e:
-        print e.message
-        db.session.rollback()
 
-        messages_list["error"] = MSG["OPERATION_FAILED"]
+    elif request.method == "POST":
+        cbc_analysis.approve()
+        cbc_analysis.comment = request.form.get("comment")
+        cbc_analysis.comment_doctor = current_user.firstname.title() + " " + current_user.lastname.title()
+        cbc_analysis.updated_at = datetime.now()
 
-    return json.dumps(messages_list)
+        try:
+            db.session.add(cbc_analysis)
+            db.session.commit()
+
+            flash_message = (MSG["ANALYSIS_APPROVE_DONE"], "success")
+            flash(*flash_message)
+
+        except sqlalchemy.exc.DatabaseError as e:
+            print e.message
+            db.session.rollback()
+
+            flash_message = (MSG["OPERATION_FAILED"], "error")
+            flash(*flash_message)
+
+        url = url_for("get_analyzes", page=request.args.get('page'), not_approved_yet=request.args.get("not_approved_yet"))
+        response = redirect(url)
+
+    return response
 
 
 """ Get Analysis As PDF """
 # This needs https://www.cairographics.org/download/ to be installed \
 # in the server hosting this website.
-@app.route('/patients/<int:patient_id>/analyzes/<string:analysis_type>/<int:analysis_id>/pdf', methods=["GET"])
+@app.route('/patients/<int:patient_id>/analyzes/<string:analysis_type>/<int:analysis_id>/print_as_pdf', methods=["GET"])
 @login_required
-def get_analysis_as_pdf(analysis_type=None, analysis_id=None, patient_id=None):
+def print_analysis(analysis_type=None, analysis_id=None, patient_id=None):
     if analysis_type == 'cbc':
-        cbc_analysis = analysis_joined_patient_eq_filter(
-            'cbc',
-            analysis_id,
-            analysis_joined_patient_columns
+        cbc_analysis = get_analysis_for_print(
+            analysis_id=analysis_id,
+            required_columns=required_columns_for_analysis
         )
-
-        # cbc_analysis = CBCAnalysis.query \
-        #                     .join(Patient, Patient.id==CBCAnalysis.patient_id) \
-        #                     .filter(CBCAnalysis.id == analysis_id) \
-        #                     .add_columns(Patient.personal_id,
-        #                                 Patient.name,
-        #                                 Patient.age,
-        #                                 Patient.gender,
-        #                                 CBCAnalysis.id,
-        #                                 CBCAnalysis.comment,
-        #                                 CBCAnalysis.comment_doctor,
-        #                                 CBCAnalysis.WCB,
-        #                                 CBCAnalysis.HGB,
-        #                                 CBCAnalysis.MCV,
-        #                                 CBCAnalysis.MCH,
-        #                                 CBCAnalysis.created_at,
-        #                                 CBCAnalysis.approved,
-        #                                 CBCAnalysis.approved_at,
-        #                                 CBCAnalysis.updated_at).first()
-
-
-
 
         if (not cbc_analysis):
             abort(404)
-            # messages_list["error"] = []
-            # messages_list["error"].append(MSG["NO_SUCH_ANALYSIS"] )
-            #
-            # return json.dumps(messages_list)
 
+        if not cbc_analysis.cbc_approved:
+            flash_message = (MSG["ANALYSIS_NEED_APPROVE"], "error")
+            flash(*flash_message)
 
-        template = 'analysis_as_pdf.html'
-        html = render_template(template, analysis=cbc_analysis)
-        return render_pdf(HTML(string=html))
+            url = url_for("get_analyzes")
+            response = redirect(url)
 
+        else:
+            template = 'analysis_as_pdf.html'
+            html = render_template(template, analysis=cbc_analysis)
+            response = render_pdf(HTML(string=html))
 
-
-def db_update_or_insert_analysis(cbc):
-    cbc.updated_at = datetime.now()
-
-    try:
-        db.session.add(cbc)
-        db.session.commit()
-
-        return True
-
-    except Exception as e:
-        print e.message
-        db.session.rollback()
-
-        return False
-
-def db_delete_analysis(cbc):
-    try:
-        db.session.delete(cbc)
-        db.session.commit()
-
-        return True
-
-    except Exception as e:
-        print e.message
-        db.session.rollback()
-
-        return False
+    return response

@@ -212,13 +212,9 @@ def get_patient_analyzes(patient_id=None):
     if request.method == "GET" and request.args.get("json") == "True":
         cbc_analysis_list = []
 
-        query_result = analyzes_of_patient_in_desc_order(
-                            'cbc',
-                            patient.id,
-                            CBCAnalysis.updated_at
-                        )
+        analyzes = get_all_analyzes_of_patient(patient.id)
 
-        for cbc_analysis in query_result:
+        for cbc_analysis in analyzes:
             cbc_analysis_list.append(cbc_analysis.serialize())
 
         return json.dumps(cbc_analysis_list)
@@ -250,17 +246,3 @@ def delete_patient(patient_id=None):
     flash(*flash_message)
     url = url_for('get_patients')
     return redirect(url)
-
-
-def db_delete_patient(patient):
-    try:
-        db.session.delete(patient)
-        db.session.commit()
-
-        return True
-
-    except Exception as e:
-        print e.message
-        db.session.rollback()
-
-        return False

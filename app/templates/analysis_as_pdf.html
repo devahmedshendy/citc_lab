@@ -44,26 +44,14 @@
                     <td class="font-weight-normal">Patient Gender</td>
                     <td>{{analysis.patient_gender}}</td>
 
-                    <td class="font-weight-normal">Approved</td>
-                    {% if analysis.cbc_approved %}
-                      <td>Yes</td>
-
-                    {% else %}
-                      <td>No</td>
-                    {% endif %}
+                    <td class="font-weight-normal">Approved At</td>
+                    <td>{{analysis.cbc_approved_at.strftime("%Y-%m-%d")}}</td>
                   </tr>
                   <tr>
                     <td class="font-weight-normal">Patient Age</td>
                     <td>{{analysis.patient_age}}</td>
-
-                    <td class="font-weight-normal">Approved At</td>
-                    {% if analysis.cbc_approved_at %}
-                      <td>{{analysis.cbc_approved_at.strftime("%Y-%m-%d")}}</td>
-
-                    {% else %}
-                      <td></td>
-                    {% endif %}
-
+                    <td></td>
+                    <td></td>
                   </tr>
                 </tbody>
               </table>
@@ -86,22 +74,22 @@
                 <tbody>
                   <tr>
                     <th scope='row'>WCB</th>
-                    <td data-cbc-wcb>{{analysis.WCB}}</td>
+                    <td data-cbc-wcb>{{analysis.cbc_wcb}}</td>
                     <td>3.70 - 10.10</td>
                   </tr>
                   <tr>
                     <th scope='row'>HGB</th>
-                    <td data-cbc-hgb>{{analysis.HGB}}</td>
+                    <td data-cbc-hgb>{{analysis.cbc_hgb}}</td>
                     <td>12.9 - 15.9</td>
                   </tr>
                   <tr>
                     <th scope='row'>MCV</th>
-                    <td data-cbc-mcv>{{analysis.MCV}}</td>
+                    <td data-cbc-mcv>{{analysis.cbc_mcv}}</td>
                     <td>81.1 - 96.0</td>
                   </tr>
                   <tr>
                     <th scope='row'>MCH</th>
-                    <td data-cbc-mch>{{analysis.MCH}}</td>
+                    <td data-cbc-mch>{{analysis.cbc_mch}}</td>
                     <td>27.0 - 31.2</td>
                   </tr>
                   {% if analysis.cbc_approved_at %}
