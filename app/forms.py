@@ -96,7 +96,6 @@ class AddUserFormForAdmin(FlaskForm):
 
 
 
-
 class EditUserFormForAdmin(FlaskForm):
     firstname = StringField(u'Firstname',
                         [InputRequired("Please enter user's firstname.")],
@@ -267,31 +266,7 @@ class EditPatientForm(FlaskForm):
 
 
 
-# class PatientForm(FlaskForm):
-#     personal_id = StringField(u'ID',
-#                         [InputRequired("Please enter patient's ID.")])
-#
-#     name        = StringField(u'Name',
-#                         [InputRequired("Please enter patient's name.")])
-#
-#     address     = StringField(u'Address',
-#                         [InputRequired("Please enter patient's address.")])
-#
-#     phone       = StringField(u'Phone',
-#                         [optional()])
-#
-#     age         = IntegerField(u"Age",
-#                         [InputRequired("Please enter patient's age.")])
-#
-#     gender      = SelectField(u'Gender',
-#                         choices=[("Male", "Male"), ("Female", "Female")])
-
-
-class CBCAnalysisForm(FlaskForm):
-    comment  = TextAreaField('Comment',
-                    [optional(), length(max=200)],
-                    render_kw={"placeholder": "Doctor comments...", "rows": "3"})
-
+class EditCBCAnalysisForm(FlaskForm):
     WCB      = StringField('WBC',
                     [InputRequired("Please enter WBC value.")],
                     render_kw={"placeholder": "White Blod Cells"})
@@ -310,10 +285,6 @@ class CBCAnalysisForm(FlaskForm):
 
 
 class AddCBCForm(FlaskForm):
-    comment  = TextAreaField('Comment',
-                    [optional(), length(max=200)],
-                    render_kw={"placeholder": "Doctor comments...", "rows": "3"})
-
     WCB      = StringField('WBC',
                     [InputRequired("Please enter WBC value.")],
                     render_kw={"placeholder": "White Blod Cells"})
