@@ -1,6 +1,5 @@
 $(document).ready(function() {
   var page_name = document.title.split(" - ")[0];
-  console.log(page_name);
 
   if (page_name === "Login") {
 
@@ -100,11 +99,6 @@ $(document).ready(function() {
       });
     }
 
-  } else if (page_name === "Patient Profile") {
-    console.log("Patient Profile Page");
-
-  } else if (page_name === "New Patient") {
-    console.log("New Patient Page");
   }
 
 

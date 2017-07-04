@@ -75,7 +75,6 @@ $(document).ready(() => {
 
 
     $(document).on('click', '#approve_cbc_button', (event) => {
-      console.log('here');
       var show_cbc_data_modal = $(event.target).closest('.modal');
       $("#approve_cbc_form").submit()
 
@@ -440,7 +439,6 @@ $(document).ready(() => {
 
 
     function createModalToApproveCBC(patient_id, analysis_type, analysis_data) {
-      console.log(analysis_data);
         let modal_header = `
             <h5 class="modal-title" id="approve_cbc_modal_title">Approve Analysis of {{patient}}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

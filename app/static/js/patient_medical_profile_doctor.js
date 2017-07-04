@@ -100,10 +100,7 @@ $(document).ready(() => {
     }
 
     function changeCBCCardComment(comment) {
-        console.log(comment);
-        console.log($(`#cbc${cbc["id"]}_comment`)[0]);
         $(`span#cbc${cbc["id"]}_comment`).text(comment["comment"]);
-        // console.log($(`p span[data-cbc-comment]`)[0]);
     }
 
     function getCBCDataFromLink(link) {
@@ -350,7 +347,6 @@ $(document).ready(() => {
     }
 
     function createModalToEditComment(patient_id, analysis_type, analysis_data) {
-      console.log(analysis_data);
         let modal_header = `
             <h5 class="modal-title" id="edit_comment_modal_title">Edit Comment</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

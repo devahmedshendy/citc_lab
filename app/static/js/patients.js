@@ -11,54 +11,6 @@ $(document).ready(()=> {
     $(confirm_delete_patient_modal).modal('toggle');
   })
 
-
-
-  // $(document).on('hidden.bs.modal', '#confirm_delete_patient_modal', (event)=> {
-  //   $(event.target).remove();
-  // })
-
-  // $(document).on('submit', '#confirm_delete_patient_form', (event)=> {
-  //   event.preventDefault();
-  //
-  //   var action_url = $(event.target).attr('action');
-  //   var fullname = $(".modal-title strong").text();
-  //
-  //   delete_patient(action_url);
-  // })
-  //
-  //
-  // function delete_patient(action_url) {
-  //   console.log(action_url);
-  //
-  //   $.ajax({
-  //     method: "POST",
-  //     url: action_url
-  //   })
-  //   .done((messages)=> {
-  //     messages = JSON.parse(messages);
-  //
-  //     if ( messages.hasOwnProperty("error") ) {
-  //       let errors_list = messages["error"]
-  //
-  //       clearAlert("#delete_patient_success")
-  //       showErrorAlert("#confirm_delete_patient_error", errors_list)
-  //
-  //     } else if ( messages.hasOwnProperty("success") ) {
-  //       success_message = messages["success"];
-  //       // patient_row = $(`[data-patient-fullname="${fullname}"]`).parent().parent();
-  //       // $(patient_row).remove();
-  //       $("#confirm_delete_patient_modal").modal('hide');
-  //       location.reload();
-  //       showSuccessAlert("#delete_patient_success", success_message)
-  //
-  //
-  //     }
-  //   })
-  //   .fail((err)=> {
-  //     console.log("Error in ajax query: " + err.statusText);
-  //   })
-  // }
-
   // ==== Patients Page Functions ====
   // Create Alert to Display Error/Success Messages
   function showErrorAlert(alert_id, errors_list) {
@@ -145,7 +97,7 @@ $(document).ready(()=> {
         <button type="button" class="btn btn-outline-info" data-dismiss="modal">Cancel</button>
       </form>
     `
-    
+
     return create_modal(modal_header, modal_body, modal_footer);
   }
 

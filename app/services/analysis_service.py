@@ -18,7 +18,6 @@ def search_for_personal_id(search_string, order_field,
                     .order_by(order_field)                              \
 
         if "filters" in kwargs:
-            print 'yes'
             for filter in kwargs["filters"]:
                 analyzes = analyzes.filter(filter)
 
@@ -37,7 +36,6 @@ def search_for_patient_name(search_string, order_field,
                     .order_by(order_field)                      \
 
         if "filters" in kwargs:
-            print 'yes'
             for filter in kwargs["filters"]:
                 analyzes = analyzes.filter(filter)
 
@@ -55,7 +53,6 @@ def get_all_analyzes_joined_patient(order_field, required_columns,
                     .order_by(order_field)            \
 
         if "filters" in kwargs:
-            print 'yes'
             for filter in kwargs["filters"]:
                 analyzes = analyzes.filter(filter)
 

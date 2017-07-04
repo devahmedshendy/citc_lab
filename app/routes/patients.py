@@ -140,7 +140,6 @@ def edit_patient(patient_id=None):
             edit_patient_form.populate_obj(patient)
 
             try:
-                print patient.personal_id
                 db.session.add(patient)
                 db.session.commit()
 

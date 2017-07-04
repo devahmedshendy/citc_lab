@@ -15,25 +15,6 @@ $(document).ready(()=> {
     $(confirm_delete_user_modal).modal('toggle');
   })
 
-  // Confirm Delete User Form -> Submitted
-  // $(document).on('submit', '#confirm_delete_user_form', (event)=> {
-  //   event.preventDefault();
-  //
-  //   var action_url = $(event.target).attr('action');
-  //   var fullname = $(".modal-title strong").text();
-  //
-  //   deleteUser(action_url);
-  // });
-
-  //-----------------------------------------
-  //
-  // Handling Modal Hidden Event
-  //-----------------------------------------
-  // Confirm Delete User Modal -> Hidden
-  // $(document).on('hidden.bs.modal', '#confirm_delete_user_modal', (event)=> {
-  //   $(event.target).remove();
-  // })
-
   //-----------------------------------------
   //
   // Users Page Functions
@@ -48,18 +29,14 @@ $(document).ready(()=> {
       messages = JSON.parse(messages);
 
       if ( messages.hasOwnProperty("error") ) {
-        console.log("error");
+        console.log(message["error"]);
 
       } else if ( messages.hasOwnProperty("success") ) {
-        user_row = $(`[data-user-fullname="${fullname}"]`).parent().parent();
-        // $(user_row).remove();
         location.reload();
-
-        $("#confirm_delete_user_modal").modal('hide');
       }
     })
     .fail((err)=> {
-      console.log("Error in ajax query: " + err.statusText);
+      console.log(err);
     })
   }
 
