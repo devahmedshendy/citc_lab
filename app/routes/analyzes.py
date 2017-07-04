@@ -72,7 +72,7 @@ def get_analyzes(page=1):
 
     if search_string and not_approved_yet:
         search_string = search_string.strip()
-        filters       = [ text("cbc_analysis.cbc_approved=0") ]
+        filters       = [ text("cbc_approved=0") ]
 
         try:
             int(search_string)
@@ -118,7 +118,7 @@ def get_analyzes(page=1):
 
 
     elif not_approved_yet:
-        filters       = [ text("cbc_analysis.cbc_approved=0") ]
+        filters       = [ text("cbc_analysis_approved=0") ]
 
         analyzes = get_all_analyzes_joined_patient(
             order_field=order_field,
