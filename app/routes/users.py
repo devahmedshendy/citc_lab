@@ -44,7 +44,9 @@ def get_users(page=1):
                           .paginate(page, PER_PAGE["USERS"], False)
 
     template = 'users.html'
-    return render_template(template, users=users, page=page)
+    response = render_template(template, users=users, page=page)
+
+    return response
 
 
 
@@ -64,7 +66,7 @@ def add_user():
         add_user_form = AddUserForm()
 
         template = 'add_user.html'
-        return render_template(template, add_user_form=add_user_form)
+        response = render_template(template, add_user_form=add_user_form)
 
 
     add_user_form = AddUserForm(request.form)
@@ -74,7 +76,7 @@ def add_user():
                 flash(error, "error")
 
         template = 'add_user.html'
-        return render_template(template, add_user_form=add_user_form)
+        response = render_template(template, add_user_form=add_user_form)
 
     else:
         user = User()
@@ -87,8 +89,9 @@ def add_user():
             db.session.commit()
 
             flash(MSG["USER_PROFILE_CREATE_DONE"], "success")
+
             url = url_for('get_users')
-            return redirect(url)
+            response = redirect(url)
 
         except sqlalchemy.exc.IntegrityError as e:
             print e.message
@@ -96,14 +99,19 @@ def add_user():
 
             flash(MSG["DUPLICATE_USER"], "error")
 
+            template = 'add_user.html'
+            response = render_template(template, add_user_form=add_user_form)
+
         except sqlalchemy.exc.DatabaseError as e:
             print e.message
             db.session.rollback()
 
             flash(MSG["OPERATION_FAILED"], "error")
 
-        template = 'add_user.html'
-        return render_template(template, add_user_form=add_user_form)
+            template = 'add_user.html'
+            response = render_template(template, add_user_form=add_user_form)
+
+    return response
 
 
 
@@ -119,6 +127,9 @@ def edit_user(user_id=None):
 
     user = User.query.get(user_id)
 
+    if not user:
+        abot(404)
+
 
     if current_user.role.name == "root":
         EditUserForm = EditUserFormForRoot
@@ -126,28 +137,36 @@ def edit_user(user_id=None):
     elif current_user.role.name == "admin":
         EditUserForm = EditUserFormForAdmin
 
+    edit_user_form = EditUserForm(obj=user)
 
     if request.method == 'GET':
-        tempate = 'edit_user.html'
-        return render_template(tempate,
-                               edit_user_form=EditUserForm(obj=user),
+        template = 'edit_user.html'
+        response =  render_template(template,
+                               edit_user_form=edit_user_form,
                                change_user_password_form=ChangeUserPasswordForm(),
                                user_id=user.id)
 
 
     if "cancel" in request.form:
         url = url_for('get_users')
-        return redirect(url)
+        response = redirect(url)
 
 
-    if 'update_profile' in request.form:
-        edit_user_form = EditUserForm(request.form)
-        change_user_password_form = ChangeUserPasswordForm()
+    elif 'update_profile' in request.form:
+        edit_user_form = EditUserForm()
+
 
         if edit_user_form.validate_on_submit() == False:
             for field, errors in edit_user_form.errors.items():
                 for error in errors:
                     flash(error, "error")
+
+
+            template = "edit_user.html"
+            response = render_template(template,
+                            edit_user_form=edit_user_form,
+                            change_user_password_form=ChangeUserPasswordForm(),
+                            user_id=user.id)
 
 
         else:
@@ -160,11 +179,20 @@ def edit_user(user_id=None):
 
                 flash(MSG["USER_PROFILE_EDIT_DONE"], "success")
 
+                url = url_for('edit_user', user_id=user_id)
+                response = redirect(url)
+
             except sqlalchemy.exc.IntegrityError as e:
                 print e.message
                 db.session.rollback()
 
                 flash(MSG["USERNAME_IS_NOT_AVAILABLE"], "error")
+
+                template = "edit_user.html"
+                response = render_template(template,
+                                edit_user_form=edit_user_form,
+                                change_user_password_form=ChangeUserPasswordForm(),
+                                user_id=user.id)
 
             except sqlalchemy.exc.DatabaseError as e:
                 print e.message
@@ -172,26 +200,29 @@ def edit_user(user_id=None):
 
                 flash(MSG["OPERATION_FAILED"], "error")
 
-
-        template = 'edit_user.html'
-        return render_template(template,
+                template = "edit_user.html"
+                response = render_template(template,
                                 edit_user_form=edit_user_form,
-                                change_user_password_form=change_user_password_form,
+                                change_user_password_form=ChangeUserPasswordForm(),
                                 user_id=user.id)
 
 
-
-
-    if "change_password" in request.form:
+    elif "change_password" in request.form:
         user = User.query.get(user_id)
-        edit_user_form = EditUserForm(obj=user)
+        edit_user_form = EditUserForm(formdata=None, obj=user)
 
-        change_user_password_form = ChangeUserPasswordForm(request.form)
+        change_user_password_form = ChangeUserPasswordForm()
 
         if change_user_password_form.validate_on_submit() == False:
             for field, errors in change_user_password_form.errors.items():
                 for error in errors:
                     flash(error, "error")
+
+            template = "edit_user.html"
+            response = render_template(template,
+                            edit_user_form=edit_user_form,
+                            change_user_password_form=ChangeUserPasswordForm(),
+                            user_id=user.id)
 
         else:
             password = change_user_password_form.new_password.data
@@ -204,6 +235,9 @@ def edit_user(user_id=None):
 
                 flash(MSG["USER_PASSWORD_CHANGE_DONE"], "success")
 
+                url = url_for('edit_user', user_id=user.id)
+                response = redirect(url)
+
             except sqlalchemy.exc.DatabaseError as e:
                 print e.message
                 db.session.rollback()
@@ -211,13 +245,13 @@ def edit_user(user_id=None):
                 flash(MSG["OPERATION_FAILED"], "error")
 
 
-        template = "edit_user.html"
-        return render_template(template,
-                        edit_user_form=edit_user_form,
-                        change_user_password_form=ChangeUserPasswordForm(),
-                        user_id=user.id)
+                template = "edit_user.html"
+                response = render_template(template,
+                                edit_user_form=edit_user_form,
+                                change_user_password_form=ChangeUserPasswordForm(),
+                                user_id=user.id)
 
-
+    return response
 
 """ Edit Account Settings """
 @app.route('/account_settings/', methods=['GET', 'POST'])
@@ -226,8 +260,8 @@ def edit_account_settings():
     user = current_user
 
     if request.method == 'GET':
-        tempate = 'edit_account_settings.html'
-        return render_template(tempate,
+        template = 'edit_account_settings.html'
+        response = render_template(template,
                                edit_account_form=EditAccountForm(obj=user),
                                change_account_password_form=ChangeAccountPasswordForm(),
                                user_id=user.id)
@@ -235,16 +269,22 @@ def edit_account_settings():
 
     if "cancel" in request.form:
         url = url_for('index')
-        return redirect(url)
+        response = redirect(url)
 
 
-    if 'update_profile' in request.form:
+    elif 'update_profile' in request.form:
         edit_account_form = EditAccountForm(request.form)
 
         if edit_account_form.validate_on_submit() == False:
             for field, errors in edit_account_form.errors.items():
                 for error in errors:
                     flash(error, "error")
+
+            template = 'edit_account_settings.html'
+            response = render_template(template,
+                                    edit_account_form=edit_account_form,
+                                    change_account_password_form=ChangeAccountPasswordForm(),
+                                    user_id=user.id)
 
         else:
             edit_account_form.populate_obj(user)
@@ -256,11 +296,20 @@ def edit_account_settings():
 
                 flash(MSG["USER_PROFILE_EDIT_DONE"], "success")
 
+                url = url_for('edit_account_settings')
+                response = redirect(url)
+
             except sqlalchemy.exc.IntegrityError as e:
                 print e.message
                 db.session.rollback()
 
                 flash(MSG["USERNAME_IS_NOT_AVAILABLE"], "error")
+
+                template = 'edit_account_settings.html'
+                response = render_template(template,
+                                        edit_account_form=edit_account_form,
+                                        change_account_password_form=ChangeAccountPasswordForm(),
+                                        user_id=user.id)
 
             except sqlalchemy.exc.DatabaseError as e:
                 print e.message
@@ -269,17 +318,16 @@ def edit_account_settings():
                 flash(MSG["OPERATION_FAILED"], "error")
 
 
-        template = 'edit_account_settings.html'
-        return render_template(template,
-                                edit_account_form=edit_account_form,
-                                change_account_password_form=ChangeAccountPasswordForm(),
-                                user_id=user.id)
+                template = 'edit_account_settings.html'
+                response = render_template(template,
+                                        edit_account_form=edit_account_form,
+                                        change_account_password_form=ChangeAccountPasswordForm(),
+                                        user_id=user.id)
 
-
-    if "change_password" in request.form:
+    elif "change_password" in request.form:
         user = current_user
 
-        edit_account_form = EditAccountForm(obj=user)
+        edit_account_form = EditAccountForm(formdata=None, obj=user)
         change_account_password_form = ChangeAccountPasswordForm(request.form)
 
         if change_account_password_form.validate_on_submit() == False:
@@ -287,37 +335,54 @@ def edit_account_settings():
                 for error in errors:
                     flash(error, "error")
 
-        else:
-            edit_account_form = EditAccountForm(obj=user)
-            change_account_password_form = ChangeAccountPasswordForm()
+            template = "edit_account_settings.html"
+            response = render_template(template,
+                            edit_account_form=edit_account_form,
+                            change_account_password_form=ChangeAccountPasswordForm(),
+                            user_id=user.id)
 
+
+        else:
             old_password = change_account_password_form.old_password.data
+
             if user.verify_password(old_password, user.hashed_password) == False:
                 flash(MSG["WRONG_OLD_PASSWORD"], "error")
 
+                print 'yes'
 
-            new_password = change_account_password_form.new_password.data
-            user.hash_password(new_password)
-            user.updated_at = datetime.now()
+                template = "edit_account_settings.html"
+                response = render_template(template,
+                                edit_account_form=edit_account_form,
+                                change_account_password_form=ChangeAccountPasswordForm(),
+                                user_id=user.id)
 
-            try:
-                db.session.add(user)
-                db.session.commit()
+            else:
+                new_password = change_account_password_form.new_password.data
+                user.hash_password(new_password)
+                user.updated_at = datetime.now()
 
-                flash(MSG["USER_PASSWORD_CHANGE_DONE"], "success")
+                try:
+                    db.session.add(user)
+                    db.session.commit()
 
-            except sqlalchemy.exc.DatabaseError as e:
-                print e.message
-                db.session.rollback()
+                    flash(MSG["USER_PASSWORD_CHANGE_DONE"], "success")
 
-                flash(MSG["OPERATION_FAILED"], "error")
+                    url = url_for('edit_account_settings')
+                    response = redirect(url)
 
-        template = "edit_account_settings.html"
-        return render_template(template,
-                        edit_account_form=edit_account_form,
-                        change_account_password_form=ChangeAccountPasswordForm(),
-                        user_id=user.id)
+                except sqlalchemy.exc.DatabaseError as e:
+                    print e.message
+                    db.session.rollback()
 
+                    flash(MSG["OPERATION_FAILED"], "error")
+
+                    template = "edit_account_settings.html"
+                    response = render_template(template,
+                                    edit_account_form=edit_account_form,
+                                    change_account_password_form=ChangeAccountPasswordForm(),
+                                    user_id=user.id)
+
+    return response
 
 
 """ Delete User """
@@ -337,7 +402,7 @@ def delete_user(user_id=None):
 
         flash(*flash_message)
         url = url_for("get_users")
-        return redirect(url)
+        response = redirect(url)
 
 
     else:
@@ -347,7 +412,9 @@ def delete_user(user_id=None):
 
             flash_message = (MSG["USER_PROFILE_DELETE_DONE"], "success")
 
-
+            flash(*flash_message)
+            url = url_for("get_users")
+            response = redirect(url)
 
         except sqlalchemy.exc.DatabaseError as e:
             print e.message
@@ -355,46 +422,8 @@ def delete_user(user_id=None):
 
             flash_message = (MSG["OPERATION_FAILED"], "error")
 
-    flash(*flash_message)
-    url = url_for("get_users")
-    return redirect(url)
+            flash(*flash_message)
+            url = url_for("get_users")
+            response = redirect(url)
 
-
-
-
-# def db_session_add(user, operation_type):
-#     try:
-#         db.session.add(user)
-#         db.session.commit()
-#
-#         flash(MSG[operation_type + "_DONE"], "success")
-#
-#     except sqlalchemy.exc.IntegrityError as e:
-#         print e.message
-#         db.session.rollback()
-#
-#         flash(MSG["DUPLICATE_USER"], "error")
-#
-#     except Exception as e:
-#         print e.message
-#         db.session.rollback()
-#
-#         flash(MSG["OPERATION_FAILED"], "error")
-#
-#
-# def db_session_delete_json_response(user):
-#     messages_list = {}
-#
-#     try:
-#         db.session.delete(user)
-#         db.session.commit()
-#
-#         messages_list["success"] = MSG["USER_PROFILE_DELETE_DONE"]
-#
-#     except Exception as e:
-#         print e.message
-#         db.session.rollback()
-#
-#         messages_list["error"] = MSG["OPERATION_FAILED"]
-#
-#     return messages_list
+    return response
