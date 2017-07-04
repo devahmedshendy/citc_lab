@@ -2,6 +2,12 @@
 CAUTION: It designed for Learning/Fun Puspose. Don't use it for production.
 
 ----
+### Core Components:
+- Programming Language: Python
+- Python Web Framework: Flask
+- CSS Framework: Bootstrap
+- Database: sqlite
+
 
 ### Installation
 - **Ubuntu 16.04.2**:
