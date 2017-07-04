@@ -3,10 +3,10 @@ CAUTION: It designed for Learning/Fun Puspose. Don't use it for production.
 
 ----
 ### Core Components:
-- Programming Language: Python
-- Python Web Framework: Flask
-- CSS Framework: Bootstrap
-- Database: sqlite
+- Python 2.7
+- Flask
+- Bootstrap v4-alpha
+- sqlite
 
 
 ### Installation
