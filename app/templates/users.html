@@ -99,11 +99,11 @@
           <td width="10%">{{ user.created_at.strftime("%Y-%m-%d") }}</td>
           <td width="10%">{{ user.updated_at.strftime("%Y-%m-%d") }}</td>
           <td width="10%">
-            <a href="{{ url_for('edit_user', user_id=user.id ) }}">edit</a>
+            <a href="{{ url_for('edit_user', user_id=user.id ) }}">Edit</a>
             |
             <a href="" data-delete-user data-user-id="{{ user.id }}"
                data-user-fullname="{{ user.firstname.title() }} {{ user.lastname.title() }}">
-               delete
+               Delete
              </a>
           </td>
         </tr>
