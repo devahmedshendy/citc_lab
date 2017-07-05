@@ -24,8 +24,10 @@ sudo -H pip install virtualenv
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-# Clone the project
-git clone https://github.com/devahmedshendy/citc_lab.git
+# Download the project the project
+# Got to the releases page https://github.com/devahmedshendy/citc_lab/releases
+# Then click on the latest version, then download it
+wget https://github.com/devahmedshendy/citc_lab/archive/<release-name>-<version-number>.tar.gz
 
 # Initialize/Active a virtual environment
 cd citc_lab
