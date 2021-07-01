@@ -18,7 +18,7 @@ html5lib==0.999999999
 infinity==1.4
 intervals==0.8.0
 itsdangerous==0.24
-Jinja2==2.9.6
+Jinja2==2.11.3
 jsmin==2.2.2
 jsonify==0.5
 lxml==3.8.0
