@@ -1,6 +1,6 @@
 blinker==1.4
 cairocffi==0.8.0
-CairoSVG==1.0.22
+CairoSVG==2.5.1
 cffi==1.10.0
 click==6.7
 cssmin==0.2.0
